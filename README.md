@@ -10,6 +10,7 @@
 ## 后端部署
 - idea导入项目
 - 发布到tomcat
+
 ## 前端部署
 - 确保本地安装node.js v4+
 - $ cd my-project
@@ -23,6 +24,7 @@
 - 数据库连接池：Druid 1.0
 - 日志管理：SLF4J 1.6、Log4j
 - 页面交互：Vue2.x
+
 ## 项目截图
 - 菜单管理
 ![image](http://shenghaijiang-git.oss-cn-shanghai.aliyuncs.com/xtp/1.png)
@@ -36,8 +38,10 @@
 ![image](http://shenghaijiang-git.oss-cn-shanghai.aliyuncs.com/xtp/5.png)
 - 用户操作
 ![image](http://shenghaijiang-git.oss-cn-shanghai.aliyuncs.com/xtp/6.png)
+
 ## 后期规划
 TODO
+
 ## 交流、反馈
 - 网站：http://www.xtits.cn
 - 官方QQ群：**372848506**
