@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xtits.xtp.mapper.MenuMapper">
+    <select id="listMenuByUserId" resultType="cn.xtits.xtp.entity.Menu">
+      select * from menu where id IN
+      (
+        SELECT MenuId From
+        (
+        SELECT MenuId FROM roleMenu where RoleId in (SELECT RoleId from roleUser where UserId = #{userId})
+        and MenuId NOT IN
+        (
+        SELECT MenuId FROM userMenu where UserId=#{userId} and Type=0
+        )
+        UNION ALL
+        SELECT MenuId FROM userMenu where UserId=#{userId} and Type=1
+        ) haveMenu
+      ) and DeleteFlag=0
+  </select>
+
+    <select id="listMenuWithOperationByUserId" resultType="cn.xtits.xtp.dto.MenuWithOperationDto">
+    SELECT * from
+    (
+        SELECT
+        a.id id,a.Code code,a.name name,a.parentId,a.parentFlag,a.URL url,a.Icon icon,
+        b.id operationId, b.Code operationCoce ,b.Name operationName FROM menu a
+        LEFT JOIN menuOperation b on a.id = b.MenuId
+        WHERE a.DeleteFlag=0
+    ) allMenu
+     WHERE id IN
+          (
+            SELECT MenuId FROM
+            (
+            SELECT MenuId FROM roleMenu WHERE RoleId IN (SELECT RoleId FROM roleUser WHERE UserId = #{userId} )
+            and MenuId NOT IN
+            (
+            SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=0
+            )
+            UNION ALL
+            SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=1
+            ) haveMenu
+          )
+    AND
+        (
+        operationid IS NULL OR
+        operationid IN
+        (
+        SELECT MenuOperationId FROM roleMenuOperation
+        WHERE RoleId IN(
+                SELECT RoleId FROM roleUser WHERE UserId = #{userId}
+            )
+        AND menuoperationid NOT IN(
+            SELECT menuoperationid
+            FROM userMenuOperation WHERE userid = #{userId} AND type = 0
+        )
+        UNION ALL
+            SELECT menuoperationid FROM userMenuOperation
+                WHERE userid = #{userId} AND type = 1
+    )
+    )
+  </select>
+
+    <select id="listMenuUserFavorite" parameterType="cn.xtits.xtp.entity.MenuExample" resultMap="BaseResultMap">
+    select * from menu where id IN
+    (
+    SELECT MenuId From
+    (
+    SELECT MenuId FROM roleMenu where RoleId in (SELECT RoleId from roleuser where UserId = #{userId})
+    and MenuId NOT IN
+    (
+    SELECT MenuId FROM userMenu where UserId=#{userId} and Type=0
+    )
+    UNION ALL
+    SELECT MenuId FROM userMenu where UserId=#{userId} and Type=1
+    ) haveMenu
+    ) and DeleteFlag=0
+  </select>
+</mapper>
