@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!--<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi">-->
+  <title>xtp通用基础服务</title>
+  <style type="text/css">
+    .scrollTable {
+      width:100%;
+      border: 1px solid #eeeeee;/*table没有外围的border，只有内部的td或th有border*/
+      background: #ffffff;
+    }
+
+    .scrollTable table {
+      border-collapse:collapse; /*统一设置两个table为细线表格*/
+    }
+    /*表头 div的第一个子元素**/
+    .scrollTable table.thead{
+      width:100%;
+    }
+    /*表头*/
+    .scrollTable table.thead th{
+      height: 30px;
+      line-height: 30px;
+      padding-left: .5rem;
+      /*border: 1px solid gray;*/
+      /*border-right:gray;*/
+      background: #eef1f6;/*亮桔黄色*/
+    }
+    /*能带滚动条的表身*/
+    /*div的第二个子元素*/
+    .scrollTable div{
+      width:100%;
+      height:230px;
+      overflow-y:auto;/*必需*/
+    }
+    /*能带滚动条的表身的正体*/
+    .scrollTable table.tbody{
+      width:100%;
+      border: 1px solid #eeeeee;
+      border-right:#eeeeee;
+      color:#666666;
+      background: #ffffff;
+    }
+    /*能带滚动条的表身的格子*/
+    .scrollTable table.tbody td{
+      border:1px solid #eeeeee;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+</html>

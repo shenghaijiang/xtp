@@ -1,0 +1,673 @@
+<template>
+    <div>
+        <el-row>
+            <xt-search @click="getRoles" >
+                <el-form :inline="true" :model="filters">
+                    <el-select v-model="filters.appId" placeholder="请选择" @change="appIdChange">
+                        <el-option
+                                v-for="item in appList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <el-form-item>
+                        <el-input v-model="filters.roleName" placeholder="角色名称"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-input v-model="filters.roleCode" placeholder="角色编码"></el-input>
+                    </el-form-item>
+                </el-form>
+            </xt-search>
+        </el-row>
+        <el-row :gutter="0">
+            <el-col :span="5">
+                <div class="grid-content bg-purple xt-height">
+                    <div class="xt-role-head">角色名称</div>
+                    <div class="xt-role-body" :loading="loading.listLoading">
+                        <el-table :data="roleList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus">
+                            <el-table-column
+                                    prop="name"
+                                    align="center"
+                                    label="名称">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="code"
+                                    align="center"
+                                    label="编码">
+                            </el-table-column>
+                        </el-table>
+                       <!-- <div v-for="item in roleList" class="xt-role-name" @click="getRoleMenus(item,this)" :class="addForm.roleId==item.id?'xt-role-name-active':''">{{item.name}}</div>-->
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="7">
+                <div class="grid-content xt-height">
+                    <div class="xt-role-head">角色菜单</div>
+                    <div class="xt-role-body">
+                        <el-tree
+                                :data="menuList"
+                                node-key="id"
+                                ref="tree"
+                                :default-checked-keys="selectedMenus"
+                                :props="defaultProps" style="height: 37.4rem;border:none;"
+                                @node-click="getRoleData"
+                                :highlight-current="true"
+                                :disabled="true"
+                                @node-expand="nodeExpand"
+                                :expand-on-click-node="false"
+                                v-loading.lock="loading.roleMenuListLoading"
+                        >
+                        </el-tree>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content bg-purple xt-height" style="border-right: 1px solid #DFE6EC">
+                    <div class="xt-role-head" style="border-right:1px solid #DFE6EC;">
+                       权限信息
+                        <el-radio-group  v-show="addForm.menuId==0?false:true" v-model="switchButton.name" size="small" @change="radioChange" style="float: right;line-height: 2.5rem">
+                            <el-radio-button label="数据" value="true" ></el-radio-button>
+                            <el-radio-button label="按钮" value="false"></el-radio-button>
+                        </el-radio-group>
+                    </div>
+                    <div class="xt-role-data-body"  v-show="switchButton.value">
+                        <el-button type="primary" v-show="addForm.menuId==0?false:true" size="small" @click="addRoleData">
+                            <div class="xt-add-icon" ><i class="el-icon-plus"></i>新增</div>
+                        </el-button>
+                        <div class="xt-role-data-list-body">
+                            <div class="xt-role-data-list-head" v-show="addForm.menuId==0?false:true">
+                                <el-col :span="6">字段名称</el-col>
+                                <el-col :span="6">运算符</el-col>
+                                <el-col :span="6">数值</el-col>
+                                <el-col :span="6">操作</el-col>
+                            </div>
+                            <div v-show="addForm.menuId==0?false:roleMenuDataList.length==0?true:false" class=" xt-no-data">暂无数据</div>
+                            <div v-for="item in roleMenuDataList" class="xt-role-data-list " v-loading.lock="loading.roleMenuDataLoading">
+                                <el-col :span="6" class="xt-role-data">
+                                    <label v-show="!item.isEdit" class="bounceInLeft animated">{{item.fieldName}}</label>
+                                    <el-input v-show="item.isEdit" v-model="item.fieldName" size="small" auto-complete="off"></el-input>
+                                </el-col>
+                                <el-col :span="6" class="xt-role-data">
+                                    <label v-show="!item.isEdit" class="bounceInLeft animated">{{item.symbol}}</label>
+                                    <el-select v-show="item.isEdit" size="small" v-model="item.symbol" placeholder="请选择运算符" class="xt-width-full-width">
+                                        <el-option v-for="item in symbolList" :label="item.name" :value="item.value"></el-option>
+                                    </el-select>
+                                </el-col>
+                                <el-col :span="6" class="xt-role-data">
+                                    <label v-show="!item.isEdit" class="bounceInLeft animated">{{item.value}}</label>
+                                    <el-input v-show="item.isEdit" size="small" v-model="item.value" auto-complete="off" class="xt-width-full-width" style="margin-top: 0.3rem"></el-input>
+                                </el-col>
+                                <el-col :span="6" class="xt-role-data">
+                                    <el-button v-show="item.isEdit" size="small" type="success" @click="editRoleDataSure(item)" icon="check" :loading="item.editRoleDataLoading"></el-button>
+                                    <el-button v-show="item.isEdit" size="small" type="danger" @click="editRoleDataCancel(item)" icon="close" ></el-button>
+                                    <el-button v-show="!item.isEdit" size="small" type="info" @click="editRoleData(item)" icon="edit"></el-button>
+                                    <el-button v-show="!item.isEdit" size="small" type="danger" @click="deleteRoleData(item)" icon="delete" :loading="item.deleteRoleDataLoading"> </el-button>
+                                </el-col>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xt-role-data-body" v-show="!switchButton.value" >
+                        <div class="xt-role-data-list-body" v-show="addForm.menuId==0?false:true" style="">
+                            <div class="xt-role-data-list-head" >
+                                按钮权限选择
+                            </div>
+                            <div style="border: 1px solid #DFE6EC;height: 30rem" v-loading.lock="loading.menuOperationLoading">
+                                    <el-checkbox  v-for="item in menuOperationList" :label="item.id" :key="item.id" style="width: 30%;margin-left: 10%;margin-top: 0.5rem" :checked="item.checked" @change="checkBoxChange(item)">{{item.name}}({{item.code}})</el-checkbox>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
+
+
+        <!--toolbars-->
+        <el-col :span="24" class="toolbar">
+            <el-pagination
+                    style="float:right;"
+                    @size-change="handledSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageInfo.pageIndex"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pageInfo.pageSize"
+                    layout="sizes, prev, pager, next"
+                    :total="pageInfo.count">
+            </el-pagination>
+        </el-col>
+
+        <!--角色权限添加模态框 a dialog for role rule add-->
+        <el-dialog :title="addForm.id==0?'数据权限添加':'数据权限修改'" :visible.sync="addDialogVisible" :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item class="xt-inline-block" label="角色名称">
+                            <el-tag type="gray">{{addForm.roleName}}</el-tag>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item class="xt-inline-block" label="角色菜单">
+                            <el-tag type="gray">{{addForm.menuName}}</el-tag>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-form-item label="字段名称" prop="fieldName">
+                    <el-input v-model="addForm.fieldName" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="运算符" prop="symbol">
+                    <el-select v-model="addForm.symbol" placeholder="请选择运算符" class="xt-width-full-width">
+                        <el-option v-for="item in symbolList" :label="item.name" :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="数值" prop="value">
+                    <el-input  v-model="addForm.value" auto-complete="off" class="xt-width-full-width"></el-input>
+                </el-form-item>
+            </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="handleClose">取 消</el-button>
+                <el-button type="primary" @click="addRoleDataSure" :loading="loading.addRoleDataLoading">确 定</el-button>
+              </span>
+        </el-dialog>
+
+    </div>
+</template>
+
+<script type="text/ecmascript-6">
+    import {AppAPI,RoleAPI,MenuAPI,MenuOperatorAPI,RoleMenuOperatorAPI} from '../../api/api';
+
+    export default {
+        name:'XTRoleDataRule',
+        watch: {
+        },
+        data(){
+            return{
+                addDialogVisible: false,
+                filters: {
+                    key: '', roleName: '', roleCode: '',appId:''
+                },
+                appList:[],
+                pageInfo: {pageIndex: 1, pageSize: 10, count: 0},
+                loading:{listLoading:false,addRoleDataLoading:false,roleLoading:false,roleMenuListLoading:false,menuOperationLoading:false,roleMenuDataLoading:false},
+                addForm:{id:0,roleId:0,roleName:'',menuName:'',menuId:0,fieldName:'',symbol:'',value:'',menuOperation:[],menuOperationEdit:false},
+                addFormRules: {
+                    fieldName: [
+                        { required: true, message: '请填写字段名称', trigger: 'blur' },
+                        { min: 1, max: 20, message: '请输入长度在1到20个字符', trigger: 'blur' }
+                    ],
+                    symbol: [
+                        { required: true, message: '请选择运算符', trigger: 'change' }
+                    ],
+                    value:[{ required: true, message: '请填写数值', trigger: 'blur' },
+                        { min: 1, max: 20, message: '请输入长度在1到20个字符', trigger: 'blur' }
+                    ]
+                },
+                roleList: [],//角色列表 a list of roles
+                roleMenuList:[],//角色菜单列表 a list of a role menus
+                roleMenuDataList:[], //角色菜单信息列表
+                menuList:[],
+                menuOperationList:[],
+                menuOperationSelected:[],
+                selectedMenus: [],
+                symbolList:[{name:'空',value:'null'},{name:'不为空',value:'IsNotNull'},{name:'等于',value:'='},{name:'不等于',value:'<>'},{name:'大于',value:'>'},{name:'不等于',value:'>='},{name:'小于',value:'<'},{name:'小于等于',value:'<='},{name:'In',value:'In'},{name:'NotIn',value:'NotIn'},{name:'Between',value:'Between'}],
+                defaultProps: {
+                    label: 'name',
+                    children: 'childs'
+                },
+                switchButton:{name:"数据",value:true}
+            }
+        },
+        methods:{
+            appIdChange(){
+                this.getRoles()
+            },
+            /*按钮权限的保存删除事件*/
+            checkBoxChange(item){
+                let _this=this;
+                item.checked=!item.checked;
+                if(item.checked==true){
+                    let params={data:JSON.stringify({roleId:_this.addForm.roleId,menuId:_this.addForm.menuId,menuOperationId:item.id})};
+                    RoleMenuOperatorAPI.insertRoleMenuOperation(params).then(function (res) {
+                        if(res.data.code==1){
+                        }else{
+                            _this.$message({
+                                type: 'error',
+                                message: '保存失败!'
+                            });
+                            let newAddForm=_this.addForm;
+                            let newParams={id:newAddForm.menuId,name:newAddForm.menuName,roleId:newAddForm.roleId,roleName:newAddForm.roleName,fieldName:newAddForm.fieldName,symbol:newAddForm.symbol,value:newAddForm.value}
+                            _this.getRoleData(newParams)
+                        }
+                    })
+                }else{
+                    RoleMenuOperatorAPI.deleteRoleMenuOperation({id:item.roleMenuOperation}).then(function (res) {
+                        if(res.data.code==1){
+                        }else{
+                            _this.$message({
+                                type: 'error',
+                                message: '保存失败!'
+                            });
+                            let paramsAddForm=_this.addForm;
+                            let newParams={id:paramsAddForm.menuId,name:paramsAddForm.menuName,roleId:paramsAddForm.roleId,roleName:paramsAddForm.roleName,fieldName:paramsAddForm.fieldName,symbol:paramsAddForm.symbol,value:paramsAddForm.value};
+                            _this.getRoleData(newParams)
+                        }
+                        item.deleteRoleDataLoading=false;
+                    })
+                }
+            },
+
+            //数据与按钮切换事件
+            radioChange(value){
+                let list=[{name:"数据",value:true},{name:"按钮",value:false}];
+                let _this=this;
+                list.map(function (element) {
+                    if(element.name===value)
+                    _this.switchButton.value=element.value;
+                });
+            },
+
+            //弹框关闭按钮事件
+            handleClose(done) {
+                this.addDialogVisible = false;
+                let newItem=this.addForm;
+                newItem.fieldName='';
+                newItem.symbol='';
+                newItem.value='';
+                this.$refs["addForm"].resetFields();
+            },
+            //每页数据数
+            handledSizeChange(val){
+                this.pageInfo.pageSize = val;
+                this.getRoles();
+            },
+            //数据当前页
+            handleCurrentChange(val){
+                this.pageInfo.pageIndex = val;
+                this.getRoles();
+            },
+
+            /*展开角色菜单事件*/
+            nodeExpand(item){
+                let _this=this;
+            },
+
+            //获取菜单按钮列表
+            getMenuOperatorList(params) {
+                let _this = this;
+                return new Promise(function (resolve, reject) {
+                    MenuOperatorAPI.MenuOperatorList(params).then(res => {
+                        resolve(res.data.data.data);
+                    });
+                })
+            },
+
+            getMenuOperationSelectedList(params){
+                let _this = this;
+                return new Promise(function (resolve, reject) {
+                    RoleMenuOperatorAPI.listRoleMenuOperation(params).then(res => {
+                        resolve(res.data.data.data);
+                    });
+                })
+            },
+
+            //获取角色列表
+            getRoles() {
+                let _this = this;
+                let para = Object.assign({}, this.pageInfo)
+                para.name = _this.filters.roleName!=''? '%' + _this.filters.roleName + '%':'';
+                para.code = _this.filters.roleName!=''?  '%' + _this.filters.roleCode + '%':'';
+                para.appId=_this.filters.appId ;
+                this.loading.listLoading = true;
+                this.addForm={id:0,roleId:0,roleName:'',menuName:'',menuId:0,fieldName:'',symbol:'',value:0,menuOperationEdit:false};
+                _this.roleList=[];
+                RoleAPI.getRoleList(para).then((res) => {
+                    _this.pageInfo.pageIndex = res.data.data.currentPage;
+                    _this.pageInfo.count = res.data.data.count;
+                   let list= res.data.data.data;
+                    _this.roleList=list;
+                    _this.roleMenuList=[];
+                    _this.roleMenuDataList=[];
+                    _this.menuList=[];
+                    _this.loading.listLoading = false;
+                }).catch(function (error) {
+                    _this.loading.listLoading = false;
+                });
+            },
+
+            //获取选中的角色的菜单列表
+            getRoleMenus(item,event){
+                let _this=this;
+                let newItem=this.addForm;
+                newItem.roleId=item.id;
+                newItem.roleName=item.name;
+                newItem.menuId=0;
+                newItem.menuName='';
+                _this.roleMenuList=[]
+                _this.roleMenuDataList=[];
+                let params={pageIndex:1,pageSize:2147483647,roleId:newItem.roleId}
+                return new Promise(function (resolve, reject) {
+                    _this.loading.roleMenuListLoading=true;
+                RoleAPI.getRoleMenuList(params).then(function(res){
+                        let list=res.data.data.data;
+                    let menuIdList=[];
+                        list.map(function (element) {
+                            menuIdList.push(element.menuId)
+                        })
+                        _this.roleMenuList=list;
+                    _this.selectedMenus=menuIdList
+                    _this.getMenus();
+                    })
+                });
+            },
+            getApps() {
+                let _self = this;
+                let para = {pageIndex:1,pageSize:9999999};
+                AppAPI.getAppList(para).then((res) => {
+                    _self.pageInfo.pageIndex = res.data.data.currentPage
+                    _self.appList = res.data.data.data;
+                    _self.appList.map(function (item) {
+                        item.tokenshow = '**************';
+                    })
+                    if (_self.filters.appId == '') {
+                        _self.filters.appId = _self.appList[0].id;
+                        para.appId = _self.filters.appId;
+                    }
+                });
+            },
+
+            //获取菜单列表
+            getMenus() {
+                let _this = this;
+                return new Promise(function (resolve, reject) {
+                    let para = {pageIndex: 1, pageSize: 999999};
+                    MenuAPI.getMenuList(para).then((res) => {
+                        let menuArr = res.data.data.data;
+                        let count = menuArr.length;
+                        let menuList=[];
+                        menuArr.map(function (item) {
+                           item.childs =[];
+                            _this.roleMenuList.map(element => {
+                                if(item.id==element.menuId){
+                                    menuList.push(item);
+                                }
+                                if(element.parentId==item.id){
+                                    let newItem={id:element.menuId,code:element.menuCode,name:element.menuName,parentId:element.parentId,roleId:element.roleId}
+                                    item.childs.push(newItem)
+                                }
+                            })
+                        });
+                        _this.menuList = menuList;
+                        _this.loading.roleMenuListLoading=false;
+                    });
+                });
+            },
+
+            //获取选中的角色权限列表
+            getRoleData(item){
+                let childsType=typeof item.childs;
+                let _this=this;
+                let newItem=this.addForm;
+                    newItem.menuId=item.id;
+                    newItem.menuName=item.name;
+                    let params={roleId:newItem.roleId,menuId:newItem.menuId,pageIndex:1,pageSize:2147483647}
+                    _this.loading.menuOperationLoading=true;
+                    _this.loading.roleMenuDataLoading=true;
+                    RoleAPI.getRoleDataList(params).then(function (res) {
+                        let list=res.data.data.data;
+                        list.map(function (element) {
+                            element["isEdit"]=false;
+                            element["editRoleDataLoading"]=false;
+                            element["deleteRoleDataLoading"]=false;
+                        })
+                        _this.roleMenuDataList=list;
+                        _this.loading.roleMenuDataLoading=false;
+                    })
+                _this.menuOperationList=[];
+                    _this.getMenuOperationSelectedList({roleId: _this.addForm.roleId,menuId: _this.addForm.menuId,pageIndex: 1,pageSize: 999999}).then(function (res) {
+                        _this.getMenuOperatorList({menuId: _this.addForm.menuId,pageIndex: 1,pageSize: 999999}).then(function (datas) {
+                            let menuOperationList=datas;
+                            menuOperationList.map(function (element) {
+                                element.checked=false;
+                                res.map(function (item) {
+                                    if(item.menuOperationId==element.id){
+                                        element.checked=true;
+                                        element.roleMenuOperation=item.id
+                                    }
+                                });
+                            });
+                            _this.menuOperationList=menuOperationList;
+                            _this.loading.menuOperationLoading=false;
+                        })
+                    })
+            },
+
+            //新增权限数据
+            addRoleData(){
+                let _this=this;
+                _this.addDialogVisible=true;
+                let newItem=_this.addForm;
+                newItem.fieldName='';
+                newItem.symbol='';
+                newItem.value='';
+            },
+
+            //打开修改页面
+            editRoleData(item){
+                let _this=this;
+                item.isEdit=true
+            },
+
+            /*编辑确认数据权限*/
+            editRoleDataSure(item){
+                let _this=this;
+                let params=item;
+                _this.loading.editRoleDataLoading=true
+                RoleAPI.updateRoleData(params).then(function (res) {
+                    if(res.data.code==1){
+                        item.isEdit=false
+                        _this.$message({
+                            type: 'success',
+                            message: '更新成功!'
+                        });
+                        let paramsAddForm=_this.addForm;
+                        let newParams={id:paramsAddForm.menuId,name:paramsAddForm.menuName,roleId:paramsAddForm.roleId,roleName:paramsAddForm.roleName,fieldName:paramsAddForm.fieldName,symbol:paramsAddForm.symbol,value:paramsAddForm.value};
+                        _this.getRoleData(newParams)
+                    }
+                    _this.loading.editRoleDataLoading=false
+                })
+            },
+
+           /* 取消编辑数据权限*/
+            editRoleDataCancel(item){
+                item.isEdit=false;
+            },
+
+            /*确认添加权限数据*/
+            addRoleDataSure(){
+                let _this=this;
+                let params=this.addForm;
+                this.$refs["addForm"].validate((valid) => {
+                    if (valid) {
+                        _this.loading.addRoleDataLoading=true;
+                        RoleAPI.addRoleData(params).then(function (res) {
+                            if(res.data.code==1){
+                                _this.addDialogVisible = false;
+                                _this.$message({
+                                    type: 'success',
+                                    message: '添加成功!'
+                                });
+                                let newParams={id:params.menuId,name:params.menuName,roleId:params.roleId,roleName:params.roleName,fieldName:params.fieldName,symbol:params.symbol,value:params.value}
+                                _this.getRoleData(newParams)
+                                _this.$refs["addForm"].resetFields();
+                            }
+                            _this.loading.addRoleDataLoading=false;
+                        })
+                    } else {
+                        _this.loading.addRoleDataLoading=false;
+                        return false;
+                    }
+                });
+            },
+
+            /*删除权限信息数据列表事件*/
+            deleteRoleData(item){
+                let _this=this;
+                let params={id:item.id};
+                this.$confirm('确认删除？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    item.deleteRoleDataLoading=true;
+                    RoleAPI.deleteRoleData(params).then(function (res) {
+                        if(res.data.code==1){
+                            _this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            let paramsAddForm=_this.addForm;
+                            let newParams={id:paramsAddForm.menuId,name:paramsAddForm.menuName,roleId:paramsAddForm.roleId,roleName:paramsAddForm.roleName,fieldName:paramsAddForm.fieldName,symbol:paramsAddForm.symbol,value:paramsAddForm.value};
+                            _this.getRoleData(newParams)
+                        }
+                        item.deleteRoleDataLoading=false;
+                    })
+
+                }).catch(() => {
+              });
+            }
+        },
+        components:{'xt-search':require('../../components/search.vue')},
+        created(){
+            this.getRoles();
+            this.getApps()
+        }
+    }
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+    .bg-purple {
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .xt-height{
+        height:41rem;
+        border-left: 1px solid #DFE6EC;
+        /*border-top: 1px solid #DFE6EC;*/
+        border-bottom: 1px solid #DFE6EC;
+        /*margin-top:1rem;*/
+    }
+    .xt-role-name{
+        height: 2.5rem;
+        line-height: 2.5rem;
+        text-align: center;
+        border-bottom:1px solid #DFE6EC;
+    }
+    .xt-role-name:hover{
+        background-color:#E4E8F1;
+        /*color:#ffffff;*/
+        cursor:pointer
+    }
+    .xt-role-name-active{
+        background-color: #EDF7FF;
+        /*color:#ffffff;*/
+        cursor:none
+    }
+    .xt-role-menu{
+        height: 2.5rem;
+        line-height: 2.5rem;
+        text-align: center;
+        border-bottom:1px solid #DFE6EC;
+        cursor:pointer
+    }
+    .xt-role-menu:hover{
+        background-color:#E4E8F1;
+        color:#ffffff
+    }
+    .xt-role-menu-active{
+        background-color: #EDF7FF;
+        color:#ffffff
+    }
+    .xt-role-head{
+        height: 2.5rem;
+        line-height: 2.5rem;
+        text-align: center;
+        font-family: "微软雅黑 Light";
+        font-weight: bolder;
+        font-size: 16px;
+        border-top:1px solid #DFE6EC;
+        border-left:1px solid #DFE6EC;
+        border-bottom:1px solid #DFE6EC;
+        border-radius: 0rem;
+        background-color: #EEF1F6;
+        /*color:#ffffff*/
+    }
+    .xt-role-body{
+        height:37.5rem;
+        overflow: auto;
+    }
+    .xt-role-data-body{
+        padding:0.2rem 0.3rem;
+    }
+    .xt-role-data-list-body{
+        height:37.2rem;
+        overflow: auto;
+    }
+    .xt-role-data-list-head{
+        height: 2rem;
+        margin-top:0.1rem;
+        font-weight: bolder;
+        border: 1px solid #DFE6EC;
+        line-height: 2rem;
+        text-align: center;
+        background-color: #EEF1F6;
+        /*color:#ffffff*/
+    }
+    .xt-role-data-list{
+        height: 2.5rem;
+        margin-bottom:0.1rem;
+        border: 1px solid #DFE6EC;
+    }
+    .xt-role-data{
+        height: 2.5rem;
+        line-height: 2.5rem;
+        text-align: center;
+        border-left: 1px solid #DFE6EC;
+        border-radius: 0rem;
+    }
+    .xt-inline-block{
+        display: inline-block;
+    }
+    .xt-width-full-width{
+        width: 100%;
+        /*line-height:2.5rem;*/
+    }
+    .xt-add-icon{
+        color:white;
+    }
+    .xt-no-data{
+        height: 3.5rem;
+        line-height: 3.5rem;
+        text-align: center;
+        font-size: 14px;
+        font-family: "微软雅黑 Light";
+        color: #919191;
+    }
+    .xt-role-data-list-foot{
+        margin-top: 23rem;
+        float: right;
+    }
+    .xt-role-data-list-button{
+        float: right;
+        margin-left: 0.3rem;
+    }
+</style>
