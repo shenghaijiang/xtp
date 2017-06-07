@@ -15,7 +15,7 @@
 - 确保本地安装node.js v4+
 - $ cd my-project
 - $ npm install
-- $ npm run de
+- $ npm run dev
 
 ## 技术选型
 - 核心框架：Spring Framework 4.3
