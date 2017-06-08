@@ -104,10 +104,9 @@
                             res.data.data.data.forEach(function (item) {
                                 _self.selectedMenus.push(item.menuId);
                             });
-                            resolve();
                         }
                     });
-
+                    resolve();
                 });
             },
             //获取菜单列表

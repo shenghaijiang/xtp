@@ -86,7 +86,7 @@
             </transition>
         </el-col>
     </div>
-    <footer><section><span>Copyright</span><img src="../assets/copyright.png" alt=""><span>2017  Version 1.0.0</span></section></footer>
+    <footer><section>Copyright2017&copy;Version 1.0.0</section></footer>
 </section>
 </el-col>
 </el-row>
