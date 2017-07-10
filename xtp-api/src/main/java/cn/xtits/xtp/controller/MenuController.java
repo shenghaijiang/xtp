@@ -121,6 +121,43 @@ public class MenuController extends BaseController {
     }
 
 
+    @RequestMapping(value = "checkExists")
+    @ResponseBody
+    public AjaxResult checkExists(
+            @RequestParam(value = "appId", required = false) Integer appId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "code", required = false) String code) {
+        MenuExample example = new MenuExample();
+        example.setPageIndex(1);
+        example.setPageSize(1);
+        MenuExample.Criteria criteria = example.createCriteria();
+        if (name!=null && !"".equals(name)) {
+            criteria.andNameEqualTo(name);
+        }
+        if (code!=null && !"".equals(code)) {
+            criteria.andCodeEqualTo(code);
+        }
+        if (appId != null && appId > 0) {
+            criteria.andAppIdEqualTo(appId);
+        }
+        if (id != null && id > 0) {
+            criteria.andIdNotEqualTo(id);
+        }
+        if (!APP_TOKEN.equals(getAppToken())) {
+            App app = appService.getAppByToken(getAppToken());
+            criteria.andAppIdEqualTo(app.getId());
+        }
+        criteria.andDeleteFlagEqualTo(false);
+        List<Menu> list = menuService.listByExample(example);
+        boolean flag = false;
+        if(list.size()>0)
+        {
+            flag = true;
+        }
+        return new AjaxResult(flag);
+    }
+
     @RequestMapping(value = "listMenu")
     @ResponseBody
     public AjaxResult listMenu(
@@ -131,37 +168,114 @@ public class MenuController extends BaseController {
             @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
             @RequestParam(value = "parentId", required = false, defaultValue = "0") Integer parentId) {
         MenuExample example = new MenuExample();
-        example.setPageIndex(pageIndex);
-        example.setPageSize(pageSize);
+        example.setPageIndex(1);
+        example.setPageSize(Integer.MAX_VALUE);
         MenuExample.Criteria criteria = example.createCriteria();
-        if (name != null) {
+        if (name!=null && !"".equals(name)) {
             criteria.andNameLike(name);
         }
-        if (code != null) {
+        if (code!=null && !"".equals(code)) {
             criteria.andCodeLike(code);
         }
         if (appId != null && appId > 0) {
 
             criteria.andAppIdEqualTo(appId);
         }
+        if(parentId>0)
+        {
+            criteria.andParentIdGreaterThan(0);
+        }
         if (!APP_TOKEN.equals(getAppToken())) {
             App app = appService.getAppByToken(getAppToken());
             criteria.andAppIdEqualTo(app.getId());
         }
         criteria.andDeleteFlagEqualTo(false);
-        criteria.andParentIdEqualTo(parentId);
+        //criteria.andParentIdEqualTo(parentId);
         List<Menu> list = menuService.listByExample(example);
-        List<MenuDto> rList = new ArrayList<>();
-        for (Menu item : list) {
+
+        List<Menu> rList = new ArrayList<>();
+
+        // 最多四级
+        for (Menu item1 : list) {
+            if( (name == null || "".equals(name))&&(code == null || "".equals(code)))
+            {
+                if(item1.getParentId().equals(parentId)){
+                    rList.add(item1);
+                }
+                continue;
+            }
+
+            if (!item1.getParentId().equals(parentId)) {
+                if(item1.getParentId().equals(0))
+                {
+                    continue;
+                }
+                Menu item2 =  menuService.getByPrimaryKey(item1.getParentId());
+                if (!item2.getParentId().equals(parentId)) {
+                    if(item2.getParentId().equals(0))
+                    {
+                        continue;
+                    }
+                    Menu item3 = menuService.getByPrimaryKey(item2.getParentId());
+                    if (!item3.getParentId().equals(parentId)) {
+                        if(item3.getParentId().equals(0))
+                        {
+                            continue;
+                        }
+                        Menu item4 = menuService.getByPrimaryKey(item3.getParentId());
+                        if (item4.getParentId().equals(parentId)) {
+                            if(!rList.contains(item4)) {
+                                rList.add(item4);
+                            }
+                        }
+                    } else {
+                        if(!rList.contains(item3)) {
+                            rList.add(item3);
+                        }
+                    }
+                } else {
+                    if(!rList.contains(item2)) {
+                        rList.add(item2);
+                    }
+                }
+            } else {
+                if(!rList.contains(item1)) {
+                    rList.add(item1);
+                }
+            }
+        }
+
+        example.setPageIndex(pageIndex);
+        example.setPageSize(pageSize);
+        //pageIndex = example.getPageIndex();
+        //pageSize = example.getPageSize();
+
+        example.setCount(rList.size());
+        if(rList.size()>(pageIndex-1)*pageSize) {
+
+
+            if(rList.size() - (pageIndex - 1) * pageSize<pageSize)
+            {
+                rList = rList.subList((pageIndex - 1) * pageSize, rList.size());
+            }
+            else {
+                rList = rList.subList((pageIndex - 1) * pageSize, pageIndex * pageSize);
+            }
+
+        }
+
+
+        List<MenuDto> myList = new ArrayList<>();
+        for (Menu item : rList) {
             MenuDto dto = new MenuDto();
             MapperUtil.copyProperties(item, dto);
             App app = appService.getByPrimaryKey(item.getAppId());
             if (app != null) {
                 dto.setAppName(app.getName());
             }
-            rList.add(dto);
+            myList.add(dto);
         }
-        Pagination<MenuDto> pList = new Pagination<>(example, rList, example.getCount());
+        Pagination<MenuDto> pList = new Pagination<>(example, myList, example.getCount());
         return new AjaxResult(pList);
     }
 
