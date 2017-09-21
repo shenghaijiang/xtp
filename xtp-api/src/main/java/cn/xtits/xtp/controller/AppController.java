@@ -9,6 +9,8 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.AppService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/app")
 public class AppController {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -80,6 +83,8 @@ public class AppController {
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
+        logger.info("192.168.2.111 GET /applistApp 9999 0.3");
+        logger.error("测试",1,2);
         AppExample example = new AppExample();
         example.setPageIndex(pageIndex);
         example.setPageSize(pageSize);
@@ -94,5 +99,4 @@ public class AppController {
         Pagination<App> pList = new Pagination<>(example, list, example.getCount());
         return new AjaxResult(pList);
     }
-
 }

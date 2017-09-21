@@ -24,7 +24,7 @@
         <!-- !!!! Database Configurations !!!! -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://139.196.125.197/xtp?characterEncoding=utf8" userId="root"
-                        password="!Qq1234567890-="/>
+                        password="`Qq1234567890-="/>
 
         <!--<jdbcConnection-->
         <!--driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"-->

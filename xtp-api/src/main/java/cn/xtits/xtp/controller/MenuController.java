@@ -58,7 +58,7 @@ public class MenuController extends BaseController {
             return new AjaxResult(0, "记录已经存在");
         }
 
-        if (APP_TOKEN != getAppToken()) {
+        if (!APP_TOKEN.equals(getAppToken())) {
             App app = appService.getAppByToken(getAppToken());
             record.setAppId(app.getId());
         }
@@ -170,6 +170,7 @@ public class MenuController extends BaseController {
         MenuExample example = new MenuExample();
         example.setPageIndex(1);
         example.setPageSize(Integer.MAX_VALUE);
+        example.setOrderByClause("sort asc");
         MenuExample.Criteria criteria = example.createCriteria();
         if (name!=null && !"".equals(name)) {
             criteria.andNameLike(name);

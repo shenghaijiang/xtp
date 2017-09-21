@@ -17,7 +17,7 @@ axios.defaults.transformRequest = [function (data) {
     }
     return ret
 }];
-let base = 'http://xtp.xtits.cn/xtp-api';
+let base = 'http://localhost:8088';
 
 export const getAllIcons = () => {
     return [

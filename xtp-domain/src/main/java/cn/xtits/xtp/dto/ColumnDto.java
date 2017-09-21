@@ -12,6 +12,8 @@ public class ColumnDto {
     private String columnKey;
     private Boolean nullable;
 
+
+
     public String getColumnName() {
         return columnName;
     }

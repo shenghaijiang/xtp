@@ -27,7 +27,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends BaseController {
 
     @Value("${REST_XTP_URL}")
     private String REST_XTP_URL;
@@ -127,12 +127,12 @@ public class UserController {
             record.setAppId(app.getId());
             record.setAppUserId(record.getId());
             record.setId(null);
-            service.insert(record);
             record.setDeleteFlag(false);
             record.setCreateDate(new Date());
+            service.insert(record);
         }
 
-        return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
+        return new AjaxResult(ErrorCodeEnums.NO_ERROR.value, "", record.getId().toString());
     }
 
     @RequestMapping(value = "deleteUser", method = RequestMethod.POST)
@@ -187,8 +187,21 @@ public class UserController {
         if (appId != null && appId > 0) {
             criteria.andAppIdEqualTo(appId);
         }
+        if(!APP_TOKEN.equals(getAppToken())){
+            App app = appService.getAppByToken(getAppToken());
+            criteria.andAppIdEqualTo(app.getId());
+        }
         List<User> list = service.listByExample(example);
         Pagination<User> pList = new Pagination<>(example, list, example.getCount());
+        return new AjaxResult(pList);
+    }
+
+    @RequestMapping(value = "listUserByRoleId")
+    @ResponseBody
+    public AjaxResult listUser(
+            @RequestParam(value = "roleId", required = false) Integer roleId) {
+        List<User> list = service.listUserByRoleId(roleId);
+        Pagination<User> pList = new Pagination<>(list);
         return new AjaxResult(pList);
     }
 
@@ -229,6 +242,27 @@ public class UserController {
             @RequestParam(value = "id", required = false) Integer id) {
         User user = service.getByPrimaryKey(id);
         return new AjaxResult(user);
+    }
+
+    @RequestMapping(value = "getUserByAppUserId")
+    @ResponseBody
+    public AjaxResult getUserByAppUserId(
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "appToken", required = false) String appToken) {
+        App app = appService.getAppByToken(appToken);
+        UserExample example = new UserExample();
+        example.setPageSize(1);
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andDeleteFlagEqualTo(false);
+            criteria.andAppUserIdEqualTo(id);
+
+            criteria.andAppIdEqualTo(app.getId());
+        List<User> list = service.listByExample(example);
+        if(list.size()>0) {
+            return new AjaxResult(list.get(0));
+        }else {
+            return new AjaxResult(null);
+        }
     }
 
 }

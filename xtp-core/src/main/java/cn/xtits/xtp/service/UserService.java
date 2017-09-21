@@ -2,6 +2,7 @@ package cn.xtits.xtp.service;
 
 import cn.xtits.xtp.entity.User;
 import cn.xtits.xtp.entity.UserExample;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface UserService {
     int updateByPrimaryKeySelective(User record);
 
     User getUserByAppUserId(Integer appUserId, Integer appId);
+
+    List<User> listUserByRoleId( @Param("roleId") Integer roleId);
 }

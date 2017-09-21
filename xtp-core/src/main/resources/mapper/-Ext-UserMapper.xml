@@ -10,4 +10,14 @@
         where AppUserId = #{appUserId,jdbcType=INTEGER} and AppId = #{appId,jdbcType=INTEGER}
     </select>
 
+    <select id="listUserByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+        select * from `user`
+        where Id in
+        (
+        select userId from `roleuser`
+        where roleId = #{roleId,jdbcType=INTEGER}
+        )
+    </select>
+
 </mapper>

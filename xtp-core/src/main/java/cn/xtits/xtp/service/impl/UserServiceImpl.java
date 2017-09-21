@@ -47,12 +47,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public int insert(User record) {
         int count = mapper.insert(record);
-        record.setAppUserId(record.getId());
-        mapper.updateByPrimaryKey(record);
+        //更新的时候数据库不同步，xtp记录误删除同步
+        if(record.getAppUserId() != null && record.getAppUserId() > 0){
 
+        }else {
+            record.setAppUserId(record.getId());
+            mapper.updateByPrimaryKey(record);
+        }
         App app = appMapper.selectByPrimaryKey(record.getAppId());
 
         if (record.getAppUserId() != null && record.getAppUserId() > 0) {
+
+
         } else {
             Map<String, String> param = new HashMap<>();
             record.setPassword("");
@@ -94,6 +100,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByAppUserId(Integer appUserId, Integer appId) {
         return mapper.getUserByAppUserId(appId, appUserId);
+    }
+
+    @Override
+    public List<User> listUserByRoleId(Integer roleId) {
+        return mapper.listUserByRoleId(roleId);
     }
 
 }

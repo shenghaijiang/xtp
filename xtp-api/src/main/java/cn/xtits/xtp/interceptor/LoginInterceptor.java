@@ -20,11 +20,13 @@ import java.util.Date;
  */
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
-    @Value("${APP_TOKEN}")
     private String APP_TOKEN;
-    //private Audience audienceEntity;
 
     public static final Logger logger = LoggerFactory.getLogger(RequestLogInterceptor.class);
+
+    public LoginInterceptor(String token) {
+        this.APP_TOKEN = token;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
