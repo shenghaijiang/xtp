@@ -57,7 +57,7 @@
     </section>
 </template>
 <script>
-    import {MenuAPI, RoleAPI, UserAPI} from '../../api/api';
+    import {MenuAPI, RoleAPI, UserAPI,UserMenuAPI,RoleMenuAPI} from '../../api/api';
     export default{
         data() {
             return {
@@ -110,14 +110,14 @@
 //
 //                }
                 return new Promise(function (resolve, reject) {
-                    MenuAPI.listUserMenu({
+                    UserMenuAPI.listUserMenu({
                         pageIndex: 1,
                         pageSize: 999999,
                         userId: _self.userId
                     }).then(function (res) {
                         _self.userMenu=res.data.data.data;
                     })
-                    RoleAPI.getRoleMenuList(para).then(function (res) {
+                    RoleMenuAPI.listRoleMenu(para).then(function (res) {
                         if (res.data.code === 1) {
                             res.data.data.data.forEach(function (item) {
                                 _self.selectedMenus.push(item.menuId);
@@ -152,11 +152,11 @@
                 let _self = this;
                 return new Promise(function (resolve, reject) {
                     let para = {pageIndex: 1, pageSize: 999999, appId: _self.appId, userId: _self.userId};
-                    MenuAPI.getMenuList(para).then((res) => {
+                    MenuAPI.listMenu(para).then((res) => {
                         let menuArr = res.data.data.data;
                         let count = menuArr.length;
                         menuArr.map(function (item) {
-                            MenuAPI.getMenuList({
+                            MenuAPI.listMenu({
                                 pageIndex: 1,
                                 pageSize: 999999,
                                 parentId: item.id,
@@ -220,7 +220,7 @@
                     })
                 });
 
-                MenuAPI.updateUserMenu({data:JSON.stringify(selectArr),userId:_self.userId}).then(function(res){
+                UserMenuAPI.updateUserMenu({data:JSON.stringify(selectArr),userId:_self.userId}).then(function(res){
                     _self.loading.saveLoading = false;
                     if (res.data.code == 1) {
                         _self.editEnabled = false;

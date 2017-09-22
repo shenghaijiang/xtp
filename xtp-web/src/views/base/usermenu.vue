@@ -163,7 +163,7 @@
     </section>
 </template>
 <script>
-    import {AppAPI, UserAPI, RoleAPI} from '../../api/api';
+    import {AppAPI, UserAPI, RoleAPI,RoleUserAPI} from '../../api/api';
     import {CheckExp, CodeChange, MessageBox, util} from '../../common/js/util'
     import search from '../../components/search.vue'
     import useritem from '../base/userItem.vue'
@@ -297,7 +297,7 @@
                 }
                 this.listLoading = true;
                 //NProgress.start();
-                UserAPI.getUserList(para).then((res) => {
+                UserAPI.listUser(para).then((res) => {
                     _self.pageInfo.pageIndex = res.data.data.currentPage
                     _self.pageInfo.count = res.data.data.count
                     _self.userList = res.data.data.data;
@@ -316,7 +316,7 @@
             getHadUser(params){
                 return new Promise(function (resolve, reject) {
                     let isEmpty = true, id = '';
-                    UserAPI.getUserList(params).then((res) => {
+                    UserAPI.listUser(params).then((res) => {
                         if (res.data.data.count != 0) {
                             isEmpty = false
                             id = res.data.data.data[0].id
@@ -327,7 +327,7 @@
             },
             getRoles(){
                 let _self = this;
-                RoleAPI.getRoleList({
+                RoleAPI.listRole({
                     pageIndex: 1,
                     pageSize: 999999,
                     appId: _self.filters.selected
@@ -361,7 +361,7 @@
                     this.listLoading = true;
                     //NProgress.start();
                     let para = {id: row.id};
-                    UserAPI.deleteUserInfo(para).then((res) => {
+                    UserAPI.deleteUser(para).then((res) => {
                         this.listLoading = false;
                         //NProgress.done();
                         this.$message({
@@ -379,7 +379,7 @@
                 let _self = this;
                 if (!row.roleIds) {
                     row.roleIds = [];
-                    RoleAPI.getUserRoleList({
+                    RoleUserAPI.listRoleUser({
                         pageIndex: 1,
                         pageSize: 999999,
                         userId: row.id,
@@ -409,7 +409,7 @@
                             this.editLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.editForm);
-                            UserAPI.editUserInfo(para).then((res) => {
+                            UserAPI.updateUser(para).then((res) => {
                                 this.editLoading = false;
                                 RoleAPI.updateRoleUser({
                                     userId: this.editForm.id,
@@ -445,7 +445,7 @@
                             this.addLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.addForm);
-                            UserAPI.addUserInfo(para).then((res) => {
+                            UserAPI.insertUser(para).then((res) => {
                                 this.addLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
@@ -483,7 +483,7 @@
                     this.listLoading = true;
                     //NProgress.start();
                     let para = {ids: ids};
-                    UserAPI.deleteUserInfo(para).then((res) => {
+                    UserAPI.deleteUser(para).then((res) => {
                         this.listLoading = false;
                         //NProgress.done();
                         this.$message({
@@ -506,7 +506,7 @@
                 }
                 this.listLoading = true;
                 //NProgress.start();
-                AppAPI.getAppList(para).then((res) => {
+                AppAPI.listApp(para).then((res) => {
                     _self.pageInfo.pageIndex = res.data.data.currentPage
 //                    _self.pageInfo.count=res.data.data.count
                     _self.appList = res.data.data.data;

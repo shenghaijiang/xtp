@@ -214,7 +214,7 @@
                 }
                 this.listLoading = true;
                 //NProgress.start();
-                RoleAPI.getRoleList(para).then((res) => {
+                RoleAPI.listRole(para).then((res) => {
                     _self.pageInfo.pageIndex = res.data.data.currentPage
                     _self.pageInfo.count = res.data.data.count
                     _self.roleList = res.data.data.data;
@@ -232,7 +232,7 @@
             getHadRole(params){
                 return new Promise(function (resolve, reject) {
                     let isempty = true, id = '';
-                    RoleAPI.getRoleList(params).then((res) => {
+                    RoleAPI.listRole(params).then((res) => {
                         if (res.data.data.count != 0) {
                             isempty = false
                             id = res.data.data.data[0].id
@@ -249,7 +249,7 @@
                     this.listLoading = true;
                     //NProgress.start();
                     let para = {id: row.id};
-                    RoleAPI.deleteRoleInfo(para).then((res) => {
+                    RoleAPI.deleteRole(para).then((res) => {
                         this.listLoading = false;
                         //NProgress.done();
                         this.$message({
@@ -280,7 +280,7 @@
                             this.editLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.editForm);
-                            RoleAPI.editRoleInfo(para).then((res) => {
+                            RoleAPI.updateRole(para).then((res) => {
                                 this.editLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
@@ -313,7 +313,7 @@
                             this.addLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.addForm);
-                            RoleAPI.addRoleInfo(para).then((res) => {
+                            RoleAPI.insertRole(para).then((res) => {
                                 this.addLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
@@ -347,7 +347,7 @@
                 }
                 this.listLoading = true;
                 //NProgress.start();
-                AppAPI.getAppList(para).then((res) => {
+                AppAPI.listApp(para).then((res) => {
                     _self.pageInfo.pageIndex=res.data.data.currentPage
                     _self.pageInfo.count=res.data.data.count
                     _self.appList = res.data.data.data;
@@ -377,7 +377,7 @@
                     this.listLoading = true;
                     //NProgress.start();
                     let para = {ids: ids};
-                    RoleAPI.deleteRoleInfo(para).then((res) => {
+                    RoleAPI.deleteRole(para).then((res) => {
                         this.listLoading = false;
                         if (res.data.code == 1) {
                             this.$message({

@@ -124,7 +124,7 @@
             //获取菜单按钮列表
             getDataList() {
                 let _self = this;
-                MenuOperatorAPI.MenuOperatorList({menuId: _self.menuId, pageIndex: 1, pageSize: 999999}).then(res => {
+                MenuOperatorAPI.listMenuOperation({menuId: _self.menuId, pageIndex: 1, pageSize: 999999}).then(res => {
                     _self.dataList = res.data.data.data;
                 });
             },
@@ -174,7 +174,7 @@
                             let para = Object.assign({}, this.addForm);
                             para.menuId=this.menuId;
                             console.log(para);
-                            MenuOperatorAPI.addMenuOperator(para).then((res) => {
+                            MenuOperatorAPI.insertMenuOperation(para).then((res) => {
                                 this.addLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {

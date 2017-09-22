@@ -17,8 +17,10 @@ axios.defaults.transformRequest = [function (data) {
     }
     return ret
 }];
-let base = 'http://localhost:8088';
+// let base = 'http://localhost:8088';
+let base="http://192.168.2.103/xtp-api"
 
+//系统图标库
 export const getAllIcons = () => {
     return [
         'fa fa-address-book',
@@ -150,37 +152,31 @@ export const requestLogin = params => {
 
 /*用户相关API*/
 export const UserAPI = {
-    getUserList: (params) => {
+    listUser: (params) => {
         return axios.post(`${base}/user/listUser`, params);
     },
-    addUserInfo: (params) => {
+    insertUser: (params) => {
         return axios.post(`${base}/user/insertUser`, {data: JSON.stringify(params)});
     },
-    editUserInfo: (params) => {
+    updateUser: (params) => {
         return axios.post(`${base}/user/updateUser`, {data: JSON.stringify(params)});
     },
-    deleteUserInfo: (params) => {
+    deleteUser: (params) => {
         return axios.post(`${base}/user/deleteUser`, params);
     },
-    getUserInfo: (params) => {
+    getUser: (params) => {
         return axios.post(`${base}/user/getUser`, params);
     },
-    editUserPassword: (params) => {
+    updateUserPassword: (params) => {
         return axios.post(`${base}/user/updateUserPassword`, {data: JSON.stringify(params), password: oldpwd});
     },
     updateUserResetPassword: (params) => {
         return axios.post(`${base}/user/updateUserResetPassword`, params);
     },
-    getUserMenuList: (params) => {
-        return axios.post(`${base}/menu/listMenuByUserId`, params);
-    },
-    getUserMenuListWidthOperation:(params) => {
-        return axios.post(`${base}/menu/listMenuWithOperationByUserId.json`, params);
-    }
 }
 
 /*用户菜单按钮相关API*/
-export const UserMenuOperatorAPI={
+export const UserMenuOperationAPI={
     listUserMenuOperation:params=>{
         return axios.post(`${base}/userMenuOperation/listUserMenuOperation`, params);
     },
@@ -193,112 +189,120 @@ export const UserMenuOperatorAPI={
     deleteUserMenuOperation:params=>{
         return axios.post(`${base}/userMenuOperation/deleteUserMenuOperation`, params);
     }
-    // insertMenuOperation:params=>{
-    //     return axios.post(`${base}/`)
-    // }
 };
 
 /*菜单相关API*/
 export const MenuAPI = {
-    getMenuList: (params) => {
+    listMenu: (params) => {
         return axios.post(`${base}/menu/listMenu`, params);
     },
-    addMenuInfo: (params) => {
+    insertMenu: (params) => {
         return axios.post(`${base}/menu/insertMenu`, {data: JSON.stringify(params)});
     },
-    editMenuInfo: (params) => {
+    updateMenu: (params) => {
         return axios.post(`${base}/menu/updateMenu`, {data: JSON.stringify(params)});
     },
-    deleteMenuInfo: (params) => {
+    deleteMenu: (params) => {
         return axios.post(`${base}/menu/deleteMenu`, params);
     },
+    listMenuByUserId: (params) => {
+        return axios.post(`${base}/menu/listMenuByUserId`, params);
+    },
+    listMenuWithOperationByUserId:(params) => {
+        return axios.post(`${base}/menu/listMenuWithOperationByUserId.json`, params);
+    },
+    checkExists:(params)=>{
+        return axios.post(`${base}/menu/checkExists`,params);
+    }
+};
+
+export const UserMenuAPI={
     updateUserMenu: (params) => {
         return axios.post(`${base}/userMenu/updateUserMenu`, params);
     },
     listUserMenu: (params) => {
         return axios.post(`${base}/userMenu/listUserMenu`, params);
     },
-};
+}
 
 /*菜单按钮相关API*/
 export const MenuOperatorAPI={
-    addMenuOperator:(params)=>{
+    insertMenuOperation:(params)=>{
         return axios.post(`${base}/menuOperation/insertMenuOperation`,{data: JSON.stringify(params)});
     },
     deleteMenuOperation:(params)=>{
         return axios.post(`${base}/menuOperation/deleteMenuOperation`, params);
     },
-    MenuOperatorList:(params)=>{
+    listMenuOperation:(params)=>{
         return axios.post(`${base}/menuOperation/listMenuOperation`, params);
     },
 };
 
 /*系统应用相关API*/
 export const AppAPI = {
-    getAppList: params => {
+    listApp: params => {
         return axios.post(`${base}/app/listApp`, params);
     },
-    addAppInfo: params => {
+    insertApp: params => {
         return axios.post(`${base}/app/insertApp`, {data: JSON.stringify(params)});
     },
-    editAppInfo: params => {
+    updateApp: params => {
         return axios.post(`${base}/app/updateApp`, {data: JSON.stringify(params)});
     },
-    deleteAppInfo: params => {
+    deleteApp: params => {
         return axios.post(`${base}/app/deleteApp`, params);
     },
 };
 
 /*角色相关API*/
 export const RoleAPI = {
-    getRoleList: params => {
+    listRole: params => {
         return axios.post(`${base}/role/listRole`, params);
     },
-    addRoleInfo: params => {
+    insertRole: params => {
         return axios.post(`${base}/role/insertRole`, {data: JSON.stringify(params)});
     },
-    editRoleInfo: params => {
+    updateRole: params => {
         return axios.post(`${base}/role/updateRole`, {data: JSON.stringify(params)});
     },
-    deleteRoleInfo: params => {
+    deleteRole: params => {
         return axios.post(`${base}/role/deleteRole`, params);
     },
-    updateRoleMenu: params => {
-        return axios.post(`${base}/roleMenu/updateRoleMenu`, params);
-    },
-    getRoleMenuList: params => {
-        return axios.post(`${base}/roleMenu/listRoleMenu`, params);
-    },
-    getUserRoleList: params => {
+};
+
+//用户角色接口定义
+export const RoleUserAPI={
+    listRoleUser: params => {
         return axios.post(`${base}/roleUser/listRoleUser`, params);
     },
     updateRoleUser: params => {
         return axios.post(`${base}/roleUser/updateRoleUser`, params);
     },
-    getRoleDataList: params => {
-        return axios.post(`${base}/roleDataRule/listRoleDataRule`, params);
+}
+
+//角色菜单接口定义
+export const RoleMenuAPI={
+    updateRoleMenu: params => {
+        return axios.post(`${base}/roleMenu/updateRoleMenu`, params);
     },
-    addRoleData:params => {
-        return axios.post(`${base}/roleDataRule/insertRoleDataRule`, {data: JSON.stringify(params)});
+    listRoleMenu: params => {
+        return axios.post(`${base}/roleMenu/listRoleMenu`, params);
     },
-    deleteRoleData: params => {
-        return axios.post(`${base}/roleDataRule/deleteRoleDataRule`, params);
-    },
-    updateRoleData: params => {
-        return axios.post(`${base}/roleDataRule/updateRoleDataRule`, {data: JSON.stringify(params)});
-    }
-};
+}
 
 /*角色数据权限相关API*/
 export const RoleDataRuleAPI={
-    listRoleDataRule:params=>{
+    listRoleDataRule: params => {
         return axios.post(`${base}/roleDataRule/listRoleDataRule`, params);
     },
-    insertRoleDataRule:params=>{
+    insertRoleDataRule:params => {
         return axios.post(`${base}/roleDataRule/insertRoleDataRule`, {data: JSON.stringify(params)});
     },
-    deleteRoleDataRule:params=>{
+    deleteRoleDataRule: params => {
         return axios.post(`${base}/roleDataRule/deleteRoleDataRule`, params);
+    },
+    updateRoleDataRule: params => {
+        return axios.post(`${base}/roleDataRule/updateRoleDataRule`, {data: JSON.stringify(params)});
     }
 };
 

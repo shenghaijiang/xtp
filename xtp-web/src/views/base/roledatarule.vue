@@ -1,9 +1,9 @@
 <template>
     <div>
         <el-row>
-            <xt-search @click="getRoles" >
+            <xt-search @click="handleSearch" >
                 <el-form :inline="true" :model="filters">
-                    <el-select v-model="filters.appId" placeholder="请选择" @change="appIdChange">
+                    <el-select v-model="filters.appId" placeholder="请选择" >
                         <el-option
                                 v-for="item in appList"
                                 :key="item.id"
@@ -23,18 +23,17 @@
         <el-row :gutter="0">
             <el-col :span="5">
                 <div class="grid-content bg-purple xt-height">
-                    <div class="xt-role-head">角色名称</div>
+                    <div class="xt-role-head">角色列表</div>
                     <div class="xt-role-body" :loading="loading.listLoading">
-                        <el-table :data="roleList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus">
+                        <el-table :data="roleList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus"
+                        :show-header="false">
                             <el-table-column
                                     prop="name"
                                     align="center"
                                     label="名称">
-                            </el-table-column>
-                            <el-table-column
-                                    prop="code"
-                                    align="center"
-                                    label="编码">
+                                    <template scope="scope">
+                                        <span><span style="font-size:12px;color:gray">[{{scope.row.code}}]</span>{{scope.row.name}}</span>
+                                    </template>
                             </el-table-column>
                         </el-table>
                        <!-- <div v-for="item in roleList" class="xt-role-name" @click="getRoleMenus(item,this)" :class="addForm.roleId==item.id?'xt-role-name-active':''">{{item.name}}</div>-->
@@ -175,7 +174,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import {AppAPI,RoleAPI,MenuAPI,MenuOperatorAPI,RoleMenuOperatorAPI} from '../../api/api';
+    import {AppAPI,RoleAPI,MenuAPI,MenuOperatorAPI,RoleMenuOperatorAPI,RoleMenuAPI,RoleDataRuleAPI} from '../../api/api';
 
     export default {
         name:'XTRoleDataRule',
@@ -219,7 +218,7 @@
             }
         },
         methods:{
-            appIdChange(){
+            handleSearch(){
                 this.getRoles()
             },
             /*按钮权限的保存删除事件*/
@@ -296,7 +295,7 @@
             getMenuOperatorList(params) {
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    MenuOperatorAPI.MenuOperatorList(params).then(res => {
+                    MenuOperatorAPI.listMenuOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })
@@ -321,7 +320,7 @@
                 this.loading.listLoading = true;
                 this.addForm={id:0,roleId:0,roleName:'',menuName:'',menuId:0,fieldName:'',symbol:'',value:0,menuOperationEdit:false};
                 _this.roleList=[];
-                RoleAPI.getRoleList(para).then((res) => {
+                RoleAPI.listRole(para).then((res) => {
                     _this.pageInfo.pageIndex = res.data.data.currentPage;
                     _this.pageInfo.count = res.data.data.count;
                    let list= res.data.data.data;
@@ -348,7 +347,7 @@
                 let params={pageIndex:1,pageSize:2147483647,roleId:newItem.roleId}
                 return new Promise(function (resolve, reject) {
                     _this.loading.roleMenuListLoading=true;
-                RoleAPI.getRoleMenuList(params).then(function(res){
+                RoleMenuAPI.listRoleMenu(params).then(function(res){
                         let list=res.data.data.data;
                     let menuIdList=[];
                         list.map(function (element) {
@@ -363,8 +362,7 @@
             getApps() {
                 let _self = this;
                 let para = {pageIndex:1,pageSize:9999999};
-                AppAPI.getAppList(para).then((res) => {
-                    _self.pageInfo.pageIndex = res.data.data.currentPage
+                AppAPI.listApp(para).then((res) => {
                     _self.appList = res.data.data.data;
                     _self.appList.map(function (item) {
                         item.tokenshow = '**************';
@@ -381,7 +379,7 @@
                 let _this = this;
                 return new Promise(function (resolve, reject) {
                     let para = {pageIndex: 1, pageSize: 999999};
-                    MenuAPI.getMenuList(para).then((res) => {
+                    MenuAPI.listMenu(para).then((res) => {
                         let menuArr = res.data.data.data;
                         let count = menuArr.length;
                         let menuList=[];
@@ -413,7 +411,7 @@
                     let params={roleId:newItem.roleId,menuId:newItem.menuId,pageIndex:1,pageSize:2147483647}
                     _this.loading.menuOperationLoading=true;
                     _this.loading.roleMenuDataLoading=true;
-                    RoleAPI.getRoleDataList(params).then(function (res) {
+                    RoleDataRuleAPI.listRoleDataRule(params).then(function (res) {
                         let list=res.data.data.data;
                         list.map(function (element) {
                             element["isEdit"]=false;
@@ -463,7 +461,7 @@
                 let _this=this;
                 let params=item;
                 _this.loading.editRoleDataLoading=true
-                RoleAPI.updateRoleData(params).then(function (res) {
+                RoleDataRuleAPI.updateRoleDataRule(params).then(function (res) {
                     if(res.data.code==1){
                         item.isEdit=false
                         _this.$message({
@@ -520,7 +518,7 @@
                     type: 'warning'
                 }).then(() => {
                     item.deleteRoleDataLoading=true;
-                    RoleAPI.deleteRoleData(params).then(function (res) {
+                    RoleDataRuleAPI.deleteRoleDataRule(params).then(function (res) {
                         if(res.data.code==1){
                             _this.$message({
                                 type: 'success',

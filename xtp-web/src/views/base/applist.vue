@@ -173,7 +173,7 @@
                 para.code='%'+_self.filters.code+'%';
                 this.listLoading = true;
                 //NProgress.start();
-                AppAPI.getAppList(para).then((res) => {
+                AppAPI.listApp(para).then((res) => {
                     _self.pageInfo.pageIndex=res.data.data.currentPage
                     _self.pageInfo.count=res.data.data.count
                     _self.appList = res.data.data.data;
@@ -193,7 +193,7 @@
                     this.listLoading = true;
                 //NProgress.start();
                 let para = { id: row.id };
-                    AppAPI.deleteAppInfo(para).then((res) => {
+                    AppAPI.deleteApp(para).then((res) => {
                     this.listLoading = false;
                 //NProgress.done();
                 this.$message({
@@ -227,7 +227,7 @@
                             this.editLoading = true;
                         //NProgress.start();
                         let para = Object.assign({}, this.editForm);
-                            AppAPI.editAppInfo(para).then((res) => {
+                            AppAPI.updateApp(para).then((res) => {
                             this.editLoading = false;
                         //NProgress.done();
                         this.$message({
@@ -250,7 +250,7 @@
                             this.addLoading = true;
                         //NProgress.start();
                         let para = Object.assign({}, this.addForm);
-                            AppAPI.addAppInfo(para).then((res) => {
+                            AppAPI.insertApp(para).then((res) => {
                             this.addLoading = false;
                         //NProgress.done();
                         this.$message({
@@ -277,7 +277,7 @@
                     this.listLoading = true;
                 //NProgress.start();
                 let para = { ids: ids };
-                    AppAPI.deleteAppInfo(para).then((res) => {
+                    AppAPI.deleteApp(para).then((res) => {
                     this.listLoading = false;
                 //NProgress.done();
                 this.$message({

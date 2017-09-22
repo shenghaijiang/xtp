@@ -48,7 +48,7 @@
     </section>
 </template>
 <script>
-    import {MenuAPI, RoleAPI, MenuOperatorAPI, RoleMenuOperatorAPI} from '../../api/api';
+    import {MenuAPI, RoleAPI, MenuOperatorAPI, RoleMenuOperatorAPI,RoleMenuAPI} from '../../api/api';
     export default{
         data() {
             return {
@@ -98,8 +98,7 @@
 
                 }
                 return new Promise(function (resolve, reject) {
-
-                    RoleAPI.getRoleMenuList(para).then(function (res) {
+                    RoleMenuAPI.listRoleMenu(para).then(function (res) {
                         if (res.data.code === 1) {
                             res.data.data.data.forEach(function (item) {
                                 _self.selectedMenus.push(item.menuId);
@@ -114,11 +113,11 @@
                 let _self = this;
                 return new Promise(function (resolve, reject) {
                     let para = {pageIndex: 1, pageSize: 999999, appId: _self.appId};
-                    MenuAPI.getMenuList(para).then((res) => {
+                    MenuAPI.listMenu(para).then((res) => {
                         let menuArr = res.data.data.data;
                         let count = menuArr.length;
                         menuArr.map(function (item) {
-                            MenuAPI.getMenuList({
+                            MenuAPI.listMenu({
                                 pageIndex: 1,
                                 pageSize: 999999,
                                 parentId: item.id,
@@ -178,7 +177,7 @@
                 })
                 _self.loading.saveLoading = true;
 
-                RoleAPI.updateRoleMenu({
+                RoleMenuAPI.updateRoleMenu({
                     roleId: _self.roleId,
                     appId: _self.appId,
                     menuIds: selectArr.join(',')

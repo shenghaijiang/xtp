@@ -36,6 +36,7 @@ const menuoperator = r => require.ensure([], () => r(require('./views/base/menuo
 const roledatarule = r => require.ensure([], () => r(require('./views/base/roledatarule')), 'roledatarule')
 const usermenu = r => require.ensure([], () => r(require('./views/base/usermenu')), 'usermenu')
 const userbuttonrule = r => require.ensure([], () => r(require('./views/base/userbuttonrule')), 'userbuttonrule')
+const newmenuoperation = r => require.ensure([],() => r(require('./views/base/newmenuoperation')),'newmenuoperation')
 
 let routes = [
     {
@@ -65,7 +66,8 @@ let routes = [
             { path: '/role', component: role, name: '角色管理' },
             { path: '/menuoperator', component: menuoperator, name: '菜单按钮管理' },
             {path:'/roledatarule',component:roledatarule,name:'角色数据/按钮权限设置'},
-            {path:'/usermenu2',component:usermenu,name:'用户菜单'}
+            {path:'/usermenu2',component:usermenu,name:'用户菜单'},
+            {path:'/newmenuoperation',component:newmenuoperation,name:'新菜单按钮管理'}
         ]
     },
     {

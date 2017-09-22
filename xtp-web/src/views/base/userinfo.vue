@@ -121,9 +121,9 @@
                         {required: true, message: '请输入姓名', trigger: 'blur'},
                         {min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
                     ],
-                    phone: [
-                        {minlength: 11, maxlength: 11, required: true, message: '请输入正确的手机号', trigger: 'blur'},
-                        {validator: checkPhone, trigger: 'blur,change'}],
+                    // phone: [
+                    //     {minlength: 11, maxlength: 11, required: true, message: '请输入正确的手机号', trigger: 'blur'},
+                    //     {validator: checkPhone, trigger: 'blur,change'}],
                     mail: [{required: false, message: '', trigger: 'blur'},
                         {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change'}],
                     qq: [{required: false, message: '', trigger: 'blur'}, {validator: checkQQ, trigger: 'blur,change'}]
@@ -147,7 +147,7 @@
                 this.$refs['userInfo'].resetFields();
                 this.editFormVisible = true
                 let _self = this;
-                getUserInfo().then(function (res) {
+                UserAPI.getUser().then(function (res) {
                     _self.userInfo = res.data.data;
                 })
             },
@@ -160,7 +160,7 @@
                             //NProgress.start();
                             let para = {password: this.settingInfo.newPwd, account: this.userInfo.account};
                             let oldpwd = this.settingInfo.oldPwd;
-                            UserAPI.editUserPassword(para, oldpwd).then((res) => {
+                            UserAPI.updateUserPassword(para, oldpwd).then((res) => {
                                 this.editPwdLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
@@ -192,7 +192,7 @@
                             this.editInfoLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.userInfo);
-                            UserAPI.editUserInfo(para).then((res) => {
+                            UserAPI.updateUser(para).then((res) => {
                                 this.editInfoLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
@@ -210,7 +210,7 @@
                                     })
                                     this.$refs['userInfo'].resetFields();
                                     let _self = this;
-                                    UserAPI.getUserInfo().then(function (res) {
+                                    UserAPI.getUser().then(function (res) {
                                         _self.userInfo = res.data.data;
                                     })
                                 }
@@ -222,7 +222,7 @@
         },
         mounted(){
             let _self = this;
-            UserAPI.getUserInfo().then(function (res) {
+            UserAPI.getUser().then(function (res) {
                 console.log(res);
                 _self.userInfo = res.data.data;
             })

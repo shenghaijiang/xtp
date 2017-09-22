@@ -94,7 +94,7 @@
 </template>
 
 <script>
-    import {UserAPI} from '../api/api';
+    import {UserAPI,MenuAPI} from '../api/api';
     export default {
         data() {
             return {
@@ -113,7 +113,7 @@
             loadMenus(){
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    UserAPI.getUserMenuList({}).then(function (result) {
+                    MenuAPI.listMenuByUserId({}).then(function (result) {
                         let parentMenus = result.data.data.parentMenu;
                         let allMenus = result.data.data.allMenu;
                         parentMenus.map(function (item) {
