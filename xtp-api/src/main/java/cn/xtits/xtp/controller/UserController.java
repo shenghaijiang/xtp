@@ -187,7 +187,7 @@ public class UserController extends BaseController {
         if (appId != null && appId > 0) {
             criteria.andAppIdEqualTo(appId);
         }
-        if(!APP_TOKEN.equals(getAppToken())){
+        if (!APP_TOKEN.equals(getAppToken())) {
             App app = appService.getAppByToken(getAppToken());
             criteria.andAppIdEqualTo(app.getId());
         }
@@ -240,6 +240,10 @@ public class UserController extends BaseController {
     @ResponseBody
     public AjaxResult getUser(
             @RequestParam(value = "id", required = false) Integer id) {
+
+        if(id==null) {
+            id = getUserId();
+        }
         User user = service.getByPrimaryKey(id);
         return new AjaxResult(user);
     }
@@ -254,13 +258,13 @@ public class UserController extends BaseController {
         example.setPageSize(1);
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
-            criteria.andAppUserIdEqualTo(id);
+        criteria.andAppUserIdEqualTo(id);
 
-            criteria.andAppIdEqualTo(app.getId());
+        criteria.andAppIdEqualTo(app.getId());
         List<User> list = service.listByExample(example);
-        if(list.size()>0) {
+        if (list.size() > 0) {
             return new AjaxResult(list.get(0));
-        }else {
+        } else {
             return new AjaxResult(null);
         }
     }
