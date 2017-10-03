@@ -54,7 +54,7 @@
                                 :highlight-current="true"
                                 :disabled="true"
                                 @node-expand="nodeExpand"
-                                :expand-on-click-node="false"
+                                :expand-on-click-node="true"
                                 v-loading.lock="loading.roleMenuListLoading"
                         >
                         </el-tree>
@@ -94,7 +94,7 @@
                                     </el-select>
                                 </el-col>
                                 <el-col :span="6" class="xt-role-data">
-                                    <label v-show="!item.isEdit" class="bounceInLeft animated">{{item.value}}</label>
+                                    <label v-show="!item.isEdit" class="bounceInLeft animated xt-text-hidden" :title="item.value">{{item.value}}</label>
                                     <el-input v-show="item.isEdit" size="small" v-model="item.value" auto-complete="off" class="xt-width-full-width" style="margin-top: 0.3rem"></el-input>
                                 </el-col>
                                 <el-col :span="6" class="xt-role-data">
@@ -348,8 +348,8 @@
                 return new Promise(function (resolve, reject) {
                     _this.loading.roleMenuListLoading=true;
                 RoleMenuAPI.listRoleMenu(params).then(function(res){
-                        let list=res.data.data.data;
-                    let menuIdList=[];
+                        let list=res.data.data?res.data.data.data:[];
+                        let menuIdList=[];
                         list.map(function (element) {
                             menuIdList.push(element.menuId)
                         })
@@ -361,17 +361,20 @@
             },
             getApps() {
                 let _self = this;
-                let para = {pageIndex:1,pageSize:9999999};
-                AppAPI.listApp(para).then((res) => {
-                    _self.appList = res.data.data.data;
-                    _self.appList.map(function (item) {
-                        item.tokenshow = '**************';
-                    })
-                    if (_self.filters.appId == '') {
-                        _self.filters.appId = _self.appList[0].id;
-                        para.appId = _self.filters.appId;
-                    }
-                });
+                return new Promise((resolve,reject) => {
+                    let para = {pageIndex:1,pageSize:9999999};
+                    AppAPI.listApp(para).then((res) => {
+                        _self.appList = res.data.data.data;
+                        _self.appList.map(function (item) {
+                            item.tokenshow = '**************';
+                        })
+                        if (_self.filters.appId == '') {
+                            _self.filters.appId = _self.appList[0].id;
+                            para.appId = _self.filters.appId;
+                        }
+                        resolve();
+                    });
+                })
             },
 
             //获取菜单列表
@@ -394,6 +397,17 @@
                                     item.childs.push(newItem)
                                 }
                             })
+                            if(item.childs){
+                                item.childs.map((child) => {
+                                    child.childs=[];
+                                    _this.roleMenuList.map(element => {
+                                        if(element.parentId==child.id){
+                                            let newItem={id:element.menuId,code:element.menuCode,name:element.menuName,parentId:element.parentId,roleId:element.roleId}
+                                            child.childs.push(newItem)
+                                        }
+                                    });
+                                })
+                            }
                         });
                         _this.menuList = menuList;
                         _this.loading.roleMenuListLoading=false;
@@ -488,7 +502,7 @@
                 this.$refs["addForm"].validate((valid) => {
                     if (valid) {
                         _this.loading.addRoleDataLoading=true;
-                        RoleAPI.addRoleData(params).then(function (res) {
+                        RoleDataRuleAPI.insertRoleDataRule(params).then(function (res) {
                             if(res.data.code==1){
                                 _this.addDialogVisible = false;
                                 _this.$message({
@@ -537,8 +551,9 @@
         },
         components:{'xt-search':require('../../components/search.vue')},
         created(){
-            this.getRoles();
-            this.getApps()
+            this.getApps().then(() => {
+                this.getRoles();
+            })
         }
     }
 </script>

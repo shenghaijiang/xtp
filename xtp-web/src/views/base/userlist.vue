@@ -95,11 +95,11 @@
         <!--编辑界面-->
         <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
             <el-form :model="editForm" label-width="100px" :rules="formRules" ref="editForm">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off" :maxlength="20"></el-input>
-                </el-form-item>
                 <el-form-item label="账户名" prop="account">
                     <el-input v-model="editForm.account" auto-complete="off" :maxlength="20"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="editForm.name" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item label="角色">
                     <el-select v-model="editForm.roleIds" multiple placeholder="请选择" style="width:100%">
@@ -129,11 +129,11 @@
         <!--新增界面-->
         <el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
             <el-form :model="addForm" label-width="100px" :rules="formRules" ref="addForm">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="addForm.name" auto-complete="off" :maxlength="20"></el-input>
-                </el-form-item>
                 <el-form-item label="账户名" prop="account">
                     <el-input v-model="addForm.account" auto-complete="off" :maxlength="20"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="addForm.name" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item label="角色">
                     <el-select v-model="addForm.roleIds" multiple placeholder="请选择" style="width:100%">
@@ -358,7 +358,7 @@
                             let para = Object.assign({}, this.editForm);
                             UserAPI.updateUser(para).then((res) => {
                             this.editLoading = false;
-                                RoleAPI.updateRoleUser({userId:this.editForm.id,roleIds:this.editForm.roleIds.join(',')}).then((roleRes) => {
+                                RoleUserAPI.updateRoleUser({userId:this.editForm.id,roleIds:this.editForm.roleIds.join(',')}).then((roleRes) => {
                                     if(roleRes.data.code!=1){
                                         MessageBox.codeMessage(roleRes.data.code).then(function ({message}) {
                                             message=roleRes.data.msg?roleRes.data.msg:message;
@@ -404,7 +404,7 @@
                             this.addLoading = false;
                         if(res.data.code==1){
                             para.id=res.data.data.id;
-                            RoleAPI.updateRoleUser({userId:para.id,roleIds:this.addForm.roleIds.join(',')}).then((roleRes) => {
+                            RoleUserAPI.updateRoleUser({userId:para.id,roleIds:this.addForm.roleIds.join(',')}).then((roleRes) => {
                                 if(roleRes.data.code!=1){
                                     MessageBox.codeMessage(roleRes.data.code).then(function ({message}) {
                                         message=roleRes.data.msg?roleRes.data.msg:message;

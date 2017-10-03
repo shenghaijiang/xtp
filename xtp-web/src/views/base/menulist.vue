@@ -39,16 +39,18 @@
                         </el-table-column>
                         <el-table-column
                                 prop="code"
-                                label="菜单编码" minWidth="120">
+                                label="菜单编码" minWidth="120"
+                                :show-overflow-tooltip="true">
                             <template scope="scope">
-                                <span class="xt-text-hidden" :title="scope.row.code">{{scope.row.code}}</span>
+                                <span >{{scope.row.code}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
                                 prop="name"
-                                label="菜单名称" minWidth="120">
+                                label="菜单名称" minWidth="120"
+                                :show-overflow-tooltip="true">
                             <template scope="scope">
-                                <span class="xt-text-hidden" :title="scope.row.name">{{scope.row.name}}</span>
+                                <span >{{scope.row.name}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -62,9 +64,10 @@
                         <el-table-column
                                 prop="url"
                                 align="center"
-                                label="链接地址" minWidth="120">
+                                label="链接地址" minWidth="120"
+                                :show-overflow-tooltip="true">
                             <template scope="scope">
-                                <span :title="scope.row.url" class="xt-text-hidden">{{scope.row.url}}</span>
+                                <span>{{scope.row.url}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -100,25 +103,28 @@
             <el-table-column
                     prop="appName"
                     align="center"
-                    label="所属应用" minWidth="120">
+                    label="所属应用" minWidth="120"
+                    :show-overflow-tooltip="true">
                 <template scope="scope">
-                    <span class="xt-text-hidden" :title="scope.row.appName">{{scope.row.appName}}</span>
+                    <span >{{scope.row.appName}}</span>
                 </template>
             </el-table-column>
             <el-table-column
                     prop="code"
                     align="center"
-                    label="菜单编码" minWidth="120">
+                    label="菜单编码" minWidth="120"
+                    :show-overflow-tooltip="true">
                 <template scope="scope">
-                    <span class="xt-text-hidden" :title="scope.row.code">{{scope.row.code}}</span>
+                    <span >{{scope.row.code}}</span>
                 </template>
             </el-table-column>
             <el-table-column
                     prop="name"
                     align="center"
-                    label="菜单名称" minWidth="120">
+                    label="菜单名称" minWidth="120"
+                    :show-overflow-tooltip="true">
                 <template scope="scope">
-                    <span class="xt-text-hidden" :title="scope.row.name">{{scope.row.name}}</span>
+                    <span>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -132,9 +138,10 @@
             <el-table-column
                     prop="url"
                     align="center"
-                    label="链接地址" minWidth="120">
+                    label="链接地址" minWidth="120"
+                    :show-overflow-tooltip="true">
                 <template scope="scope">
-                    <span class="xt-text-hidden" :title="scope.row.url">{{scope.row.url}}</span>
+                    <span >{{scope.row.url}}</span>
                 </template>
             </el-table-column>
             <el-table-column
@@ -416,9 +423,8 @@
                         _self.listLoading = false;
                         _self.appList = result.data.data.data;
                         let para = Object.assign({}, _self.pageInfo);
-                        if (_self.filters.name != '')
-                            para.name = '%' + _self.filters.name + '%';
-                        para.code = '%' + _self.filters.code + '%';
+                        para.name = _self.filters.name?'%' + _self.filters.name + '%':'';
+                        para.code = _self.filters.code?'%' + _self.filters.code + '%':'';
                         if (_self.filters.selected == ''){
                             _self.filters.selected=_self.appList[0].id;
                             para.appId = _self.filters.selected;
@@ -439,8 +445,8 @@
                     });
                 } else {
                     let para = Object.assign({}, this.pageInfo);
-                    para.name = '%' + _self.filters.name + '%';
-                    para.code = '%' + _self.filters.code + '%';
+                    para.name = _self.filters.name?'%' + _self.filters.name + '%':'';
+                    para.code = _self.filters.code?'%' + _self.filters.code + '%':'';
                     para.appId = _self.filters.selected;
                     MenuAPI.listMenu(para).then((res) => {
                         _self.pageInfo.pageIndex = res.data.data.currentPage
@@ -480,26 +486,28 @@
                                 message: '删除成功',
                                 type: 'success'
                             });
-                            let menuItemDel=_self.menuList.find(function (menuItem) {
-                                return para.id==menuItem.id
-                            });
-                            if(menuItemDel){
-                                _self.getMenus();
+                            if(row.parentId==0){
+                                let menuItemDel=_self.menuList.find(function (menuItem) {return para.id==menuItem.id});
+                                if(menuItemDel){
+                                    _self.getMenus();
+                                }
                             }else{
                                 _self.menuList.map(function (element) {
-                                    let childItem=element.childs.find(function (childsItem) {
-                                        return childsItem.id==para.id
-                                    })
-                                    if(childItem){
-                                        element.childs.remove(childItem);
-                                        return true;
-                                    }else{
-                                        let childParentItem=element.childs.find(function (childsItem) {
-                                            return childsItem.id==row.parentId;
+                                    if(element.childs){
+                                        let childItem=element.childs.find(function (childsItem) {
+                                            return childsItem.id==para.id
                                         })
-                                        if(childParentItem){
-                                            _self.callBackFuncs.map((func)=>func('delete',row.parentId));
+                                        if(childItem){
+                                            element.childs.remove(childItem);
                                             return true;
+                                        }else{
+                                            let childParentItem=element.childs.find(function (childsItem) {
+                                                return childsItem.id==row.parentId;
+                                            })
+                                            if(childParentItem){
+                                                _self.callBackFuncs.map((func)=>func('delete',row.parentId));
+                                                return true;
+                                            }
                                         }
                                     }
                                 })
@@ -520,39 +528,6 @@
 
                 });
             },
-            //删除
-            // handleDel: function (index, row) {
-            //     let _this = this;
-            //     this.$confirm('确认删除该记录吗?', '提示', {
-            //         type: 'warning'
-            //     }).then(function () {
-            //         _this.listLoading = true;
-            //         let para = {id: row.id};
-            //         MenuAPI.deleteMenu(para).then(function (res) {
-            //             if (res.data.code == 1) {
-            //                 _this.$message({
-            //                     message: '删除成功',
-            //                     type: 'success'
-            //                 });
-            //                 _this.getMenus();
-            //             } else {
-            //                 let _this = this;
-            //                 MessageBox.codeMessage(res.data.code).then(function ({message}) {
-            //                     if (res.data.msg != '' && res.data.msg != 'undefined')
-            //                         message = res.data.msg;
-            //                     _this.$message({
-            //                         message: message,
-            //                         type: 'error'
-            //                     });
-            //                 })
-            //             }
-            //             _this.listLoading = false;
-            //         });
-            //     }).catch(() => {
-
-            //     });
-
-            // },
             //显示编辑界面
             handleEdit: function (index, row) {
                 this.editFormVisible = true;
@@ -572,41 +547,19 @@
                 this.addFormVisible = true;
                 //this.$refs["addForm"].resetFields();
             },
-            // //编辑
-            // editSubmit: function () {
-            //     let _this=this;
-            //     this.$refs.editForm.validate((valid) => {
-            //         if (valid) {
-            //             _this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            //                 _this.editLoading = true;
-            //                 //NProgress.start();
-            //                 let para = Object.assign({}, this.editForm);
-            //                 delete para.childs;
-            //                 MenuAPI.updateMenu(para).then((res) => {
-            //                     _this.editLoading = false;
-            //                     //NProgress.done();
-            //                     if (res.data.code == 1) {
-            //                         this.$message({
-            //                             message: '提交成功',
-            //                             type: 'success'
-            //                         });
-            //                         this.$refs['editForm'].resetFields();
-            //                         this.editFormVisible = false;
-            //                         _this.getMenus();
-            //                     } else {
-            //                         let _this = this;
-            //                         MessageBox.codeMessage(res.data.code).then(function ({message}) {
-            //                             _this.$message({
-            //                                 message: message,
-            //                                 type: 'error'
-            //                             });
-            //                         })
-            //                     }
-            //                 });
-            //             });
-            //         }
-            //     });
-            // },
+            copyData(item,oldItem){
+                item.appId=oldItem.appId;
+                item.code=oldItem.code;
+                item.name=oldItem.name;
+                item.url=oldItem.url;
+                item.icon=oldItem.icon;
+                item.displayFlag=oldItem.displayFlag;
+                item.sort=oldItem.sort;
+                item.type=oldItem.type;
+                item.appName=oldItem.appName;
+                item.operationList=oldItem.operationList;
+                return item;
+            },
             //编辑
             editSubmit: function () {
                 let _this=this;
@@ -632,6 +585,7 @@
                                           _this.copyData(element,para)
                                             return true;
                                         }else{
+                                            if(element.childs)
                                             element.childs.map(function (childItem) {
                                                 if(childItem.id==para.id){
                                                     _this.copyData(childItem,para)
@@ -662,42 +616,6 @@
                 });
             },
             //新增
-            // addSubmit: function () {
-            //     let _this = this;
-            //     this.$refs.addForm.validate((valid) => {
-            //         if (valid) {
-            //             _this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            //                 _this.addLoading = true;
-            //                 //NProgress.start();
-            //                 let para = Object.assign({}, this.addForm);
-            //                 delete para.childs;
-            //                 MenuAPI.insertMenu(para).then((res) => {
-            //                     _this.addLoading = false;
-            //                     //NProgress.done();
-            //                     if (res.data.code == 1) {
-            //                         _this.$message({
-            //                             message: '提交成功',
-            //                             type: 'success'
-            //                         });
-            //                         _this.$refs['addForm'].resetFields();
-            //                         _this.addFormVisible = false;
-            //                         _this.getMenus();
-            //                     } else {
-            //                         let _this = this;
-            //                         MessageBox.codeMessage(res.data.code).then(function ({message}) {
-            //                             if (res.data.msg != '' && res.data.msg != 'undefined')
-            //                                 message = res.data.msg;
-            //                             _this.$message({
-            //                                 message: message,
-            //                                 type: 'error'
-            //                             });
-            //                         })
-            //                     }
-            //                 });
-            //             });
-            //         }
-            //     });
-            // },
             addSubmit: function () {
                 let _this=this;
                 this.$refs.addForm.validate((valid) => {

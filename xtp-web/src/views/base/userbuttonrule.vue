@@ -26,20 +26,6 @@
                 <div class="grid-content bg-purple xt-height">
                     <div class="xt-role-head">用户名称</div>
                     <div class="xt-role-body" v-loading.lock="loading.listLoading">
-                        <!--<div style="display: inline-block;width:47%;height:1rem;background-color: #EEF1F6;margin-top: 0.1rem;font-weight: bold;border: 1px solid #DFE6EC;">
-                            名称
-                        </div>
-                        <div style="display: inline-block;width:48%;height:1rem;background-color: #EEF1F6;margin-top: 0.1rem;font-weight: bold;border: 1px solid #DFE6EC;">
-                           账户
-                        </div>
-                        <div v-for="item in userList" class="xt-role-name" @click="getRoleMenus(item,this)" :class="addForm.userId==item.id?'xt-role-name-active':''">
-                                <div style="display: inline-block">
-                                    {{item.name}}
-                                </div>
-                                <div style="display: inline-block">
-                                    {{item.account}}
-                                </div>
-                            </div>-->
                         <el-table :data="userList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus"
                         :show-header="false">
                             <el-table-column
@@ -68,8 +54,7 @@
                                 :highlight-current="true"
                                 :disabled="true"
                                 :expand-on-click-node="true"
-                                v-loading.lock="loading.roleMenuListLoading"
-                        >
+                                v-loading.lock="loading.roleMenuListLoading">
                         </el-tree>
                     </div>
                 </div>
@@ -310,22 +295,31 @@
                 return new Promise(function (resolve, reject) {
                     _this.loading.roleMenuListLoading=true;
                     MenuAPI.listMenuWithOperationByUserId(params).then(function(res){
-                        let list=res.data.data.allMenu;
-                        _this.userMenuList=list;
-                        let menuArr = res.data.data.parentMenu;
-                        let count = menuArr.length;
+                        let allMenu=res.data.data.allMenu?res.data.data.allMenu:[];
+                        let menuArr = res.data.data.parentMenu?res.data.data.parentMenu:[];
                         let menuList=[];
                         menuArr.map(function (item) {
                             item.childs =[];
-                            list.map(element => {
+                            allMenu.map(element => {
                                 if(item.id==element.id){
                                     menuList.push(item);
                                 }
                                 if(element.parentId==item.id){
                                     item.childs.push(element)
                                 }
-                            })
+                            });
+                            if(item.childs){
+                                item.childs.map((child) => {
+                                    child.childs=[];
+                                    allMenu.map(element => {
+                                        if(element.parentId==child.id){
+                                            child.childs.push(element)
+                                        }
+                                    });
+                                })
+                            }
                         });
+                        _this.userMenuList=allMenu;
                         _this.menuList = menuList;
                         _this.loading.roleMenuListLoading=false;
                     })

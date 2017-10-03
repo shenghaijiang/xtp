@@ -1,9 +1,9 @@
 <template>
     <section>
         <!--工具条-->
-        <xt-search @click="getUsers" :addButton="true" @addClick="handleAdd">
+        <xt-search @click="handleSearch" :addButton="true" @addClick="handleAdd">
             <el-form :inline="true" :model="filters">
-                <el-select v-model="filters.selected" placeholder="请选择" @change="selectedChange">
+                <el-select v-model="filters.selected" placeholder="请选择" >
                     <el-option
                             v-for="item in appList"
                             :key="item.id"
@@ -33,11 +33,11 @@
                     {{(pageInfo.pageIndex - 1) * pageInfo.pageSize + scope.$index + 1}}
                 </template>
             </el-table-column>
-            <!--<el-table-column-->
-            <!--prop="appName"-->
-            <!--align="center"-->
-            <!--label="所属应用">-->
-            <!--</el-table-column>-->
+            <!-- <el-table-column
+                prop="appName"
+                align="center"
+                label="所属应用">
+            </el-table-column> -->
             <el-table-column
                     prop="name"
                     align="center"
@@ -68,14 +68,14 @@
                     align="center"
                     label="QQ">
             </el-table-column>
-            <el-table-column label="操作" minWidth="207">
+            <!-- <el-table-column label="操作" minWidth="207">
                 <template scope="scope">
                     <el-button size="small" type="primary" @click="handleReset(scope.$index, scope.row)">重置密码
                     </el-button>
                     <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
         </el-table>
 
         <!--工具条-->
@@ -274,6 +274,10 @@
             }
         },
         methods: {
+            handleSearch(){
+                this.pageInfo.pageIndex = 1;
+                this.getUsers();
+            },
             handleCancel(){
                 this.editFormVisible = false
                 this.$refs["editForm"].resetFields();
@@ -290,13 +294,10 @@
             getUsers() {
                 let _self = this;
                 let para = Object.assign({}, this.pageInfo);
-                para.name = '%' + _self.filters.name + '%';
-                para.account = '%' + _self.filters.account + '%';
-                if (_self.filters.selected != '') {
-                    para.appId = _self.filters.selected;
-                }
+                para.name = _self.filters.name?'%' + _self.filters.name + '%':'';
+                para.account = _self.filters.account?'%' + _self.filters.account + '%':'';
+                para.appId = _self.filters.selected?_self.filters.selected:'';
                 this.listLoading = true;
-                //NProgress.start();
                 UserAPI.listUser(para).then((res) => {
                     _self.pageInfo.pageIndex = res.data.data.currentPage
                     _self.pageInfo.count = res.data.data.count
@@ -307,10 +308,9 @@
                         element["QQ"] = element.qq
                     })
                     _self.listLoading = false;
-                    //NProgress.done();
                 }).catch(function (error) {
                     _self.listLoading = false;
-                    _self.userList = []
+                    // _self.userList = []
                 });
             },
             getHadUser(params){
@@ -359,11 +359,9 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                    //NProgress.start();
                     let para = {id: row.id};
                     UserAPI.deleteUser(para).then((res) => {
                         this.listLoading = false;
-                        //NProgress.done();
                         this.$message({
                             message: '删除成功',
                             type: 'success'
@@ -498,38 +496,28 @@
             },
             getApps() {
                 let _self = this;
-                let para = Object.assign({}, this.pageInfo);
-                para.name = '%' + _self.filters.key + '%';
-//                para.appId=_self.filter.selected;
-                if (_self.filters.selected != '') {
-                    para.appId = _self.filters.selected;
-                }
-                this.listLoading = true;
-                //NProgress.start();
-                AppAPI.listApp(para).then((res) => {
-                    _self.pageInfo.pageIndex = res.data.data.currentPage
-//                    _self.pageInfo.count=res.data.data.count
-                    _self.appList = res.data.data.data;
-                    _self.appList.map(function (item) {
-                        item.tokenshow = '**************';
-                    })
-                    if (_self.filters.selected == '') {
-                        _self.filters.selected = _self.appList[0].id;
-                        para.appId = _self.filters.selected;
-                    }
-                    _self.listLoading = false;
-                    //NProgress.done();
-                });
-            },
-            selectedChange(){
-                this.getUsers();
+                return new Promise((resolve,reject) => {
+                    let para = {pageIndex:1,pageSize:2147483647};
+                    AppAPI.listApp(para).then((res) => {
+                        let list=[];
+                        list=res.data.code===1?res.data.data.data:[];
+                        list.map(function (item) {
+                            item.tokenshow = '**************';
+                        })
+                        if (_self.filters.selected == '') {
+                            _self.filters.selected = list?list[0].id:'';
+                        }
+                        _self.appList = res.data.data.data;
+                        resolve(list)
+                    });
+                })
             }
         },
         components: {'xt-search': search,useritem},
         mounted() {
-            this.getApps();
-            this.getRoles();
-//            this.getUsers();
+            this.getApps().then(() => {
+                this.getUsers();
+            });
         }
     }
 

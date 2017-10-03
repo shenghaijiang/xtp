@@ -17,8 +17,8 @@
                 <template scope="props">
                     <div v-if="props.row.checkedSubMenus">
                         <el-table :data="props.row.checkedSubMenus">
-                            <el-table-column prop="name" label="菜单名称"></el-table-column>
-                            <el-table-column prop="url" label="菜单路径"></el-table-column>
+                            <el-table-column prop="name" label="菜单名称" :show-overflow-tooltip="true"></el-table-column>
+                            <el-table-column prop="url" label="菜单路径" :show-overflow-tooltip="true"></el-table-column>
                             <el-table-column label="菜单类型">
                                 <template scope="menu2">
                                     二级菜单
@@ -37,8 +37,8 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="菜单名称"></el-table-column>
-            <el-table-column prop="url" label="菜单路径"></el-table-column>
+            <el-table-column prop="name" label="菜单名称" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="url" label="菜单路径" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column label="菜单类型">
                 <template scope="menu">
                     一级菜单
@@ -100,15 +100,7 @@
             },
             getUserMenus(appId){
                 let _self = this;
-                let para = {
-                    pageIndex: 1,
-                    pageSize: 999999,
-                    userId: _self.userId,
-                    appId: _self.appId
-                }
-//                if (appId) {
-//
-//                }
+                let para = {pageIndex: 1,pageSize: 999999,userId: _self.userId,appId: _self.appId}
                 return new Promise(function (resolve, reject) {
                     UserMenuAPI.listUserMenu({
                         pageIndex: 1,
@@ -147,7 +139,6 @@
                 }
             },
             //获取菜单列表
-            //获取菜单列表
             getMenus() {
                 let _self = this;
                 return new Promise(function (resolve, reject) {
@@ -156,12 +147,7 @@
                         let menuArr = res.data.data.data;
                         let count = menuArr.length;
                         menuArr.map(function (item) {
-                            MenuAPI.listMenu({
-                                pageIndex: 1,
-                                pageSize: 999999,
-                                parentId: item.id,
-                                appId: _self.appId
-                            }).then(function (res) {
+                            MenuAPI.listMenu({pageIndex: 1,pageSize: 999999,parentId: item.id,appId: _self.appId}).then(function (res) {
                                 item.isIndeterminate = true;
                                 item.type = '忽略'
                                 item.checkedSubMenus = [];
@@ -241,7 +227,6 @@
         created() {
             let _self = this;
             this.listLoading = true;
-
             this.getUserMenus().then(function () {
                 _self.getMenus().then(function (obj) {
                     _self.listLoading = false;

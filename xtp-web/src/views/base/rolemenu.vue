@@ -11,7 +11,7 @@
                            :loading="loading.saveLoading"><i class="fa fa-save"></i></el-button>
             </el-button-group>
         </el-col>
-        <div v-for="item in menuList">
+        <!-- <div v-for="item in menuList">
             <fieldset v-if="item.childs.length>0" class="box" :disabled="!editEnabled">
                 <legend>
                     <el-checkbox :disabled="!editEnabled" v-model="item.checkAll" @change="handleCheckAllChange(item)">
@@ -19,7 +19,7 @@
                     </el-checkbox>
                 </legend>
                 <div style="">
-                    <div v-for="subitem in item.childs">
+                    <div v-for="subitem in item.childs"> -->
                         <!--<el-tree :data="item.childs"-->
                         <!--:props="props"-->
                         <!--show-checkbox-->
@@ -29,7 +29,7 @@
                         <!--:ref="'tree'+item.id"-->
                         <!--&gt;-->
                         <!--</el-tree>-->
-                        <el-checkbox :disabled="!editEnabled" v-model="subitem.checked" style="margin-bottom: 5px;">{{subitem.name}}</el-checkbox>
+                        <!-- <el-checkbox :disabled="!editEnabled" v-model="subitem.checked" style="margin-bottom: 5px;">{{subitem.name}}</el-checkbox>
                     </div>
                 </div>
             </fieldset>
@@ -44,6 +44,23 @@
                     {{item.name}}
                 </el-checkbox>
             </div>
+        </fieldset> -->
+
+        <fieldset class="box" :disabled="!editEnabled" :key="index" v-for="(item, index) in menuList">
+            <el-tree
+                    :check-strictly="!editEnabled"
+                    :data="item.arr"
+                    show-checkbox
+                    :load="loadNodes"
+                    lazy
+                    :default-expand-all="true"
+                    node-key="id"
+                    :ref="'tree_'+item.id"
+                    :default-checked-keys="selectedMenus"
+                    highlight-current
+                    :props="defaultProps">
+            </el-tree>
+            </div>
         </fieldset>
     </section>
 </template>
@@ -55,13 +72,13 @@
                 selectedMenus: [],
                 editEnabled: false,
                 menuList: [],
+                tempList:[],
                 listLoading: true,
                 loading: {saveLoading: false},
-                regions: [{
-                    'name': '基本信息'
-                }, {
-                    'name': '基本信息基本信息基本信息'
-                }],
+                defaultProps:{
+                    label:'name',
+                    children:'childs'
+                },
                 props: {
                     label: 'name',
                     children: 'childs'
@@ -80,6 +97,31 @@
             }
         },
         methods: {
+            loadNodes(node, resolve){
+                if(node.level==0)
+                    return resolve(node.data);
+                else if(node.level==1){
+                    node.data.childs.map((item)=>{
+                        item.syncIds=[];
+                        item.syncIds.push([item.id,node.data.id]);
+                    });
+                    return resolve(node.data.childs);
+                }
+                else if(node.level==2){
+                    MenuAPI.listMenu({pageIndex: 1, pageSize: 999999, parentId: node.data.id,appId: this.appId}).then(function (res) {
+                        let tempList=res.data.data.data;
+                        tempList.map((item)=>{
+                            item.syncIds=[];
+                            item.syncIds.push([item.id,node.data.id,node.data.parentId]);
+                        });
+                        return resolve(tempList);
+                    });
+                }
+                else
+                {
+                    return resolve([]);
+                }
+            },
             handleEdit(){
                 this.editEnabled = true;
             },
@@ -88,24 +130,16 @@
             },
             getRoleMenus(appId){
                 let _self = this;
-                let para = {
-                    pageIndex: 1,
-                    pageSize: 999999,
-                    roleId: _self.roleId,
-                    appId: _self.appId
-                }
-                if (appId) {
-
-                }
+                let para = {pageIndex: 1,pageSize: 999999,roleId: _self.roleId,appId: _self.appId};
                 return new Promise(function (resolve, reject) {
                     RoleMenuAPI.listRoleMenu(para).then(function (res) {
                         if (res.data.code === 1) {
                             res.data.data.data.forEach(function (item) {
                                 _self.selectedMenus.push(item.menuId);
                             });
-                        }
+                            resolve();
+                        }else{ resolve(); }
                     });
-                    resolve();
                 });
             },
             //获取菜单列表
@@ -117,12 +151,7 @@
                         let menuArr = res.data.data.data;
                         let count = menuArr.length;
                         menuArr.map(function (item) {
-                            MenuAPI.listMenu({
-                                pageIndex: 1,
-                                pageSize: 999999,
-                                parentId: item.id,
-                                appId: _self.appId
-                            }).then(function (res) {
+                            MenuAPI.listMenu({pageIndex: 1,pageSize: 999999,parentId: item.id,appId: _self.appId}).then(function (res) {
                                 item.isIndeterminate = true;
                                 item.checkAll = false;
                                 item.checkedSubMenus = [];
@@ -157,31 +186,20 @@
 
             },
             handleSave(){
-                let selectArr = [], _self = this, list = [];
-                this.menuList.forEach(function (main) {
-                    if (main.checkAll) {
-                        list.push(main.id);
+                let selectArr = [],_self = this;
+                this.menuList.map((item)=>{
+                    let arr=Array.from(this.$refs['tree_'+item.id][0].getCheckedNodes())
+                    if(arr && arr.length>0)
+                    {
+                        arr.map(item=>{
+                            if(item.syncIds)
+                                selectArr.push(item.syncIds.join(','));
+                        })
                     }
-                    main.childs.forEach(function (sub) {
-                        if (sub.checked) {
-                            selectArr.push(sub.id);
-                            if (selectArr.indexOf(sub.parentId) < 0) {
-                                selectArr.push(sub.parentId);
-                            }
-                        }
-                    })
-                })
-
-                list.map(function (item) {
-                    selectArr.push(item);
-                })
-                _self.loading.saveLoading = true;
-
-                RoleMenuAPI.updateRoleMenu({
-                    roleId: _self.roleId,
-                    appId: _self.appId,
-                    menuIds: selectArr.join(',')
-                }).then(function (res) {
+                });
+                let menuIds=Array.from(new Set(selectArr.join(',').split(','))).join(',');
+                _self.loading.saveLoading=true;
+                RoleMenuAPI.updateRoleMenu({roleId: _self.roleId,appId: _self.appId,menuIds: menuIds}).then(function (res) {
                     _self.loading.saveLoading = false;
                     if (res.data.code == 1) {
                         _self.editEnabled = false;
@@ -206,6 +224,9 @@
                 _self.getMenus().then(function (obj) {
                     _self.listLoading = false;
                     _self.menuList = obj;
+                    _self.menuList.map((item)=>{
+                        item.arr=[item];
+                    });
                 });
             });
         }

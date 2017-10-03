@@ -45,12 +45,12 @@ let routes = [
         name: '',
         hidden: true
     },
-    {
-        path: '/404',
-        component: notfound,
-        name: '',
-        hidden: true
-    },
+    // {
+    //     path: '/404',
+    //     component: notfound,
+    //     name: '',
+    //     hidden: true
+    // },
     //{ path: '/main', component: Main },
     {
         path: '/',
@@ -58,6 +58,7 @@ let routes = [
         name: '基础信息',
         iconCls: 'fa fa-bank',//图标样式class
         children: [
+            {path: '/404', component: notfound, name: '', hidden: true},
             { path: '/userinfo', component: userinfo, name: '个人信息设置' },
             { path: '/app', component:require('./views/base/applist'),name:'应用管理' },
             { path: '/menu', component:menu,name:'菜单管理' },
