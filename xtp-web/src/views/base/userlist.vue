@@ -186,7 +186,7 @@
                 }
             }
             var checkUser=(rule, value, callback) =>{
-                let param={account:value},_this=this;
+                let param={account:value,appId:this.addForm.appId},_this=this;
                 this.getHadUser(param).then(({isEmpty,id}) => {
                     if((this.editFormVisible)&&(id==this.editForm.id))
                     callback()
@@ -346,7 +346,7 @@
             //get new pages for user --dialog 
             handleAdd: function () {
                 this.addFormVisible = true;
-                this.addForm={id: 0,appId:1,name: '',account:'',qq:'',mail:'',roleIds:[],phone:''}
+                this.addForm={id: 0,appId:this.filters.appId,name: '',account:'',qq:'',mail:'',roleIds:[],phone:''}
             },
             //edit function
             editSubmit: function () {
