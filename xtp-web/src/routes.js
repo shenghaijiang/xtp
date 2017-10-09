@@ -36,6 +36,7 @@ const menuoperator = r => require.ensure([], () => r(require('./views/base/menuo
 const roledatarule = r => require.ensure([], () => r(require('./views/base/roledatarule')), 'roledatarule')
 const usermenu = r => require.ensure([], () => r(require('./views/base/usermenu')), 'usermenu')
 const userbuttonrule = r => require.ensure([], () => r(require('./views/base/userbuttonrule')), 'userbuttonrule')
+const newmenuoperation = r => require.ensure([],() => r(require('./views/base/newmenuoperation')),'newmenuoperation')
 
 let routes = [
     {
@@ -44,12 +45,12 @@ let routes = [
         name: '',
         hidden: true
     },
-    {
-        path: '/404',
-        component: notfound,
-        name: '',
-        hidden: true
-    },
+    // {
+    //     path: '/404',
+    //     component: notfound,
+    //     name: '',
+    //     hidden: true
+    // },
     //{ path: '/main', component: Main },
     {
         path: '/',
@@ -57,6 +58,7 @@ let routes = [
         name: '基础信息',
         iconCls: 'fa fa-bank',//图标样式class
         children: [
+            {path: '/404', component: notfound, name: '', hidden: true},
             { path: '/userinfo', component: userinfo, name: '个人信息设置' },
             { path: '/app', component:require('./views/base/applist'),name:'应用管理' },
             { path: '/menu', component:menu,name:'菜单管理' },
@@ -65,7 +67,8 @@ let routes = [
             { path: '/role', component: role, name: '角色管理' },
             { path: '/menuoperator', component: menuoperator, name: '菜单按钮管理' },
             {path:'/roledatarule',component:roledatarule,name:'角色数据/按钮权限设置'},
-            {path:'/usermenu2',component:usermenu,name:'用户菜单'}
+            {path:'/usermenu2',component:usermenu,name:'用户菜单'},
+            {path:'/newmenuoperation',component:newmenuoperation,name:'新菜单按钮管理'}
         ]
     },
     {

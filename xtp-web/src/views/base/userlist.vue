@@ -1,9 +1,9 @@
 <template>
     <section>
         <!--工具条-->
-        <xt-search @click="getUsers" :addButton="true" @addClick="handleAdd">
+        <xt-search @click="handleSearch" :addButton="true" @addClick="handleAdd">
             <el-form :inline="true" :model="filters">
-                <el-select v-model="filters.selected" placeholder="请选择" @change="selectedChange">
+                <el-select v-model="filters.appId" placeholder="请选择" >
                     <el-option
                             v-for="item in appList"
                             :key="item.id"
@@ -24,7 +24,7 @@
         <el-table :data="userList" highlight-current-row v-loading="listLoading"  style="width: 100%;" @selection-change="selsChange"> <!--@selection-change="selsChange"-->
             <!--<el-table-column type="expand">-->
                 <!--<template scope="scope">-->
-                    <!--<useritem :userId="scope.row.id" :appId="filters.selected"></useritem>-->
+                    <!--<useritem :userId="scope.row.id" :appId="filters.appId"></useritem>-->
                 <!--</template>-->
             <!--</el-table-column>-->
             <el-table-column type="index" width="60">
@@ -95,29 +95,29 @@
         <!--编辑界面-->
         <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
             <el-form :model="editForm" label-width="100px" :rules="formRules" ref="editForm">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="账户名" prop="account">
-                    <el-input v-model="editForm.account" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.account" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
-                <!--<el-form-item label="角色">-->
-                    <!--<el-select v-model="editForm.roleIds" multiple placeholder="请选择">-->
-                        <!--<el-option v-for="item in roles" :label="item.name" :value="item.id+''">-->
-                        <!--</el-option>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="editForm.name" auto-complete="off" :maxlength="20"></el-input>
+                </el-form-item>
+                <el-form-item label="角色">
+                    <el-select v-model="editForm.roleIds" multiple placeholder="请选择" style="width:100%">
+                        <el-option v-for="item in roles" :label="item.name" :value="item.id+''">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <!--<el-form-item label="分组号" prop="groupId">-->
                     <!--<el-input v-model="editForm.groupId" auto-complete="off"></el-input>-->
                 <!--</el-form-item>-->
                 <el-form-item label="手机号" prop="phone">
-                    <el-input v-model="editForm.phone" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.phone" auto-complete="off" :maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item label="Email" prop="mail">
-                    <el-input v-model="editForm.mail" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.mail" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item label="QQ" prop="qq">
-                    <el-input v-model="editForm.qq" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.qq" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -129,29 +129,29 @@
         <!--新增界面-->
         <el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
             <el-form :model="addForm" label-width="100px" :rules="formRules" ref="addForm">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="addForm.name" auto-complete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="账户名" prop="account">
-                    <el-input v-model="addForm.account" auto-complete="off"></el-input>
+                    <el-input v-model="addForm.account" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
-                <!--<el-form-item label="角色">-->
-                    <!--<el-select v-model="addForm.roleIds" multiple placeholder="请选择">-->
-                        <!--<el-option v-for="item in roles" :label="item.name" :value="item.id+''">-->
-                        <!--</el-option>-->
-                    <!--</el-select>-->
-                <!--</el-form-item>-->
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="addForm.name" auto-complete="off" :maxlength="20"></el-input>
+                </el-form-item>
+                <el-form-item label="角色">
+                    <el-select v-model="addForm.roleIds" multiple placeholder="请选择" style="width:100%">
+                        <el-option v-for="item in roles" :label="item.name" :value="item.id+''">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <!--<el-form-item label="分组号" prop="groupId">-->
                     <!--<el-input v-model="addForm.groupId" auto-complete="off"></el-input>-->
                 <!--</el-form-item>-->
                 <el-form-item label="手机号" prop="phone">
-                    <el-input v-model="addForm.phone" auto-complete="off" ></el-input>
+                    <el-input v-model="addForm.phone" auto-complete="off" :maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item label="Email" prop="mail">
-                    <el-input v-model="addForm.mail" auto-complete="off"></el-input>
+                    <el-input v-model="addForm.mail" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item label="QQ" prop="qq">
-                    <el-input v-model="addForm.qq" auto-complete="off"></el-input>
+                    <el-input v-model="addForm.qq" auto-complete="off" :maxlength="20"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -162,7 +162,7 @@
     </section>
 </template>
 <script>
-    import { AppAPI,UserAPI,RoleAPI } from '../../api/api';
+    import { AppAPI,UserAPI,RoleAPI,RoleUserAPI } from '../../api/api';
     import {CheckExp,CodeChange,MessageBox,util} from '../../common/js/util'
     import search from '../../components/search.vue'
     export default {
@@ -199,7 +199,7 @@
             }
             return {
                 filters: {
-                    key: '',account:'',name:'',selected:''
+                    key: '',account:'',name:'',appId:''
                 },
                 roles:[],
                 pageInfo:{pageIndex:1,pageSize:10,count:0},
@@ -222,9 +222,9 @@
 //                    groupId: [
 //                        {required: true, message: '请输入分组号', trigger: 'blur'}
 //                    ],
-                    phone: [
-                        {minlength: 11, maxlength: 11,required: true, message: '请输入正确的手机号', trigger: 'blur'},
-                        { validator:checkPhone, trigger: 'blur,change' }],
+                    // phone: [
+                    //     {minlength: 11, maxlength: 11,required: true, message: '请输入正确的手机号', trigger: 'blur'},
+                    //     { validator:checkPhone, trigger: 'blur,change' }],
                     mail:[{ required: false, message: '', trigger: 'change' },
                         { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }],
                     qq:[{required: false, message: '', trigger: 'blur'},{ validator:checkQQ, trigger: 'change' }]
@@ -272,6 +272,12 @@
             }
         },
         methods: {
+            handleSearch(){
+                this.pageInfo.pageIndex=1;
+                this.getRoles().then(() => {
+                    this.getUsers();
+                });
+            },
             handleCancel(){
                 this.editFormVisible = false
                 this.$refs["editForm"].resetFields();
@@ -283,53 +289,6 @@
             handleCurrentChange(val){
                 this.pageInfo.pageIndex=val;
                 this.getUsers();
-            },
-            //获取用户列表
-            getUsers() {
-                let _self = this;
-                let para = Object.assign({},this.pageInfo);
-                para.name='%'+_self.filters.name+'%';
-                para.account='%'+_self.filters.account+'%';
-                if(_self.filters.selected!='' ){
-                    para.appId = _self.filters.selected;
-                }
-                this.listLoading = true;
-                //NProgress.start();
-                UserAPI.getUserList(para).then((res) => {
-                    _self.pageInfo.pageIndex=res.data.data.currentPage
-                _self.pageInfo.count=res.data.data.count
-                _self.userList = res.data.data.data;
-                _self.userList.map(element => {
-                    element.account=CodeChange.specialCharacter(element.account)
-                    element.name=CodeChange.specialCharacter(element.name)
-                    element["QQ"]=element.qq
-                })
-                _self.listLoading = false;
-                //NProgress.done();
-            }).catch(function (error) {
-                    _self.listLoading = false;
-                    _self.userList=[]
-                });
-            },
-            getHadUser(params){
-                return new Promise(function(resolve, reject) {
-                    let isEmpty=true,id='';
-                    UserAPI.getUserList(params).then((res) => {
-                        if(res.data.data.count!=0){
-                            isEmpty=false
-                            id=res.data.data.data[0].id
-                        }
-                    resolve({isEmpty,id})
-                    })
-                })
-            },
-            getRoles(){
-                let _self=this;
-                RoleAPI.getRoleList({pageIndex:1,pageSize:999999,appId:_self.filters.selected}).then(function(res){
-                    if(res.data.code==1){
-                        _self.roles=res.data.data.data;
-                    }
-                })
             },
             handleReset(index,row){
                 this.$confirm('确认重置该用户的密码吗?', '提示', {
@@ -347,7 +306,7 @@
 
                 });
             },
-            //删除
+            //delete function
             handleDel: function (index, row) {
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
@@ -355,7 +314,7 @@
                     this.listLoading = true;
                 //NProgress.start();
                 let para = { id: row.id };
-                UserAPI.deleteUserInfo(para).then((res) => {
+                UserAPI.deleteUser(para).then((res) => {
                     this.listLoading = false;
                 //NProgress.done();
                 this.$message({
@@ -368,12 +327,12 @@
 
                 });
             },
-            //显示编辑界面
+            //get user edit dialog
             handleEdit: function (index, row) {
                 let _self=this;
                 if(!row.roleIds){
                     row.roleIds=[];
-                    RoleAPI.getUserRoleList({pageIndex:1,pageSize:999999,userId:row.id,appId:_self.filters.appId}).then(function(res){
+                    RoleUserAPI.listRoleUser({pageIndex:1,pageSize:999999,userId:row.id,appId:_self.filters.appId}).then(function(res){
                         if(res.data.code==1){
                             res.data.data.data.forEach(function(i){
                                 row.roleIds.push(i.roleId+'');
@@ -384,57 +343,78 @@
                 this.editFormVisible = true;
                 this.editForm = Object.assign({}, row);
             },
-            //显示新增界面
+            //get new pages for user --dialog 
             handleAdd: function () {
                 this.addFormVisible = true;
                 this.addForm={id: 0,appId:1,name: '',account:'',qq:'',mail:'',roleIds:[],phone:''}
             },
-            //编辑
+            //edit function
             editSubmit: function () {
                 let _this=this;
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.editLoading = true;
-                        //NProgress.start();
-                        let para = Object.assign({}, this.editForm);
-                        UserAPI.editUserInfo(para).then((res) => {
+                            let para = Object.assign({}, this.editForm);
+                            UserAPI.updateUser(para).then((res) => {
                             this.editLoading = false;
-                        RoleAPI.updateRoleUser({userId:this.editForm.id,roleIds:this.editForm.roleIds.join(',')});
-                        if(res.data.code==1) {
-                            this.$message({
-                                message: '保存成功',
-                                type: 'success'
+                                RoleUserAPI.updateRoleUser({userId:this.editForm.id,roleIds:this.editForm.roleIds.join(',')}).then((roleRes) => {
+                                    if(roleRes.data.code!=1){
+                                        MessageBox.codeMessage(roleRes.data.code).then(function ({message}) {
+                                            message=roleRes.data.msg?roleRes.data.msg:message;
+                                            _this.$message({
+                                                message: message,
+                                                type: 'error'
+                                            });
+                                        })
+                                    }
                             });
-                            this.$refs['editForm'].resetFields();
-                            this.editFormVisible = false;
-                            this.getUsers();
-                        }else{
-                            MessageBox.codeMessage(res.data.code).then(function ({message}) {
-                                _this.$message({
-                                    message: message,
-                                    type: 'error'
+                            if(res.data.code==1) {
+                                this.$message({
+                                    message: '保存成功',
+                                    type: 'success'
                                 });
-                            })
-                        }
-                    });
+                                this.$refs['editForm'].resetFields();
+                                this.editFormVisible = false;
+                                this.getUsers();
+                            }else{
+                                MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                    message=res.data.msg?res.data.msg:message;
+                                    _this.$message({
+                                        message: message,
+                                        type: 'error'
+                                    });
+                                })
+                            }
+                        });
                     });
                     }
                 });
             },
-            //新增
+            //insert function
             addSubmit: function () {
                 let _this=this;
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
-                        //NProgress.start();
                         let para = Object.assign({}, this.addForm);
-                        UserAPI.addUserInfo(para).then((res) => {
+                        para.appId=_this.filters.appId;
+                        UserAPI.insertUser(para).then((res) => {
                             this.addLoading = false;
-                        //NProgress.done();
                         if(res.data.code==1){
+                            para.id=res.data.data.id;
+                            RoleUserAPI.updateRoleUser({userId:para.id,roleIds:this.addForm.roleIds.join(',')}).then((roleRes) => {
+                                if(roleRes.data.code!=1){
+                                    MessageBox.codeMessage(roleRes.data.code).then(function ({message}) {
+                                        message=roleRes.data.msg?roleRes.data.msg:message;
+                                        _this.$message({
+                                            message: message,
+                                            type: 'error'
+                                        });
+                                    })
+                                }
+                            });
                             this.$message({
                                 message: '新增成功，用户【'+res.data.data.account+'】的初始密码是:'+res.data.data.password,
                                 showClose: true,
@@ -446,6 +426,7 @@
                             this.getUsers();
                         }else{
                             MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                message=res.data.msg?res.data.msg:message;
                                 _this.$message({
                                     message: message,
                                     type: 'error'
@@ -460,18 +441,16 @@
             selsChange: function (sels) {
                 this.sels = sels;
             },
-            //批量删除
+            //batch delete
             batchRemove: function () {
                 var ids = this.sels.map(item => item.id).toString();
                 this.$confirm('确认删除选中记录吗？', '提示', {
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                //NProgress.start();
                 let para = { ids: ids };
-                UserAPI.deleteUserInfo(para).then((res) => {
+                UserAPI.deleteUser(para).then((res) => {
                     this.listLoading = false;
-                //NProgress.done();
                 this.$message({
                     message: '删除成功',
                     type: 'success'
@@ -482,41 +461,80 @@
 
                 });
             },
-            getApps() {
+            //get a list for user 
+            getUsers() {
                 let _self = this;
                 let para = Object.assign({},this.pageInfo);
-                para.name='%'+_self.filters.key+'%';
-//                para.appId=_self.filter.selected;
-                if(_self.filters.selected!='' ){
-                    para.appId = _self.filters.selected;
-                }
+                para.name=_self.filters.name?'%'+_self.filters.name+'%':'';
+                para.account=_self.filters.account?'%'+_self.filters.account+'%':'';
+                para.appId = _self.filters.appId;
                 this.listLoading = true;
-                //NProgress.start();
-//                console.log(para);
-                AppAPI.getAppList(para).then((res) => {
+                UserAPI.listUser(para).then((res) => {
                     _self.pageInfo.pageIndex=res.data.data.currentPage
-//                    _self.pageInfo.count=res.data.data.count
-                    _self.appList = res.data.data.data;
-                    _self.appList.map(function (item) {
-                        item.tokenshow='**************';
-                    })
-                    if (_self.filters.selected == ''){
-                        _self.filters.selected=_self.appList[0].id;
-                        para.appId = _self.filters.selected;
-                    }
+                    _self.pageInfo.count=res.data.data.count
+                    _self.userList = res.data.data.data;
+                    _self.userList.map(element => {
+                    element["QQ"]=element.qq
+                })
+                _self.listLoading = false;
+            }).catch(function (error) {
                     _self.listLoading = false;
-                    //NProgress.done();
+                    _self.userList=[]
                 });
             },
-            selectedChange(){
-                this.getUsers();
+            getHadUser(params){
+                return new Promise(function(resolve, reject) {
+                    let isEmpty=true,id='';
+                    UserAPI.listUser(params).then((res) => {
+                        if(res.data.data.count!=0){
+                            isEmpty=false
+                            id=res.data.data.data[0].id
+                        }
+                    resolve({isEmpty,id})
+                    })
+                })
+            },
+            //get role list for user select form
+            getRoles(){
+                let _self=this;
+                return new Promise((resolve,reject) => {
+                    RoleAPI.listRole({pageIndex:1,pageSize:999999,appId:_self.filters.appId}).then(function(res){
+                        let roleList=[];
+                        if(res.data.code==1){
+                            roleList=res.data.data.data;
+                        }
+                        _self.roles=roleList;
+                        resolve(roleList)
+                    })
+                })
+            },
+            //get APP list for app select
+            getApps() {
+                let _self = this;
+                return new Promise((resolve,reject) => {
+                    let para = {pageIndex:1,pageSize:2147483647};
+                    AppAPI.listApp(para).then((res) => {
+                        let appList=[];
+                        if(res.data.code==1) appList=res.data.data.data;
+                        appList.map(function (item) {
+                            item.tokenshow='**************';
+                        })
+                        _self.filters.appId=appList?appList[0].id:'';
+                        _self.appList = appList;
+                        resolve(appList)
+                    });
+                })
             }
         },
         components:{'xt-search':search},
         mounted() {
-            this.getApps();
-            this.getRoles();
-//            this.getUsers();
+        },
+        created(){
+            this.getApps().then(() => {
+                this.getRoles();
+                console.log('123')
+                this.getUsers();
+            })
         }
     }
 

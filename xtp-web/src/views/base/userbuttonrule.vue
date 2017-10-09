@@ -1,9 +1,9 @@
 <template>
     <section>
         <el-row>
-            <xt-search @click="getUserLists" >
+            <xt-search @click="handleSearch" >
                 <el-form :inline="true" :model="filters">
-                    <el-select v-model="filters.appId" placeholder="请选择" @change="appIdChange">
+                    <el-select v-model="filters.appId" placeholder="请选择" >
                         <el-option
                                 v-for="item in appList"
                                 :key="item.id"
@@ -26,30 +26,15 @@
                 <div class="grid-content bg-purple xt-height">
                     <div class="xt-role-head">用户名称</div>
                     <div class="xt-role-body" v-loading.lock="loading.listLoading">
-                        <!--<div style="display: inline-block;width:47%;height:1rem;background-color: #EEF1F6;margin-top: 0.1rem;font-weight: bold;border: 1px solid #DFE6EC;">
-                            名称
-                        </div>
-                        <div style="display: inline-block;width:48%;height:1rem;background-color: #EEF1F6;margin-top: 0.1rem;font-weight: bold;border: 1px solid #DFE6EC;">
-                           账户
-                        </div>
-                        <div v-for="item in userList" class="xt-role-name" @click="getRoleMenus(item,this)" :class="addForm.userId==item.id?'xt-role-name-active':''">
-                                <div style="display: inline-block">
-                                    {{item.name}}
-                                </div>
-                                <div style="display: inline-block">
-                                    {{item.account}}
-                                </div>
-                            </div>-->
-                        <el-table :data="userList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus">
+                        <el-table :data="userList" highlight-current-row  style="width: 100%;" @row-click="getRoleMenus"
+                        :show-header="false">
                             <el-table-column
                                     prop="name"
                                     align="center"
-                                    label="姓名">
-                            </el-table-column>
-                            <el-table-column
-                                    prop="account"
-                                    align="center"
-                                    label="账户">
+                                    label="名称">
+                                    <template scope="scope">
+                                        <span><span style="font-size:12px;color:gray">[{{scope.row.account}}]</span>{{scope.row.name}}</span>
+                                    </template>
                             </el-table-column>
                         </el-table>
                     </div>
@@ -69,8 +54,7 @@
                                 :highlight-current="true"
                                 :disabled="true"
                                 :expand-on-click-node="true"
-                                v-loading.lock="loading.roleMenuListLoading"
-                        >
+                                v-loading.lock="loading.roleMenuListLoading">
                         </el-tree>
                     </div>
                 </div>
@@ -161,7 +145,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import {AppAPI,UserAPI,MenuAPI,MenuOperatorAPI,UserMenuOperatorAPI} from '../../api/api';
+    import {AppAPI,UserAPI,MenuAPI,MenuOperatorAPI,UserMenuOperationAPI,RoleDataRuleAPI} from '../../api/api';
     import search from '../../components/search.vue'
 
     export default {
@@ -203,14 +187,14 @@
             }
         },
         methods:{
-            appIdChange(){
+            handleSearch(){
                 this.getUserLists()
             },
             /*按钮权限的保存删除事件*/
             checkBoxChange(item){
                 let _this=this;
                 let params={data:JSON.stringify({userId:_this.addForm.userId,menuId:_this.addForm.menuId,menuOperationId:item.id,type:item.type})};
-                UserMenuOperatorAPI.insertUserMenuOperation(params).then(function (res) {
+                UserMenuOperationAPI.insertUserMenuOperation(params).then(function (res) {
                     if(res.data.code==1){
                     }else{
                         _this.$message({
@@ -258,7 +242,7 @@
             getMenuOperatorList(params) {
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    MenuOperatorAPI.MenuOperatorList(params).then(res => {
+                    MenuOperatorAPI.listMenuOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })
@@ -267,7 +251,7 @@
             getMenuOperationSelectedList(params){
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    UserMenuOperatorAPI.listUserMenuOperation(params).then(res => {
+                    UserMenuOperationAPI.listUserMenuOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })
@@ -286,7 +270,7 @@
                 _this.userMenuList=[];
                 _this.userMenuDataList=[];
                 _this.menuList=[];
-                UserAPI.getUserList(para).then((res) => {
+                UserAPI.listUser(para).then((res) => {
                     _this.pageInfo.pageIndex = res.data.data.currentPage;
                     _this.pageInfo.count = res.data.data.count;
                    let list= res.data.data.data;
@@ -310,23 +294,32 @@
                 let params={pageIndex:1,pageSize:2147483647,userId:newItem.userId}
                 return new Promise(function (resolve, reject) {
                     _this.loading.roleMenuListLoading=true;
-                    UserAPI.getUserMenuListWidthOperation(params).then(function(res){
-                        let list=res.data.data.allMenu;
-                        _this.userMenuList=list;
-                        let menuArr = res.data.data.parentMenu;
-                        let count = menuArr.length;
+                    MenuAPI.listMenuWithOperationByUserId(params).then(function(res){
+                        let allMenu=res.data.data.allMenu?res.data.data.allMenu:[];
+                        let menuArr = res.data.data.parentMenu?res.data.data.parentMenu:[];
                         let menuList=[];
                         menuArr.map(function (item) {
                             item.childs =[];
-                            list.map(element => {
+                            allMenu.map(element => {
                                 if(item.id==element.id){
                                     menuList.push(item);
                                 }
                                 if(element.parentId==item.id){
                                     item.childs.push(element)
                                 }
-                            })
+                            });
+                            if(item.childs){
+                                item.childs.map((child) => {
+                                    child.childs=[];
+                                    allMenu.map(element => {
+                                        if(element.parentId==child.id){
+                                            child.childs.push(element)
+                                        }
+                                    });
+                                })
+                            }
                         });
+                        _this.userMenuList=allMenu;
                         _this.menuList = menuList;
                         _this.loading.roleMenuListLoading=false;
                     })
@@ -335,7 +328,7 @@
             getApps() {
                 let _self = this;
                 let para = {pageIndex:1,pageSize:9999999};
-                AppAPI.getAppList(para).then((res) => {
+                AppAPI.listApp(para).then((res) => {
                     _self.pageInfo.pageIndex = res.data.data.currentPage
                     _self.appList = res.data.data.data;
                     _self.appList.map(function (item) {
@@ -358,7 +351,7 @@
                     let params={userId:newItem.userId,menuId:newItem.menuId,pageIndex:1,pageSize:2147483647}
                     _this.loading.menuOperationLoading=true;
                     _this.loading.roleMenuDataLoading=true;
-                UserMenuOperatorAPI.listUserMenuOperation(params).then(function (res) {
+                UserMenuOperationAPI.listUserMenuOperation(params).then(function (res) {
                         let list=res.data.data.data;
                         list.map(function (element) {
                             element["isEdit"]=false;
@@ -408,7 +401,7 @@
                 let _this=this;
                 let params=item;
                 _this.loading.editRoleDataLoading=true;
-                RoleAPI.updateRoleData(params).then(function (res) {
+                RoleDataRuleAPI.updateRoleDataRule(params).then(function (res) {
                     if(res.data.code==1){
                         item.isEdit=false;
                         _this.$message({
@@ -435,7 +428,7 @@
                 this.$refs["addForm"].validate((valid) => {
                     if (valid) {
                         _this.loading.addRoleDataLoading=true;
-                        RoleAPI.addRoleData(params).then(function (res) {
+                        RoleDataRuleAPI.insertRoleDataRule(params).then(function (res) {
                             if(res.data.code==1){
                                 _this.addDialogVisible = false;
                                 _this.$message({
@@ -465,7 +458,7 @@
                     type: 'warning'
                 }).then(() => {
                     item.deleteRoleDataLoading=true;
-                    RoleAPI.deleteRoleData(params).then(function (res) {
+                    RoleDataRuleAPI.deleteRoleDataRule(params).then(function (res) {
                         if(res.data.code==1){
                             _this.$message({
                                 type: 'success',

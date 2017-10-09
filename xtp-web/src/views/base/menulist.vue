@@ -1,9 +1,9 @@
 <template>
     <section>
         <!--工具条-->
-        <xt-search @click="getMenus" :addButton="true" @addClick="handleAdd">
+        <xt-search @click="handleSearch" :addButton="true" @addClick="handleAdd">
             <el-form :inline="true" :model="filters">
-                <el-select v-model="filters.selected" placeholder="请选择" @change="selectedChange">
+                <el-select v-model="filters.selected" placeholder="请选择">
                     <el-option
                             v-for="item in appList"
                             :key="item.id"
@@ -31,25 +31,32 @@
                     <el-table
                             :data="scope.row.childs"
                             v-loading="scope.row.loading"
-                            style="width: 100%"
-                            @expand="expandHandle">
+                            style="width: 100%">
                         <el-table-column type="expand">
                             <template scope="props">
-                                <xt-operator :menuId="props.row.id"></xt-operator>
+                                <xt-menutag :row="props.row" @handleAdd="handleAdd" @handleEdit="handleEdit" @handleDel="handleDel" @reload="callBackFunc"></xt-menutag>
                             </template>
                         </el-table-column>
                         <el-table-column
                                 prop="code"
-                                label="菜单编码">
+                                label="菜单编码" minWidth="120"
+                                :show-overflow-tooltip="true">
+                            <template scope="scope">
+                                <span >{{scope.row.code}}</span>
+                            </template>
                         </el-table-column>
                         <el-table-column
                                 prop="name"
-                                label="菜单名称">
+                                label="菜单名称" minWidth="120"
+                                :show-overflow-tooltip="true">
+                            <template scope="scope">
+                                <span >{{scope.row.name}}</span>
+                            </template>
                         </el-table-column>
                         <el-table-column
                                 prop="icon"
                                 align="center"
-                                label="菜单图标">
+                                label="菜单图标" minWidth="120">
                             <template scope="scope">
                                 <i :class="scope.row.icon"></i>
                             </template>
@@ -57,21 +64,30 @@
                         <el-table-column
                                 prop="url"
                                 align="center"
-                                label="链接地址">
+                                label="链接地址" minWidth="120"
+                                :show-overflow-tooltip="true">
+                            <template scope="scope">
+                                <span>{{scope.row.url}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="sort"
+                                align="center"
+                                label="排序" minWidth="120">
                         </el-table-column>
                         <el-table-column
                                 prop="displayFlag"
                                 align="center"
-                                label="是否启用">
+                                label="是否启用" minWidth="120">
                             <template scope="scope">
                                 {{scope.row.displayFlag ? "√" : "×"}}
                             </template>
                         </el-table-column>
-                        <el-table-column label="操作" align="center">
+                        <el-table-column label="操作" align="center" minWidth="150">
                             <template scope="scope">
                                 <el-button
                                         title="编辑"
-                                        type="success"
+                                        type="info"
                                         size="small"
                                         @click="handleEdit(scope.$index, scope.row)" icon="edit"></el-button>
                                 <el-button
@@ -87,22 +103,34 @@
             <el-table-column
                     prop="appName"
                     align="center"
-                    label="所属应用">
+                    label="所属应用" minWidth="120"
+                    :show-overflow-tooltip="true">
+                <template scope="scope">
+                    <span >{{scope.row.appName}}</span>
+                </template>
             </el-table-column>
             <el-table-column
                     prop="code"
                     align="center"
-                    label="菜单编码">
+                    label="菜单编码" minWidth="120"
+                    :show-overflow-tooltip="true">
+                <template scope="scope">
+                    <span >{{scope.row.code}}</span>
+                </template>
             </el-table-column>
             <el-table-column
                     prop="name"
                     align="center"
-                    label="菜单名称">
+                    label="菜单名称" minWidth="120"
+                    :show-overflow-tooltip="true">
+                <template scope="scope">
+                    <span>{{scope.row.name}}</span>
+                </template>
             </el-table-column>
             <el-table-column
                     prop="icon"
                     align="center"
-                    label="菜单图标">
+                    label="菜单图标" minWidth="120">
                 <template scope="scope">
                     <i :class="scope.row.icon"></i>
                 </template>
@@ -110,17 +138,26 @@
             <el-table-column
                     prop="url"
                     align="center"
-                    label="链接地址">
+                    label="链接地址" minWidth="120"
+                    :show-overflow-tooltip="true">
+                <template scope="scope">
+                    <span >{{scope.row.url}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="sort"
+                    align="center"
+                    label="排序" minWidth="80">
             </el-table-column>
             <el-table-column
                     prop="displayFlag"
                     align="center"
-                    label="是否启用">
+                    label="是否启用" minWidth="120">
                 <template scope="scope">
                     {{scope.row.displayFlag ? "√" : "×"}}
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" minWidth="150">
                 <template scope="scope">
                     <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -232,22 +269,32 @@
 <script>
     import {AppAPI, MenuAPI, getAllIcons} from '../../api/api';
     import search from '../../components/search.vue'
+    import menuTag from './menuListTag.vue'
     import menuoperator from './menuoperator.vue'
     import {CodeChange, MessageBox, util} from '../../common/js/util'
 
     export default {
         data() {
             var checkCode = (rule, value, callback) => {
-                let param = {code: value}
-                this.getHadMenu(param).then(({isempty, id}) => {
-                    if ((this.editFormVisible) && (id == this.editForm.id))
-                        callback();
-                    else {
-                        if (!isempty)
+                let param = {code: value};
+                if (this.editFormVisible){
+                    param={code: value,id:this.editForm.id};
+                    this.getHadMenu(param).then(({isExist}) => {
+                        if(isExist){
                             return callback(new Error('该菜单编码已存在，请重新输入'));
-                        else callback();
-                    }
-                })
+                        }else{
+                            callback();
+                        }
+                    })
+                }else {
+                    this.getHadMenu(param).then(({isExist}) => {
+                        if(isExist){
+                            return callback(new Error('该菜单编码已存在，请重新输入'));
+                        }else{
+                            callback();
+                        }
+                    })
+                }
             }
             return {
                 filters: {
@@ -308,11 +355,19 @@
                     icon: '',
                     sort: 0,
                     displayFlag: true
-                }
+                },
+                callBackFuncs:[]
             }
         },
-        components: {'xt-search': search, 'xt-operator': menuoperator},
+        components: {'xt-search': search, 'xt-menutag':menuTag},
         methods: {
+            callBackFunc(func){
+                this.callBackFuncs.push(func);
+            },
+            handleSearch(){
+                this.pageInfo.pageIndex=1;
+                this.getMenus();
+            },
             handleAddCancel(){
                 this.addFormVisible = false
                 this.$refs["addForm"].resetFields();
@@ -364,18 +419,17 @@
                 let _self = this;
                 this.listLoading = true;
                 if (this.appList.length == 0) {
-                    AppAPI.getAppList({pageIndex: 1, pageSize: 9999999}).then(function (result) {
+                    AppAPI.listApp({pageIndex: 1, pageSize: 9999999}).then(function (result) {
                         _self.listLoading = false;
                         _self.appList = result.data.data.data;
                         let para = Object.assign({}, _self.pageInfo);
-                        if (_self.filters.name != '')
-                            para.name = '%' + _self.filters.name + '%';
-                        para.code = '%' + _self.filters.code + '%';
+                        para.name = _self.filters.name?'%' + _self.filters.name + '%':'';
+                        para.code = _self.filters.code?'%' + _self.filters.code + '%':'';
                         if (_self.filters.selected == ''){
                             _self.filters.selected=_self.appList[0].id;
                             para.appId = _self.filters.selected;
                         }
-                        MenuAPI.getMenuList(para).then((res) => {
+                        MenuAPI.listMenu(para).then((res) => {
                             _self.pageInfo.pageIndex = res.data.data.currentPage;
                             _self.pageInfo.count = res.data.data.count;
                             let data = res.data.data.data;
@@ -391,10 +445,10 @@
                     });
                 } else {
                     let para = Object.assign({}, this.pageInfo);
-                    para.name = '%' + _self.filters.name + '%';
-                    para.code = '%' + _self.filters.code + '%';
+                    para.name = _self.filters.name?'%' + _self.filters.name + '%':'';
+                    para.code = _self.filters.code?'%' + _self.filters.code + '%':'';
                     para.appId = _self.filters.selected;
-                    MenuAPI.getMenuList(para).then((res) => {
+                    MenuAPI.listMenu(para).then((res) => {
                         _self.pageInfo.pageIndex = res.data.data.currentPage
                         _self.pageInfo.count = res.data.data.count
                         _self.listLoading = false;
@@ -410,48 +464,69 @@
             },
             getHadMenu(params){
                 return new Promise(function (resolve, reject) {
-                    let _this = this, isempty = true, id = '';
-                    MenuAPI.getMenuList(params).then((res) => {
-                        if (res.data.data.count != 0) {
-                            isempty = false
-                            id = res.data.data.data[0].id
-                        }
-                        resolve({isempty, id})
+                    let _this = this,isExist=false;
+                    MenuAPI.checkExists(params).then((res) => {
+                        isExist=res.data.data;
+                        resolve({isExist})
                     })
                 })
             },
             //删除
             handleDel: function (index, row) {
-                let _this = this;
+                let _self=this;
+                let para = {id: row.id};
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
                 }).then(function () {
-                    _this.listLoading = true;
+                    _self.listLoading = true;
                     let para = {id: row.id};
-                    MenuAPI.deleteMenuInfo(para).then(function (res) {
+                    MenuAPI.deleteMenu(para).then(function (res) {
                         if (res.data.code == 1) {
-                            _this.$message({
+                            _self.$message({
                                 message: '删除成功',
                                 type: 'success'
                             });
-                            _this.getMenus();
+                            if(row.parentId==0){
+                                let menuItemDel=_self.menuList.find(function (menuItem) {return para.id==menuItem.id});
+                                if(menuItemDel){
+                                    _self.getMenus();
+                                }
+                            }else{
+                                _self.menuList.map(function (element) {
+                                    if(element.childs){
+                                        let childItem=element.childs.find(function (childsItem) {
+                                            return childsItem.id==para.id
+                                        })
+                                        if(childItem){
+                                            element.childs.remove(childItem);
+                                            return true;
+                                        }else{
+                                            let childParentItem=element.childs.find(function (childsItem) {
+                                                return childsItem.id==row.parentId;
+                                            })
+                                            if(childParentItem){
+                                                _self.callBackFuncs.map((func)=>func('delete',row.parentId));
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                })
+                            }
                         } else {
-                            let _this = this;
                             MessageBox.codeMessage(res.data.code).then(function ({message}) {
                                 if (res.data.msg != '' && res.data.msg != 'undefined')
                                     message = res.data.msg;
-                                _this.$message({
+                                _self.$message({
                                     message: message,
                                     type: 'error'
                                 });
                             })
                         }
-                        _this.listLoading = false;
+                        _self.listLoading = false;
                     });
                 }).catch(() => {
 
                 });
-
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -472,18 +547,31 @@
                 this.addFormVisible = true;
                 //this.$refs["addForm"].resetFields();
             },
+            copyData(item,oldItem){
+                item.appId=oldItem.appId;
+                item.code=oldItem.code;
+                item.name=oldItem.name;
+                item.url=oldItem.url;
+                item.icon=oldItem.icon;
+                item.displayFlag=oldItem.displayFlag;
+                item.sort=oldItem.sort;
+                item.type=oldItem.type;
+                item.appName=oldItem.appName;
+                item.operationList=oldItem.operationList;
+                return item;
+            },
             //编辑
             editSubmit: function () {
                 let _this=this;
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
-                        _this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            _this.editLoading = true;
+                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+                            this.editLoading = true;
                             //NProgress.start();
                             let para = Object.assign({}, this.editForm);
                             delete para.childs;
-                            MenuAPI.editMenuInfo(para).then((res) => {
-                                _this.editLoading = false;
+                            MenuAPI.updateMenu(para).then((res) => {
+                                this.editLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
                                     this.$message({
@@ -492,10 +580,30 @@
                                     });
                                     this.$refs['editForm'].resetFields();
                                     this.editFormVisible = false;
-                                    _this.getMenus();
+                                    this.menuList.map(function (element) {
+                                        if(para.id==element.id){
+                                          _this.copyData(element,para)
+                                            return true;
+                                        }else{
+                                            if(element.childs)
+                                            element.childs.map(function (childItem) {
+                                                if(childItem.id==para.id){
+                                                    _this.copyData(childItem,para)
+                                                    return true;
+                                                }else{
+                                                    if(childItem.id==para.parentId){
+                                                        _this.callBackFuncs.map((func)=>func('edit',para.parentId));
+                                                        return true;
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    })
+//                                    this.getMenus();
                                 } else {
                                     let _this = this;
                                     MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                        if(res.data.msg) message=res.data.msg
                                         _this.$message({
                                             message: message,
                                             type: 'error'
@@ -509,27 +617,45 @@
             },
             //新增
             addSubmit: function () {
-                let _this = this;
+                let _this=this;
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
-                        _this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            _this.addLoading = true;
-                            //NProgress.start();
+                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
+                            this.addLoading = true;
                             let para = Object.assign({}, this.addForm);
                             delete para.childs;
-                            MenuAPI.addMenuInfo(para).then((res) => {
-                                _this.addLoading = false;
-                                //NProgress.done();
+                            MenuAPI.insertMenu(para).then((res) => {
+                                this.addLoading = false;
                                 if (res.data.code == 1) {
-                                    _this.$message({
+                                    this.$message({
                                         message: '提交成功',
                                         type: 'success'
                                     });
-                                    _this.$refs['addForm'].resetFields();
-                                    _this.addFormVisible = false;
-                                    _this.getMenus();
+                                    this.$refs['addForm'].resetFields();
+                                    this.addFormVisible = false;
+                                    para.id=res.data.data.id;
+                                    if(para.parentId==0){
+                                        _this.getMenus();
+                                        return true;
+                                    }else{
+                                        this.menuList.map(function (element) {
+                                            if(!element.childs){
+                                                element.childs=[];
+                                            }
+                                            if(element.id==para.parentId){
+                                                element.childs.push(JSON.parse(JSON.stringify(para)))
+                                                return true;
+                                            }else{
+                                                element.childs.map(function (childsItem) {
+                                                    if(childsItem.id==para.parentId){
+                                                        _this.callBackFuncs.map((func)=>func('add',para.parentId));
+                                                        return true;
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
                                 } else {
-                                    let _this = this;
                                     MessageBox.codeMessage(res.data.code).then(function ({message}) {
                                         if (res.data.msg != '' && res.data.msg != 'undefined')
                                             message = res.data.msg;
@@ -544,17 +670,26 @@
                     }
                 });
             },
-            expandHandle(row){
+            expandHandle(row,expanded){
                 return new Promise(function (resolve, reject) {
-                    if (row.childs == null) {
-                        row.loading = true;
-                        MenuAPI.getMenuList({pageIndex: 1, pageSize: 999999, parentId: row.id}).then(function (res) {
-                            row.loading = false;
-                            row.childs = res.data.data.data;
+                    if(expanded){
+//                        if (row.childs == null) {
+                            row.loading = true;
+                            MenuAPI.listMenu({pageIndex: 1, pageSize: 999999, parentId: row.id}).then(function (res) {
+                                row.loading = false;
+                                let childList=res.data.data.data;
+                                childList.map(function (element) {
+                                    element.childs=[];
+                                })
+                                childList.sort(function (a,b) {
+                                    return a.sort-b.sort;
+                                })
+                                row.childs = childList;
+                                resolve()
+                            })
+                       /* } else {
                             resolve()
-                        })
-                    } else {
-                        resolve()
+                        }*/
                     }
                 })
             },
@@ -567,7 +702,7 @@
                     this.listLoading = true;
                     //NProgress.start();
                     let para = {ids: ids};
-                    MenuAPI.deleteMenuInfo(para).then((res) => {
+                    MenuAPI.deleteMenu(para).then((res) => {
                         this.listLoading = false;
                         //NProgress.done();
                         _this.$message({
@@ -580,10 +715,6 @@
 
                 });
             },
-            //选项变动
-            selectedChange(){
-                this.getMenus();
-            }
         },
 
         mounted() {

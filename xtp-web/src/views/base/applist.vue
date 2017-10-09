@@ -53,7 +53,6 @@
 
         <!--工具条-->
         <el-col :span="24" class="toolbar">
-            <!--<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>-->
             <el-pagination
                     style="float:right;"
                     @size-change="handledSizeChange"
@@ -68,7 +67,7 @@
 
         <!--编辑界面-->
         <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
-            <el-form :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
+            <el-form :model="editForm" label-width="100px" :rules="addFormRules" ref="editForm">
                 <el-form-item label="应用编码" prop="code">
                     <el-input v-model="editForm.code" auto-complete="off"></el-input>
                 </el-form-item>
@@ -100,7 +99,7 @@
     </section>
 </template>
 <script>
-    import util from '../../common/js/util'
+    import {MessageBox} from '../../common/js/util'
     //import NProgress from 'nprogress'
     import { AppAPI } from '../../api/api';
 
@@ -118,16 +117,6 @@
                 sels: [],//列表选中列
                 editFormVisible: false,//编辑界面是否显示
                 editLoading: false,
-                editFormRules: {
-                    code: [
-                        {required: true, message: '请输入应用编码', trigger: 'blur'},
-                        {min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
-                    ],
-                    name: [
-                        {required: true, message: '请输入应用名称', trigger: 'blur'},
-                        {min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
-                    ]
-                },
                 //编辑界面数据
                 editForm: {
                     id: 0,
@@ -139,11 +128,11 @@
                 addFormRules: {
                     code: [
                         {required: true, message: '请输入应用编码', trigger: 'blur'},
-                        {min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
+                        {min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur'}
                     ],
                     name: [
                         {required: true, message: '请输入应用名称', trigger: 'blur'},
-                        {min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur'}
+                        {min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur'}
                     ]
                 },
                 //新增界面数据
@@ -169,11 +158,10 @@
             getApps() {
                 let _self = this;
                 let para = Object.assign({},this.pageInfo);
-                para.name='%'+_self.filters.name+'%';
-                para.code='%'+_self.filters.code+'%';
+                para.name=_self.filters.name?'%'+_self.filters.name+'%':'';
+                para.code=_self.filters.code?'%'+_self.filters.code+'%':'';
                 this.listLoading = true;
-                //NProgress.start();
-                AppAPI.getAppList(para).then((res) => {
+                AppAPI.listApp(para).then((res) => {
                     _self.pageInfo.pageIndex=res.data.data.currentPage
                     _self.pageInfo.count=res.data.data.count
                     _self.appList = res.data.data.data;
@@ -182,7 +170,6 @@
                         para.appId = _self.filters.selected;
                     }
                 _self.listLoading = false;
-                //NProgress.done();
                 });
             },
             //删除
@@ -191,20 +178,26 @@
                     type: 'warning'
                 }).then(() => {
                     this.listLoading = true;
-                //NProgress.start();
-                let para = { id: row.id };
-                    AppAPI.deleteAppInfo(para).then((res) => {
-                    this.listLoading = false;
-                //NProgress.done();
-                this.$message({
-                    message: '删除成功',
-                    type: 'success'
-                });
-                this.getApps();
-            });
-            }).catch(() => {
-
-                });
+                    let para = { id: row.id };
+                    AppAPI.deleteApp(para).then((res) => {
+                        if(res.data.code==1){
+                            this.listLoading = false;
+                            this.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            this.getApps();
+                        }else{
+                            MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                message = res.data.msg?res.data.msg:'';
+                                _this.$message({
+                                    message: message,
+                                    type: 'error'
+                                });
+                            });
+                        }
+                    });
+                }).catch(() => {});
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -225,20 +218,28 @@
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.editLoading = true;
-                        //NProgress.start();
                         let para = Object.assign({}, this.editForm);
-                            AppAPI.editAppInfo(para).then((res) => {
-                            this.editLoading = false;
-                        //NProgress.done();
-                        this.$message({
-                            message: '提交成功',
-                            type: 'success'
+                            AppAPI.updateApp(para).then((res) => {
+                                if(res.data.code==1){
+                                    this.editLoading = false;
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
+                                    });
+                                    this.$refs['editForm'].resetFields();
+                                    this.editFormVisible = false;
+                                    this.getApps();
+                                }else{
+                                    MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                        message = res.data.msg?res.data.msg:'';
+                                        _this.$message({
+                                            message: message,
+                                            type: 'error'
+                                        });
+                                    });
+                                }
+                            });
                         });
-                        this.$refs['editForm'].resetFields();
-                        this.editFormVisible = false;
-                        this.getApps();
-                    });
-                    });
                     }
                 });
             },
@@ -248,47 +249,33 @@
                     if (valid) {
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
-                        //NProgress.start();
                         let para = Object.assign({}, this.addForm);
-                            AppAPI.addAppInfo(para).then((res) => {
-                            this.addLoading = false;
-                        //NProgress.done();
-                        this.$message({
-                            message: '提交成功',
-                            type: 'success'
+                        AppAPI.insertApp(para).then((res) => {
+                            if(res.data.code==1){
+                                this.addLoading = false;
+                                this.$message({
+                                    message: '提交成功',
+                                    type: 'success'
+                                });
+                                this.$refs['addForm'].resetFields();
+                                this.addFormVisible = false;
+                                this.getApps();
+                            }else{
+                                MessageBox.codeMessage(res.data.code).then(function ({message}) {
+                                    message = res.data.msg?res.data.msg:'';
+                                    _this.$message({
+                                        message: message,
+                                        type: 'error'
+                                    });
+                                });
+                            }
                         });
-                        this.$refs['addForm'].resetFields();
-                        this.addFormVisible = false;
-                        this.getApps();
-                    });
                     });
                     }
                 });
             },
             selsChange: function (sels) {
                 this.sels = sels;
-            },
-            //批量删除
-            batchRemove: function () {
-                var ids = this.sels.map(item => item.id).toString();
-                this.$confirm('确认删除选中记录吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    this.listLoading = true;
-                //NProgress.start();
-                let para = { ids: ids };
-                    AppAPI.deleteAppInfo(para).then((res) => {
-                    this.listLoading = false;
-                //NProgress.done();
-                this.$message({
-                    message: '删除成功',
-                    type: 'success'
-                });
-                this.getApps();
-            });
-            }).catch(() => {
-
-                });
             },
             selectedChange(){
                 this.getApps();
