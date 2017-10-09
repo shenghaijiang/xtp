@@ -50,6 +50,9 @@ public class MenuController extends BaseController {
         Menu record = JsonUtil.fromJson(data, Menu.class);
         MenuExample example = new MenuExample();
         MenuExample.Criteria criteria = example.createCriteria();
+        if (record.getId() != null && record.getId() > 0) {
+            criteria.andAppIdEqualTo(record.getAppId());
+        }
         criteria.andCodeEqualTo(record.getCode());
         criteria.andIdNotEqualTo(record.getId());
         criteria.andDeleteFlagEqualTo(false);
@@ -102,6 +105,9 @@ public class MenuController extends BaseController {
         Menu record = JsonUtil.fromJson(data, Menu.class);
         MenuExample example = new MenuExample();
         MenuExample.Criteria criteria = example.createCriteria();
+        if (record.getId() != null && record.getId() > 0) {
+            criteria.andAppIdEqualTo(record.getAppId());
+        }
         criteria.andCodeEqualTo(record.getCode());
         criteria.andIdNotEqualTo(record.getId());
         criteria.andDeleteFlagEqualTo(false);
@@ -164,8 +170,8 @@ public class MenuController extends BaseController {
             @RequestParam(value = "appId", required = false) Integer appId,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageIndex", required = false, defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "parentId", required = false, defaultValue = "0") Integer parentId) {
         MenuExample example = new MenuExample();
         example.setPageIndex(1);

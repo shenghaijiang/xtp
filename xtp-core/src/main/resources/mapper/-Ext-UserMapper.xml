@@ -17,7 +17,7 @@
         (
         select userId from `roleuser`
         where roleId = #{roleId,jdbcType=INTEGER}
-        )
+        ) and deleteflag=0
     </select>
 
 </mapper>

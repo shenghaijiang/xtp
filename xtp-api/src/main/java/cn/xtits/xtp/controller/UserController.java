@@ -54,6 +54,9 @@ public class UserController extends BaseController {
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
         criteria.andAccountEqualTo(record.getAccount());
+        if (record.getAppId() != null && record.getAppId() > 0) {
+            criteria.andAppIdEqualTo(record.getAppId());
+        }
         if (record.getId() != null && record.getId() > 0) {
             criteria.andIdNotEqualTo(record.getId());
         }
@@ -198,7 +201,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "listUserByRoleId")
     @ResponseBody
-    public AjaxResult listUser(
+    public AjaxResult listUserByRoleId(
             @RequestParam(value = "roleId", required = false) Integer roleId) {
         List<User> list = service.listUserByRoleId(roleId);
         Pagination<User> pList = new Pagination<>(list);

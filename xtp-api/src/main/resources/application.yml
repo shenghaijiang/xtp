@@ -1,11 +1,19 @@
 server:
   port: 8088
 
+#spring:
+#  datasource:
+#    url: jdbc:mysql://192.168.2.102:3306/git-xtp
+#    username: hail
+#    password: hail
+#    driver-class-name: com.mysql.jdbc.Driver
+
 spring:
   datasource:
-    url: jdbc:mysql://192.168.2.102:3306/git-xtp
-    username: hail
-    password: hail
+#    url: jdbc:mysql://192.168.3.7:3306/xtp
+    url: jdbc:mysql://139.196.125.197:3306/xtp
+    username: root
+    password: '!QQ1234567890-='
     driver-class-name: com.mysql.jdbc.Driver
 
 # MyBatis
@@ -15,4 +23,5 @@ mybatis:
     type-aliases-package: cn.xtits.xtp.entity
 
 REST_XTP_URL: http://139.196.125.197/xtp-api
+#REST_XTP_URL: http://192.168.3.7/xtp-api
 APP_TOKEN: CJzdWIiOiJ7XCJ1c2VySDkwMTUeyJhbGciOiJI

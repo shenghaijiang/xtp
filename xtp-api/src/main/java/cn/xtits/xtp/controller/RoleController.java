@@ -51,7 +51,9 @@ public class RoleController extends BaseController {
         RoleExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
         criteria.andCodeEqualTo(record.getCode());
-        criteria.andAppIdEqualTo(record.getAppId());
+        if (record.getAppId() != null && record.getAppId() > 0) {
+            criteria.andAppIdEqualTo(record.getAppId());
+        }
         criteria.andIdNotEqualTo(record.getId());
         List<Role> list = service.listByExample(example);
         if (list.size() > 0) {
@@ -100,7 +102,9 @@ public class RoleController extends BaseController {
         RoleExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
         criteria.andCodeEqualTo(record.getCode());
-        criteria.andAppIdEqualTo(record.getAppId());
+        if (record.getAppId() != null && record.getAppId() > 0) {
+            criteria.andAppIdEqualTo(record.getAppId());
+        }
         criteria.andIdNotEqualTo(record.getId());
         List<Role> list = service.listByExample(example);
         if (list.size() > 0) {

@@ -4,6 +4,7 @@ import cn.xtits.xtf.common.db.DbConn;
 import cn.xtits.xtf.common.utils.PropertiesUtil;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -15,7 +16,7 @@ public class PermissionUtil {
 
     private static String operationSql = "SELECT c. CODE menuCode , b. CODE operationCode FROM menuOperation b INNER JOIN menu c ON b.MenuId = c.Id WHERE c. CODE = ''{1}'' AND b.id IN( SELECT MenuOperationId FROM roleMenuOperation WHERE RoleId IN( SELECT RoleId FROM roleUser WHERE UserId = {0}) AND menuoperationid NOT IN( SELECT menuoperationid FROM userMenuOperation WHERE userid = {0} AND type = 0) UNION ALL SELECT menuoperationid FROM userMenuOperation WHERE userid = {0} AND type = 1) and b.Code=''{2}''";
 
-    private static String dateSql = "SELECT a.RoleId roleid, a.Value value, a.MenuId menuId, a.Symbol symbol, a.FieldName fieldName, b. Code menuCode FROM roleDataRule a INNER JOIN menu b on a.MenuId = b.Id WHERE a.RoleId in(SELECT RoleId FROM roleUser WHERE UserId = {0}) and b.Code = ''{1}''";
+    private static String dateSql = "SELECT a.FieldName fieldName, a.RoleId roleid, a.MenuId menuId, CONCAT(a.FieldName,a.Symbol,a.Value) as criterion FROM roleDataRule a WHERE a.RoleId in(SELECT RoleId FROM roleUser WHERE UserId = {0}) and a.MenuId = {1}";
 
     private static String getUserIdSql = "SELECT a.id FROM user a INNER JOIN app b ON a.AppId = b.Id WHERE AppUserId = {0} AND DeleteFlag = 0 AND b.Token = ''{1}''";
 
@@ -50,14 +51,17 @@ public class PermissionUtil {
 
     }
 
-    public static List<Map<String, Object>> IsData(String token, int userId, String menuCode) {
+    public static List<Map<String, Object>> IsData(String token, int userId, Integer menuId) {
 
         int xtpUserId = getUserIdByAppUserId(token, userId);
 
         List<Map<String, Object>> list;
         try (DbConn conn = getConn()) {
-            String sql = MessageFormat.format(dateSql, xtpUserId, menuCode);
+            String sql = MessageFormat.format(dateSql, xtpUserId, menuId);
             list = conn.executeList(sql);
+            if(list==null){
+                list = new ArrayList<>();
+            }
             return list;
         } catch (Exception e) {
             return null;
