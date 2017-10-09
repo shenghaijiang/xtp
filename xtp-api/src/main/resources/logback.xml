@@ -96,6 +96,6 @@
         <!-- 生产环境需要配置此Appender -->
         <!--<appender-ref ref="WARN_FILE_OUT"/>-->
         <!-- 生产环境需要配置此Appender（开发环境可以不配） -->
-        <appender-ref ref="KAFKA_APPENDER"/>
+        <!--<appender-ref ref="KAFKA_APPENDER"/>-->
     </root>
 </configuration>
