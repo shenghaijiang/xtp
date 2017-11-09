@@ -189,9 +189,11 @@
                 let selectArr = [],_self = this;
                 this.menuList.map((item)=>{
                     let arr=Array.from(this.$refs['tree_'+item.id][0].getCheckedNodes())
+                    console.log(this.$refs['tree_'+item.id],arr)
                     if(arr && arr.length>0)
                     {
                         arr.map(item=>{
+                            selectArr.push(item.id);
                             if(item.syncIds)
                                 selectArr.push(item.syncIds.join(','));
                         })
