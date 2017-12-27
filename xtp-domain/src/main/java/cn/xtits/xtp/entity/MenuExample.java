@@ -956,6 +956,66 @@ public class MenuExample extends BaseQuery {
             return (Criteria) this;
         }
 
+        public Criteria andEnableFlagIsNull() {
+            addCriterion("EnableFlag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagIsNotNull() {
+            addCriterion("EnableFlag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagEqualTo(Boolean value) {
+            addCriterion("EnableFlag =", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagNotEqualTo(Boolean value) {
+            addCriterion("EnableFlag <>", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagGreaterThan(Boolean value) {
+            addCriterion("EnableFlag >", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("EnableFlag >=", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagLessThan(Boolean value) {
+            addCriterion("EnableFlag <", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagLessThanOrEqualTo(Boolean value) {
+            addCriterion("EnableFlag <=", value, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagIn(List<Boolean> values) {
+            addCriterion("EnableFlag in", values, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagNotIn(List<Boolean> values) {
+            addCriterion("EnableFlag not in", values, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagBetween(Boolean value1, Boolean value2) {
+            addCriterion("EnableFlag between", value1, value2, "enableFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnableFlagNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("EnableFlag not between", value1, value2, "enableFlag");
+            return (Criteria) this;
+        }
+
         public Criteria andCodeLikeInsensitive(String value) {
             addCriterion("upper(Code) like", value.toUpperCase(), "code");
             return (Criteria) this;
