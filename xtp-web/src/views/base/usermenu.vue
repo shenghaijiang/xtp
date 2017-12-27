@@ -1,7 +1,7 @@
 <template>
     <section>
         <!--工具条-->
-        <xt-search @click="handleSearch" :addButton="true" @addClick="handleAdd">
+        <xt-search @click="handleSearch" :addButton="false" @addClick="handleAdd">
             <el-form :inline="true" :model="filters">
                 <el-select v-model="filters.selected" placeholder="请选择" >
                     <el-option

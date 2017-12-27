@@ -192,6 +192,7 @@
                     if(arr && arr.length>0)
                     {
                         arr.map(item=>{
+                            selectArr.push(item.id);
                             if(item.syncIds)
                                 selectArr.push(item.syncIds.join(','));
                         })

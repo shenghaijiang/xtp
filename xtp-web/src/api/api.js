@@ -17,8 +17,7 @@ axios.defaults.transformRequest = [function (data) {
     }
     return ret
 }];
-// let base = 'http://'+location.host+'/xtp-api';
-let base="http://192.168.2.102/xtp-api"
+let base="http://localhost:8088"
 
 //系统图标库
 export const getAllIcons = () => {
