@@ -1,4 +1,3 @@
-import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
@@ -9,6 +8,7 @@ import VueRouter from 'vue-router'
 import routes from './routes'
 import 'font-awesome/css/font-awesome.min.css'
 import 'animate.css/animate.min.css'
+import babelpolyfill from 'babel-polyfill'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
