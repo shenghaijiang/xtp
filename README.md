@@ -8,14 +8,19 @@
 6. 数据同步功能，方便系统整合
 
 ## 后端部署
+- 创建数据库git-xtp
+- 导入 xtp.sql createUser.sql 两个文件
 - idea导入项目
-- 发布到tomcat
+- 修改 application.yml 对应的数据库连接,用户名,密码
+- 运行项目|发布到tomcat ROOT目录
 
 ## 前端部署
 - 确保本地安装node.js v4+
 - $ cd my-project
-- $ npm install
+- $ npm install babel-plugin-syntax-jsx babel-plugin-transform-vue-jsx babel-helper-vue-jsx-merge-props babel-preset-es2015 --save-dev
+- $ npm --registry https://registry.npm.taobao.org install
 - $ npm run dev
+- $ 修改src/api/api.js中let base=实际后端java接口地址
 
 ## 技术选型
 - 核心框架：Spring Framework 4.3

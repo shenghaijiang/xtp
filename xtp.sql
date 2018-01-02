@@ -1,22 +1,24 @@
 /*
-Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
-Source Server         : root@192.168.2.102
-Source Server Version : 50713
-Source Host           : 192.168.2.102:3306
-Source Database       : git-xtp
+ Source Server         : 192.168.2.102
+ Source Server Type    : MySQL
+ Source Server Version : 50713
+ Source Host           : 192.168.2.102
+ Source Database       : git-xtp
 
-Target Server Type    : MYSQL
-Target Server Version : 50713
-File Encoding         : 65001
+ Target Server Type    : MySQL
+ Target Server Version : 50713
+ File Encoding         : utf-8
 
-Date: 2017-09-21 14:48:54
+ Date: 12/27/2017 10:35:04 AM
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+SET NAMES utf8;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for app
+--  Table structure for `app`
 -- ----------------------------
 DROP TABLE IF EXISTS `app`;
 CREATE TABLE `app` (
@@ -28,12 +30,14 @@ CREATE TABLE `app` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of app
+--  Records of `app`
 -- ----------------------------
+BEGIN;
 INSERT INTO `app` VALUES ('1', 'xtp', 'xtp权限管理', 'CJzdWIiOiJ7XCJ1c2VySDkwMTUeyJhbGciOiJI');
+COMMIT;
 
 -- ----------------------------
--- Table structure for appfavorite
+--  Table structure for `appfavorite`
 -- ----------------------------
 DROP TABLE IF EXISTS `appfavorite`;
 CREATE TABLE `appfavorite` (
@@ -44,11 +48,7 @@ CREATE TABLE `appfavorite` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of appfavorite
--- ----------------------------
-
--- ----------------------------
--- Table structure for dict
+--  Table structure for `dict`
 -- ----------------------------
 DROP TABLE IF EXISTS `dict`;
 CREATE TABLE `dict` (
@@ -61,16 +61,14 @@ CREATE TABLE `dict` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='数据字典';
 
 -- ----------------------------
--- Records of dict
+--  Records of `dict`
 -- ----------------------------
-INSERT INTO `dict` VALUES ('1', 'datarule_symbol', '=', '=', '2016-03-01 22:42:05');
-INSERT INTO `dict` VALUES ('2', 'datarule_symbol', '>', '>', '2016-03-01 22:42:21');
-INSERT INTO `dict` VALUES ('3', 'datarule_symbol', '<', '<', '2016-03-01 22:42:28');
-INSERT INTO `dict` VALUES ('6', 'db_source', 'zcurd_base', '基本库', '2016-09-18 17:25:49');
-INSERT INTO `dict` VALUES ('7', 'db_source', 'zcurd_busi', '业务库', '2016-09-18 17:25:54');
+BEGIN;
+INSERT INTO `dict` VALUES ('1', 'datarule_symbol', '=', '=', '2016-03-01 22:42:05'), ('2', 'datarule_symbol', '>', '>', '2016-03-01 22:42:21'), ('3', 'datarule_symbol', '<', '<', '2016-03-01 22:42:28'), ('6', 'db_source', 'zcurd_base', '基本库', '2016-09-18 17:25:49'), ('7', 'db_source', 'zcurd_busi', '业务库', '2016-09-18 17:25:54');
+COMMIT;
 
 -- ----------------------------
--- Table structure for ext
+--  Table structure for `ext`
 -- ----------------------------
 DROP TABLE IF EXISTS `ext`;
 CREATE TABLE `ext` (
@@ -82,11 +80,7 @@ CREATE TABLE `ext` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of ext
--- ----------------------------
-
--- ----------------------------
--- Table structure for log
+--  Table structure for `log`
 -- ----------------------------
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE `log` (
@@ -101,11 +95,7 @@ CREATE TABLE `log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of log
--- ----------------------------
-
--- ----------------------------
--- Table structure for menu
+--  Table structure for `menu`
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu` (
@@ -122,23 +112,17 @@ CREATE TABLE `menu` (
   `DeleteFlag` bit(1) DEFAULT NULL,
   `Type` int(6) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of menu
+--  Records of `menu`
 -- ----------------------------
-INSERT INTO `menu` VALUES ('1', '1', '应用管理', '应用管理', '/app', '0', 'fa fa-address-book-o', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('2', '1', '个人信息设置', '个人信息设置', '/userinfo', '0', 'fa fa-trophy', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('3', '1', '菜单管理', '菜单管理', '/menu', '0', 'fa fa-object-ungroup', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('4', '1', '用户管理', '用户管理', '/user', '0', 'fa fa-bank', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('5', '1', '角色管理', '角色管理', '/role', '0', 'fa fa-arrows', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('6', '1', '菜单按钮管理', '菜单按钮管理', '/menuoperator', '0', 'fa fa-arrows', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('7', '1', '角色数据权限', '角色数据权限', '/roledatarule', '0', 'fa fa-arrows', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('8', '1', '用户菜单管理', '用户菜单管理', '/usermenu2', '0', 'fa fa-arrows', '', '', '0', '\0', null);
-INSERT INTO `menu` VALUES ('9', '1', '用户按钮权限', '用户按钮权限', '/userbuttonrule', '0', 'fa fa-arrows', '', '', '0', '\0', null);
+BEGIN;
+INSERT INTO `menu` VALUES ('1', '1', '应用管理', '应用管理', '/app', '0', 'fa fa-address-book-o', b'1', b'1', '0', b'0', null), ('2', '1', '个人信息设置', '个人信息设置', '/userinfo', '0', 'fa fa-trophy', b'1', b'1', '0', b'0', null), ('3', '1', '菜单管理', '菜单管理', '/menu', '0', 'fa fa-object-ungroup', b'1', b'1', '0', b'0', null), ('4', '1', '用户管理', '用户管理', '/user', '0', 'fa fa-bank', b'1', b'1', '0', b'0', null), ('5', '1', '角色管理', '角色管理', '/role', '0', 'fa fa-arrows', b'1', b'1', '0', b'0', null), ('6', '1', '菜单按钮管理', '菜单按钮管理', '/newmenuoperation', '0', 'fa fa-arrows', b'1', b'1', '0', b'0', null), ('7', '1', '角色数据权限', '角色数据权限', '/roledatarule', '0', 'fa fa-arrows', b'1', b'1', '0', b'0', null), ('8', '1', '用户菜单管理', '用户菜单管理', '/usermenu2', '0', 'fa fa-arrows', b'1', b'1', '0', b'0', null), ('9', '1', '用户按钮权限', '用户按钮权限', '/userbuttonrule', '0', 'fa fa-arrows', b'1', b'1', '0', b'0', null), ('10', '1', 'xtp二级菜单', 'xtp二级菜单', 'xtp二级菜单', '1', 'fa fa-tag', b'0', b'1', '1', b'0', null), ('11', '1', 'xtp三级菜单', 'xtp三级菜单', 'xtp三级菜单', '10', 'fa fa-tag', b'0', b'1', '0', b'0', null);
+COMMIT;
 
 -- ----------------------------
--- Table structure for menuoperation
+--  Table structure for `menuoperation`
 -- ----------------------------
 DROP TABLE IF EXISTS `menuoperation`;
 CREATE TABLE `menuoperation` (
@@ -152,17 +136,14 @@ CREATE TABLE `menuoperation` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of menuoperation
+--  Records of `menuoperation`
 -- ----------------------------
-INSERT INTO `menuoperation` VALUES ('1', '查询', '查询', '1', 'fa fa-edit', '\0');
-INSERT INTO `menuoperation` VALUES ('2', '添加', '添加', '2', 'fa fa-edit', '\0');
-INSERT INTO `menuoperation` VALUES ('3', '新增', '新增', '3', 'fa fa-address-book', '\0');
-INSERT INTO `menuoperation` VALUES ('4', '修改', '修改', '4', 'fa fa-thermometer-quarter', '\0');
-INSERT INTO `menuoperation` VALUES ('5', '删除', '删除', '5', 'fa fa-video-camera', '\0');
-INSERT INTO `menuoperation` VALUES ('6', '新增', '新增', '6', 'fa fa-at', '\0');
+BEGIN;
+INSERT INTO `menuoperation` VALUES ('1', '查询', '查询', '1', 'fa fa-edit', b'0'), ('2', '添加', '添加', '2', 'fa fa-edit', b'0'), ('3', '新增', '新增', '3', 'fa fa-address-book', b'0'), ('4', '修改', '修改', '4', 'fa fa-thermometer-quarter', b'0'), ('5', '删除', '删除', '5', 'fa fa-video-camera', b'0'), ('6', '删除', '删除', '1', 'fa fa-tag', b'0');
+COMMIT;
 
 -- ----------------------------
--- Table structure for organize
+--  Table structure for `organize`
 -- ----------------------------
 DROP TABLE IF EXISTS `organize`;
 CREATE TABLE `organize` (
@@ -192,12 +173,14 @@ CREATE TABLE `organize` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of organize
+--  Records of `organize`
 -- ----------------------------
-INSERT INTO `organize` VALUES ('10000223', '1', '001.02', '100000008', '办公室', 'Department', '', '', '', null, null, null, '', '', '', '10000460', '', '', 'Administrator', '2009-02-20 18:49:00', null, null);
+BEGIN;
+INSERT INTO `organize` VALUES ('10000223', '1', '001.02', '100000008', '办公室', 'Department', '', '', '', null, null, null, '', '', b'1', '10000460', '', b'1', 'Administrator', '2009-02-20 18:49:00', null, null);
+COMMIT;
 
 -- ----------------------------
--- Table structure for role
+--  Table structure for `role`
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
@@ -212,12 +195,14 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of role
+--  Records of `role`
 -- ----------------------------
-INSERT INTO `role` VALUES ('1', '管理员', '管理员', '\0', '2017-03-14 16:29:59', '2017-06-30 16:20:11', '1');
+BEGIN;
+INSERT INTO `role` VALUES ('1', '管理员', '管理员', b'0', '2017-03-14 16:29:59', '2017-06-30 16:20:11', '1');
+COMMIT;
 
 -- ----------------------------
--- Table structure for roledatarule
+--  Table structure for `roledatarule`
 -- ----------------------------
 DROP TABLE IF EXISTS `roledatarule`;
 CREATE TABLE `roledatarule` (
@@ -232,11 +217,7 @@ CREATE TABLE `roledatarule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='角色数据规则';
 
 -- ----------------------------
--- Records of roledatarule
--- ----------------------------
-
--- ----------------------------
--- Table structure for rolemenu
+--  Table structure for `rolemenu`
 -- ----------------------------
 DROP TABLE IF EXISTS `rolemenu`;
 CREATE TABLE `rolemenu` (
@@ -244,23 +225,17 @@ CREATE TABLE `rolemenu` (
   `RoleId` int(11) DEFAULT NULL,
   `MenuId` int(11) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of rolemenu
+--  Records of `rolemenu`
 -- ----------------------------
-INSERT INTO `rolemenu` VALUES ('1', '1', '1');
-INSERT INTO `rolemenu` VALUES ('2', '1', '2');
-INSERT INTO `rolemenu` VALUES ('3', '1', '3');
-INSERT INTO `rolemenu` VALUES ('4', '1', '4');
-INSERT INTO `rolemenu` VALUES ('5', '1', '5');
-INSERT INTO `rolemenu` VALUES ('6', '1', '6');
-INSERT INTO `rolemenu` VALUES ('7', '1', '7');
-INSERT INTO `rolemenu` VALUES ('8', '1', '8');
-INSERT INTO `rolemenu` VALUES ('9', '1', '9');
+BEGIN;
+INSERT INTO `rolemenu` VALUES ('18', '1', '1'), ('19', '1', '2'), ('20', '1', '3'), ('21', '1', '4'), ('22', '1', '5'), ('23', '1', '6'), ('24', '1', '7'), ('25', '1', '8'), ('26', '1', '9');
+COMMIT;
 
 -- ----------------------------
--- Table structure for rolemenuoperation
+--  Table structure for `rolemenuoperation`
 -- ----------------------------
 DROP TABLE IF EXISTS `rolemenuoperation`;
 CREATE TABLE `rolemenuoperation` (
@@ -273,11 +248,7 @@ CREATE TABLE `rolemenuoperation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of rolemenuoperation
--- ----------------------------
-
--- ----------------------------
--- Table structure for roleuser
+--  Table structure for `roleuser`
 -- ----------------------------
 DROP TABLE IF EXISTS `roleuser`;
 CREATE TABLE `roleuser` (
@@ -288,12 +259,14 @@ CREATE TABLE `roleuser` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of roleuser
+--  Records of `roleuser`
 -- ----------------------------
+BEGIN;
 INSERT INTO `roleuser` VALUES ('1', '1', '1');
+COMMIT;
 
 -- ----------------------------
--- Table structure for user
+--  Table structure for `user`
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -322,12 +295,14 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of user
+--  Records of `user`
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', '1', '1', null, null, 'admin', '123456', '管理员', '', '', '', '2017-09-21 14:24:30', '2017-06-30 16:20:04', '\0', '38816', '2017-06-06', '1', '1', '1', '资质', '1');
+BEGIN;
+INSERT INTO `user` VALUES ('1', '1', '1', null, null, 'admin', '123456', '管理员', '', '', '', '2017-09-21 14:24:30', '2017-06-30 16:20:04', b'0', '38816', '2017-06-06', '1', '1', '1', '资质', '1');
+COMMIT;
 
 -- ----------------------------
--- Table structure for userext
+--  Table structure for `userext`
 -- ----------------------------
 DROP TABLE IF EXISTS `userext`;
 CREATE TABLE `userext` (
@@ -356,11 +331,7 @@ CREATE TABLE `userext` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of userext
--- ----------------------------
-
--- ----------------------------
--- Table structure for userfavorite
+--  Table structure for `userfavorite`
 -- ----------------------------
 DROP TABLE IF EXISTS `userfavorite`;
 CREATE TABLE `userfavorite` (
@@ -372,11 +343,7 @@ CREATE TABLE `userfavorite` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of userfavorite
--- ----------------------------
-
--- ----------------------------
--- Table structure for usermenu
+--  Table structure for `usermenu`
 -- ----------------------------
 DROP TABLE IF EXISTS `usermenu`;
 CREATE TABLE `usermenu` (
@@ -388,11 +355,7 @@ CREATE TABLE `usermenu` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of usermenu
--- ----------------------------
-
--- ----------------------------
--- Table structure for usermenuoperation
+--  Table structure for `usermenuoperation`
 -- ----------------------------
 DROP TABLE IF EXISTS `usermenuoperation`;
 CREATE TABLE `usermenuoperation` (
@@ -405,6 +368,4 @@ CREATE TABLE `usermenuoperation` (
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of usermenuoperation
--- ----------------------------
+SET FOREIGN_KEY_CHECKS = 1;
