@@ -10,8 +10,8 @@ mybatis:
     configLocation: classpath:mybatis-config.xml
     type-aliases-package: cn.xtits.iformula.entity
 
-REST_XTP_URL: http://localhost/xtp-api
-APP_TOKEN: IUzIwMTUyN1NiJ9NDkDkUciOiJeyJG1O1cGhd
+REST_XTP_URL: http://localhost:8088/xtp-api
+APP_TOKEN: CJzdWIiOiJ7XCJ1c2VySDkwMTUeyJhbGciOiJI
 TTL_MILLIS: 31536000000
 logging:
   level: debug
