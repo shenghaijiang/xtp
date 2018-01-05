@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/xtp?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: '!QQ1234567890-=q'
+    driver-class-name: com.mysql.jdbc.Driver
+# MyBatis
+mybatis:
+    mapperLocations: classpath:mapper/*.xml
+    configLocation: classpath:mybatis-config.xml
+    type-aliases-package: cn.xtits.iformula.entity
+
+REST_XTP_URL: http://localhost/xtp-api
+APP_TOKEN: IUzIwMTUyN1NiJ9NDkDkUciOiJeyJG1O1cGhd
+TTL_MILLIS: 31536000000
+logging:
+  level: debug
