@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
     public int insert(User record) {
         int count = mapper.insert(record);
         //更新的时候数据库不同步，xtp记录误删除同步
-        if(record.getAppUserId() != null && record.getAppUserId() > 0){
+        if (record.getAppUserId() != null && record.getAppUserId() > 0) {
 
-        }else {
+        } else {
             record.setAppUserId(record.getId());
             mapper.updateByPrimaryKey(record);
         }
@@ -103,8 +103,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> listUserByRoleId(Integer roleId) {
-        return mapper.listUserByRoleId(roleId);
+    public List<User> listUserByRoleId(List<Integer> roleIds) {
+        if (roleIds != null && roleIds.size() < 1) {
+            roleIds.add(-1000);
+        }
+        return mapper.listUserByRoleId(roleIds);
     }
 
 }

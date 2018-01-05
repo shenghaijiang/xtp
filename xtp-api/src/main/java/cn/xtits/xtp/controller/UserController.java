@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -202,8 +203,13 @@ public class UserController extends BaseController {
     @RequestMapping(value = "listUserByRoleId")
     @ResponseBody
     public AjaxResult listUserByRoleId(
-            @RequestParam(value = "roleId", required = false) Integer roleId) {
-        List<User> list = service.listUserByRoleId(roleId);
+            @RequestParam(value = "roleId", required = false) String roleId) {
+        List<Integer> roleIds = new ArrayList<>();
+        String[] split = roleId.split(",");
+        for (String s : split) {
+            roleIds.add(Integer.parseInt(s));
+        }
+        List<User> list = service.listUserByRoleId(roleIds);
         Pagination<User> pList = new Pagination<>(list);
         return new AjaxResult(pList);
     }
