@@ -5,7 +5,7 @@
   "author": "xtits.cn",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "node build/dev-server.js",
     "start": "npm run dev",
     "build": "node build/build.js"
   },
@@ -65,7 +65,7 @@
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
-    "copy-webpack-plugin":"^4.3.1",
+    "copy-webpack-plugin": "^4.3.1",
     "webpack-hot-middleware": "^2.18.0",
     "webpack-merge": "^4.1.0",
     "friendly-errors-webpack-plugin": "^1.6.1"
