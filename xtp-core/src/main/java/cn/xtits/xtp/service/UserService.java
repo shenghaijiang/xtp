@@ -25,5 +25,5 @@ public interface UserService {
 
     User getUserByAppUserId(Integer appUserId, Integer appId);
 
-    List<User> listUserByRoleId( @Param("roleId") Integer roleId);
+    List<User> listUserByRoleId(List<Integer> roleIds);
 }

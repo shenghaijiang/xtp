@@ -10,14 +10,18 @@
         where AppUserId = #{appUserId,jdbcType=INTEGER} and AppId = #{appId,jdbcType=INTEGER}
     </select>
 
-    <select id="listUserByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="listUserByRoleId" resultMap="BaseResultMap">
 
         select * from `user`
         where Id in
         (
-        select userId from `roleuser`
-        where roleId = #{roleId,jdbcType=INTEGER}
-        ) and deleteflag=0
+            select userId from `roleuser`
+            where roleId in
+            <foreach collection="roleIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and deleteflag=0
+        )
     </select>
 
 </mapper>

@@ -9,9 +9,13 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xtp-api</artifactId>
     <version>2.0.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>xtp-api</name>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -27,4 +31,12 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

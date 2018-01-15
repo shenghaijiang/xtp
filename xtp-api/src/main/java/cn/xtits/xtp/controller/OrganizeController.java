@@ -9,6 +9,7 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.OrganizeService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,12 +58,16 @@ public class OrganizeController {
     @RequestMapping(value = "listOrganize")
     @ResponseBody
     public AjaxResult listOrganize(
+            @RequestParam(value = "parentId", required = false) String parentId,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
         OrganizeExample example = new OrganizeExample();
         example.setPageIndex(pageIndex);
         example.setPageSize(pageSize);
         OrganizeExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotBlank(parentId)){
+            criteria.andParentIdEqualTo(parentId);
+        }
         List<Organize> list = service.listByExample(example);
         Pagination<Organize> pList = new Pagination<>(example, list, example.getCount());
         return new AjaxResult(pList);
