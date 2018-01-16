@@ -174,7 +174,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import {AppAPI,RoleAPI,MenuAPI,MenuOperatorAPI,RoleMenuOperatorAPI,RoleMenuAPI,RoleDataRuleAPI} from '../../api/api';
+    import {AppAPI,RoleAPI,MenuAPI,MenuOperationAPI,RoleMenuOperationAPI,RoleMenuAPI,RoleDataRuleAPI} from '../../api/api';
 
     export default {
         name:'XTRoleDataRule',
@@ -227,7 +227,7 @@
                 item.checked=!item.checked;
                 if(item.checked==true){
                     let params={data:JSON.stringify({roleId:_this.addForm.roleId,menuId:_this.addForm.menuId,menuOperationId:item.id})};
-                    RoleMenuOperatorAPI.insertRoleMenuOperation(params).then(function (res) {
+                    RoleMenuOperationAPI.insertRoleMenuOperation(params).then(function (res) {
                         if(res.data.code==1){
                         }else{
                             _this.$message({
@@ -240,7 +240,7 @@
                         }
                     })
                 }else{
-                    RoleMenuOperatorAPI.deleteRoleMenuOperation({id:item.roleMenuOperation}).then(function (res) {
+                    RoleMenuOperationAPI.deleteRoleMenuOperation({id:item.roleMenuOperation}).then(function (res) {
                         if(res.data.code==1){
                         }else{
                             _this.$message({
@@ -295,7 +295,7 @@
             getMenuOperatorList(params) {
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    MenuOperatorAPI.listMenuOperation(params).then(res => {
+                    MenuOperationAPI.listMenuAllOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })
@@ -304,7 +304,7 @@
             getMenuOperationSelectedList(params){
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    RoleMenuOperatorAPI.listRoleMenuOperation(params).then(res => {
+                    RoleMenuOperationAPI.listRoleMenuOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })

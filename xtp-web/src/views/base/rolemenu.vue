@@ -65,7 +65,7 @@
     </section>
 </template>
 <script>
-    import {MenuAPI, RoleAPI, MenuOperatorAPI, RoleMenuOperatorAPI,RoleMenuAPI} from '../../api/api';
+    import {MenuAPI, RoleAPI, MenuOperationAPI, RoleMenuOperationAPI,RoleMenuAPI} from '../../api/api';
     export default{
         data() {
             return {

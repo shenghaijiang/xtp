@@ -58,7 +58,7 @@
     </section>
 </template>
 <script>
-    import {MenuOperatorAPI, getAllIcons} from '../../api/api';
+    import {MenuOperationAPI, getAllIcons} from '../../api/api';
     import {CodeChange, MessageBox} from '../../common/js/util'
     import search from '../../components/search.vue'
     export default{
@@ -124,7 +124,7 @@
             //获取菜单按钮列表
             getDataList() {
                 let _self = this;
-                MenuOperatorAPI.listMenuOperation({menuId: _self.menuId, pageIndex: 1, pageSize: 999999}).then(res => {
+                MenuOperationAPI.listMenuOperation({menuId: _self.menuId, pageIndex: 1, pageSize: 999999}).then(res => {
                     _self.dataList = res.data.data.data;
                 });
             },
@@ -136,7 +136,7 @@
                 }).then(function () {
                     _this.listLoading = true;
                     let para = {id: row.id};
-                    MenuOperatorAPI.deleteMenuOperation(para).then(function (res) {
+                    MenuOperationAPI.deleteMenuOperation(para).then(function (res) {
                         if (res.data.code == 1) {
                             _this.$message({
                                 message: '删除成功',
@@ -173,8 +173,7 @@
                             //NProgress.start();
                             let para = Object.assign({}, this.addForm);
                             para.menuId=this.menuId;
-                            console.log(para);
-                            MenuOperatorAPI.insertMenuOperation(para).then((res) => {
+                            MenuOperationAPI.insertMenuOperation(para).then((res) => {
                                 this.addLoading = false;
                                 //NProgress.done();
                                 if (res.data.code == 1) {
