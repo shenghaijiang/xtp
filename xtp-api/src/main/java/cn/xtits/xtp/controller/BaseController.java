@@ -22,7 +22,7 @@ public class BaseController {
 
     public String getAppToken() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getAttribute("appToken").toString();
+        return request.getParameter("appToken").toString();
     }
 
     public Date getDateNow() {
