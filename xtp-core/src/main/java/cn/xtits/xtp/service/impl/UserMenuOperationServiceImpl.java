@@ -7,7 +7,6 @@ import cn.xtits.xtp.mapper.UserMenuOperationMapper;
 import cn.xtits.xtp.service.UserMenuOperationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

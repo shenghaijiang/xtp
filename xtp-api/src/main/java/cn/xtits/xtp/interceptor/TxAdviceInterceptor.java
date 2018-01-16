@@ -1,9 +1,7 @@
 package cn.xtits.xtp.interceptor;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.aop.Advisor;
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
+//import org.aspectj.lang.annotation.Aspect;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +17,7 @@ import java.util.Map;
 /**
  * Created by ShengHaiJiang on 2017/9/13.
  */
-@Aspect
+//@Aspect
 //@Component 事务依然生效
 @Configuration
 public class TxAdviceInterceptor {
@@ -56,11 +54,11 @@ public class TxAdviceInterceptor {
         return txAdvice;
     }
 
-    @Bean
-    public Advisor txAdviceAdvisor() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression(AOP_POINTCUT_EXPRESSION);
-        return new DefaultPointcutAdvisor(pointcut, txAdvice());
-        //return new DefaultPointcutAdvisor(pointcut, txAdvice);
-    }
+//    @Bean
+//    public Advisor txAdviceAdvisor() {
+//        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+//        pointcut.setExpression(AOP_POINTCUT_EXPRESSION);
+//        return new DefaultPointcutAdvisor(pointcut, txAdvice());
+//        //return new DefaultPointcutAdvisor(pointcut, txAdvice);
+//    }
 }

@@ -138,33 +138,40 @@ public class MenuServiceImpl implements MenuService {
 
 
         for (MenuWithOperationDto item : repeatlist) {
-
             MenuOperation e = new MenuOperation();
-            e.setId(item.getOperationId());
-            e.setCode(item.getOperationCoce());
-            e.setName(item.getOperationName());
+            if(item.getOperationId()!=null) {
+                e.setId(item.getOperationId());
+                e.setCode(item.getOperationCoce());
+                e.setName(item.getOperationName());
+            }
             item.setOperationId(null);
             item.setOperationCoce(null);
             item.setOperationName(null);
 
             //TODO 优化 第一个元素处理
-            if (item.getId().equals(0)) {
+            if (temp.getId().equals(0)) {
                 temp = item;
                 temp.setOperationList(new ArrayList<>());
-                temp.getOperationList().add(e);
+                if(e.getId()!=null) {
+                    temp.getOperationList().add(e);
+                }
                 allList.add(temp);
                 continue;
             }
 
-
             if (item.getId().equals(temp.getId())) {
 
-                temp.getOperationList().add(e);
+                if(e.getId()!=null) {
+                    temp.getOperationList().add(e);
+                }
 
             } else {//相同的时候添加选项
                 temp = item;
+                if(e.getId()!=null) {
+                    temp.getOperationList().add(e);
+                }
                 temp.setOperationList(new ArrayList<>());
-                temp.getOperationList().add(e);
+
                 allList.add(temp);
             }
         }

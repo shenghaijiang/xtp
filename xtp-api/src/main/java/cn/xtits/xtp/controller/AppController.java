@@ -9,12 +9,12 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.AppService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -33,7 +33,8 @@ public class AppController {
     @Autowired
     private AppService service;
 
-    @RequestMapping(value = "insertApp", method = RequestMethod.POST)
+    //    @RequiresPermissions({"app:insert"})
+    @RequestMapping(value = "insertApp")
     @ResponseBody
     public AjaxResult insertApp(
             @RequestParam(value = "data", required = false) String data) {
@@ -50,7 +51,8 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteApp", method = RequestMethod.POST)
+    //    @RequiresPermissions({"app:delete"})
+    @RequestMapping(value = "deleteApp")
     @ResponseBody
     public AjaxResult deleteApp(
             @RequestParam(value = "id", required = false) int id) {
@@ -58,7 +60,8 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateApp", method = RequestMethod.POST)
+    //    @RequiresPermissions({"app:update"})
+    @RequestMapping(value = "updateApp")
     @ResponseBody
     public AjaxResult updateApp(
             @RequestParam(value = "data", required = false) String data) {
@@ -75,7 +78,7 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //    @RequiresPermissions({"app:view"})
     @RequestMapping(value = "listApp")
     @ResponseBody
     public AjaxResult listApp(
@@ -83,8 +86,6 @@ public class AppController {
             @RequestParam(value = "code", required = false) String code,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
-        logger.info("192.168.2.111 GET /applistApp 9999 0.3");
-        logger.error("测试",1,2);
         AppExample example = new AppExample();
         example.setPageIndex(pageIndex);
         example.setPageSize(pageSize);

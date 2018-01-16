@@ -18,45 +18,43 @@
   </select>
 
     <select id="listMenuWithOperationByUserId" resultType="cn.xtits.xtp.dto.MenuWithOperationDto">
-    SELECT * from
+    SELECT * FROM
     (
-        SELECT
-        a.id id,a.Code code,a.name name,a.parentId,a.parentFlag,a.URL url,a.Icon icon,
-        b.id operationId, b.Code operationCoce ,b.Name operationName FROM menu a
-        LEFT JOIN menuOperation b on a.id = b.MenuId
-        WHERE a.DeleteFlag=0
-    ) allMenu
-     WHERE id IN
-          (
-            SELECT MenuId FROM
-            (
-            SELECT MenuId FROM roleMenu WHERE RoleId IN (SELECT RoleId FROM roleUser WHERE UserId = #{userId} )
-            and MenuId NOT IN
-            (
-            SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=0
+            SELECT a.id id,a.Code code,a.name name,a.parentId,a.parentFlag,a.URL url,a.Icon icon
+            FROM menu a
+            WHERE a.DeleteFlag=0
+                        AND id IN
+              (
+                SELECT MenuId FROM
+                (
+                SELECT MenuId FROM roleMenu WHERE RoleId IN (SELECT RoleId FROM roleUser WHERE UserId = #{userId} )
+                and MenuId NOT IN
+                (
+                SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=0
+                )
+                UNION ALL
+                SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=1
+                ) haveMenu
+              )
+    ) m LEFT JOIN
+    (
+                  SELECT r.menuid,m.id operationId, m.Code operationCoce ,m.Name operationName FROM roleMenuOperation r
+                    INNER JOIN menuoperation m on  r.MenuOperationId = m.Id
+            WHERE RoleId IN(
+                    SELECT RoleId FROM roleUser WHERE UserId = #{userId}
+                )
+            AND menuoperationid NOT IN(
+                SELECT menuoperationid
+                FROM userMenuOperation WHERE userid = #{userId} AND type = 0
             )
             UNION ALL
-            SELECT MenuId FROM userMenu WHERE UserId=#{userId} and Type=1
-            ) haveMenu
-          )
-    AND
-        (
-        operationid IS NULL OR
-        operationid IN
-        (
-        SELECT MenuOperationId FROM roleMenuOperation
-        WHERE RoleId IN(
-                SELECT RoleId FROM roleUser WHERE UserId = #{userId}
-            )
-        AND menuoperationid NOT IN(
-            SELECT menuoperationid
-            FROM userMenuOperation WHERE userid = #{userId} AND type = 0
-        )
-        UNION ALL
-            SELECT menuoperationid FROM userMenuOperation
-                WHERE userid = #{userId} AND type = 1
-    )
-    )
+                    SELECT r.menuid,m.id operationId, m.Code operationCoce ,m.Name operationName  FROM userMenuOperation r
+                    INNER JOIN menuoperation m ON  r.MenuOperationId = m.Id
+             WHERE userid = #{userId} AND type = 1
+
+
+    ) o ON m.id = o.menuid
+
   </select>
 
     <select id="listMenuUserFavorite" parameterType="cn.xtits.xtp.entity.MenuExample" resultMap="BaseResultMap">

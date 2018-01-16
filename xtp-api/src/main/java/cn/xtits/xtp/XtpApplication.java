@@ -26,31 +26,33 @@ import java.util.List;
 @MapperScan(basePackages = "cn.xtits.xtp.mapper")
 public class XtpApplication extends WebMvcConfigurerAdapter {
 
-	@Value("${APP_TOKEN}")
-	private String APP_TOKEN;
+    @Value("${APP_TOKEN}")
+    private String APP_TOKEN;
 
-	public static void main(String[] args) {
-		SpringApplication.run(XtpApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(XtpApplication.class, args);
+    }
 
-	/**
-	 * 配置拦截器
-	 * @author lance
-	 * @param registry
-	 */
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LoginInterceptor(APP_TOKEN)).addPathPatterns("/**").excludePathPatterns("/user/loginUser*","/Unit/listUnit*");
-		registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns("/**");
-		registry.addInterceptor(new RequestLogInterceptor()).addPathPatterns("/**");
+    /**
+     * 配置拦截器
+     *
+     * @param registry
+     * @author lance
+     */
+    public void addInterceptors(InterceptorRegistry registry) {
+        //registry.addInterceptor(new LoginInterceptor(APP_TOKEN)).addPathPatterns("/**").excludePathPatterns("/user/loginUser*", "/Unit/listUnit*");
+        registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new RequestLogInterceptor()).addPathPatterns("/**");
 
-	}
+    }
 
-	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-		exceptionResolvers.add(new ExceptionHandlerResolver());
-	}
 
-	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-		converters.clear();
-		converters.add(new JsonMessageConverter());
-	}
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        exceptionResolvers.add(new ExceptionHandlerResolver());
+    }
+
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.clear();
+        converters.add(new JsonMessageConverter());
+    }
 }

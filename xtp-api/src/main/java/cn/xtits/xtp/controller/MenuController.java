@@ -350,6 +350,6 @@ public class MenuController extends BaseController {
                 e.printStackTrace();
             }
         }
-        return new AjaxResult(dto);
+        return new AjaxResult(dto,true);
     }
 }

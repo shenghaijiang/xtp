@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -69,7 +70,7 @@ public class MenuOperationController {
         example.setPageSize(pageSize);
         MenuOperationExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
-        if (menuId != null && menuId > 0) {
+        if (menuId != null) {
             criteria.andMenuIdEqualTo(menuId);
         }
         List<MenuOperation> list = service.listByExample(example);
@@ -77,4 +78,27 @@ public class MenuOperationController {
         return new AjaxResult(pList);
     }
 
+    @RequestMapping(value = "listMenuAllOperation")
+    @ResponseBody
+    public AjaxResult listMenuAllOperation(
+            @RequestParam(value = "menuId", required = false) Integer menuId,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
+        MenuOperationExample example = new MenuOperationExample();
+        example.setPageIndex(pageIndex);
+        example.setPageSize(pageSize);
+        MenuOperationExample.Criteria criteria = example.createCriteria();
+        criteria.andDeleteFlagEqualTo(false);
+        if (menuId != null && menuId > 0) {
+            ArrayList<Integer> integers = new ArrayList<>();
+            integers.add(menuId);
+            integers.add(0);
+            criteria.andMenuIdIn(integers);
+        } else if (menuId == 0) {
+            criteria.andMenuIdEqualTo(menuId);
+        }
+        List<MenuOperation> list = service.listByExample(example);
+        Pagination<MenuOperation> pList = new Pagination<>(example, list, example.getCount());
+        return new AjaxResult(pList);
+    }
 }
