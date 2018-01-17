@@ -1,2 +1,4 @@
 
 .idea/
+/xtp-web/node_modules
+/xtp-web/dist

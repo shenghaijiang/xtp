@@ -107,7 +107,7 @@
                                 </el-table-column>
                                 <el-table-column label="操作" width="150">
                                     <template scope="scope">
-                                        <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                                        <el-button type="danger" :disabled="scope.row.menuId==0" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -139,7 +139,7 @@
 
         <el-dialog title="选择图标" v-model="iconVisible" :close-on-click-modal="false">
             <div class="iconbox">
-                <div class="item" v-for="item in allIcon" @click="handleIcon(item)">
+                <div class="item" v-for="item in allIcon" @click="handleIcon(item)" :key="item">
                     <i :class="item"></i>
                 </div>
             </div>
@@ -147,7 +147,7 @@
     </section>
 </template>
 <script>
-    import {AppAPI,MenuOperatorAPI, getAllIcons,MenuAPI} from '../../api/api'
+    import {AppAPI,MenuOperationAPI, getAllIcons,MenuAPI} from '../../api/api'
     import {MessageBox} from '../../common/js/util'
 
     export default{
@@ -230,7 +230,7 @@
                 }).then(function () {
                     _this.listLoading = true;
                     let para = {id: row.id};
-                    MenuOperatorAPI.deleteMenuOperation(para).then(function (res) {
+                    MenuOperationAPI.deleteMenuOperation(para).then(function (res) {
                         if (res.data.code == 1) {
                             _this.$message({
                                 message: '删除成功',
@@ -269,7 +269,7 @@
                         this.$confirm('确认提交吗？', '提示', {}).then(() => {
                             this.addLoading = true;
                             let para = Object.assign({}, this.addForm);
-                            MenuOperatorAPI.insertMenuOperation(para).then((res) => {
+                            MenuOperationAPI.insertMenuOperation(para).then((res) => {
                                 this.addLoading = false;
                                 if (res.data.code == 1) {
                                     this.$message({
@@ -300,7 +300,7 @@
             //获取菜单按钮列表
             getDataList(menuId) {
                 return new Promise((resolve,reject) => {
-                    MenuOperatorAPI.listMenuOperation({menuId: menuId, pageIndex: 1, pageSize: 999999}).then(res => {
+                    MenuOperationAPI.listMenuAllOperation({menuId: menuId, pageIndex: 1, pageSize: 999999}).then(res => {
                         let roleMenuOperationList=[];
                         if(res.data.code==1) roleMenuOperationList = res.data.data.data;
                         resolve(roleMenuOperationList);

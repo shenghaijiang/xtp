@@ -145,7 +145,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import {AppAPI,UserAPI,MenuAPI,MenuOperatorAPI,UserMenuOperationAPI,RoleDataRuleAPI} from '../../api/api';
+    import {AppAPI,UserAPI,MenuAPI,MenuOperationAPI,UserMenuOperationAPI,RoleDataRuleAPI} from '../../api/api';
     import search from '../../components/search.vue'
 
     export default {
@@ -242,7 +242,7 @@
             getMenuOperatorList(params) {
                 let _this = this;
                 return new Promise(function (resolve, reject) {
-                    MenuOperatorAPI.listMenuOperation(params).then(res => {
+                    MenuOperationAPI.listMenuAllOperation(params).then(res => {
                         resolve(res.data.data.data);
                     });
                 })
@@ -363,7 +363,7 @@
                     })
                 _this.menuOperationList=[];
                     _this.getMenuOperationSelectedList({userId: _this.addForm.userId,menuId: _this.addForm.menuId,pageIndex: 1,pageSize: 999999}).then(function (res) {
-                        _this.getMenuOperatorList({menuId: 0,pageIndex: 1,pageSize: 999999}).then(function (datas) {
+                        _this.getMenuOperatorList({menuId: _this.addForm.menuId,pageIndex: 1,pageSize: 999999}).then(function (datas) {
                             let menuOperationList=datas;
                             menuOperationList.map(function (element) {
                                 element.type=-1;

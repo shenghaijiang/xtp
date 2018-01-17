@@ -17,7 +17,7 @@ axios.defaults.transformRequest = [function (data) {
     }
     return ret
 }];
-let base="http://192.168.2.102/xtp-api"
+let base="http://192.168.2.103:5555/xtp-api"
 
 //系统图标库
 export const getAllIcons = () => {
@@ -225,7 +225,7 @@ export const UserMenuAPI={
 }
 
 /*菜单按钮相关API*/
-export const MenuOperatorAPI={
+export const MenuOperationAPI={
     insertMenuOperation:(params)=>{
         return axios.post(`${base}/menuOperation/insertMenuOperation`,{data: JSON.stringify(params)});
     },
@@ -234,6 +234,9 @@ export const MenuOperatorAPI={
     },
     listMenuOperation:(params)=>{
         return axios.post(`${base}/menuOperation/listMenuOperation`, params);
+    },
+    listMenuAllOperation:(params)=>{
+        return axios.post(`${base}/menuOperation/listMenuAllOperation`, params);//获取一个菜单设置的所有权限
     },
 };
 
@@ -306,7 +309,7 @@ export const RoleDataRuleAPI={
 };
 
 /*角色菜单按钮相关API*/
-export const RoleMenuOperatorAPI={
+export const RoleMenuOperationAPI={
     insertRoleMenuOperation:params=>{
         return axios.post(`${base}/roleMenuOperation/insertRoleMenuOperation`, params);
     },
