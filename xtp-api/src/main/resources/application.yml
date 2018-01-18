@@ -2,7 +2,7 @@ server:
   port: 8088
 spring:
   profiles:
-    active: test
+    active: gitee
   application:
     name: xtp-api-service
 

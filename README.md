@@ -1,18 +1,24 @@
 # xtp权限系统
+## 演示站点
+- http://139.196.125.197/xtp
+- 用户名:admin 密码:123456
+- 清不要删除菜单,数据定时清理
+
 ## 实现功能
-1. 实现角色分配功能
-2. 实现角色分配功能按钮
-3. 实现数据权限设置
-4. 针对用户单独分配禁止功能
-5. 针对用户单独分配禁止功能按钮
-6. 数据同步功能，方便系统整合
+- 实现角色分配功能
+- 实现角色分配功能权限
+- 实现角色数据权限设置
+- 实现用户单独分配功能
+- 实现用户单独分配功能权限
+- 实现用户单独数据权限设置
+- 数据同步功能，方便系统整合
 
 ## 后端部署
 - 创建数据库git-xtp
-- 导入 xtp.sql createUser.sql 两个文件
+- 导入 xtp.sql 文件
 - idea导入项目
 - 修改 application.yml 对应的数据库连接,用户名,密码
-- 运行项目|发布到tomcat ROOT目录
+- 运行项目|java -jar xtp-api.jar --eureka.client.serviceUrl.defaultZone=http://{eureke地址[如果不使用spring cloud方式运行,忽略]}:8761/eureka
 
 ## 前端部署
 - 确保本地安装node.js v4+
@@ -23,12 +29,23 @@
 - $ 修改src/api/api.js中let base=实际后端java接口地址
 
 ## 技术选型
-- 核心框架：Spring Framework 4.3
-- 持久层框架：MyBatis 3.2
-- 数据库mysql
+- 核心框架：Spring cloud Dalston.SR3 ; Spring boot 1.5.9 
+- 安全框架：Shiro
+- 持久层框架：MyBatis
+- 数据库：mysql
 - 数据库连接池：Druid 1.0
 - 日志管理：SLF4J 1.6、Log4j
 - 页面交互：Vue2.x
+
+## 授权示例
+        @RequiresPermissions({"app:insert"})
+        @RequestMapping(value = "insertApp")
+        @ResponseBody
+        public AjaxResult insertApp() {
+            return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
+        }
+        
+- app:对应功能code,insert对应分配的权限code
 
 ## 项目截图
 - 菜单管理
@@ -45,7 +62,7 @@
 ![image](http://shenghaijiang-git.oss-cn-shanghai.aliyuncs.com/xtp/6.png)
 
 ## 后期规划
-TODO
+- 授权查询数据库,大并发下存在性能问题,后期授权整合缓存系统
 
 ## 交流、反馈
 - 网站：http://www.xtits.cn
