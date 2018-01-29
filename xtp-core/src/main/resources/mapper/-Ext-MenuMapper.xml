@@ -14,7 +14,7 @@
         UNION ALL
         SELECT MenuId FROM userMenu where UserId=#{userId} and Type=1
         ) haveMenu
-      ) and DeleteFlag=0
+      ) and DeleteFlag=0 order by parentid, sort
   </select>
 
     <select id="listMenuWithOperationByUserId" resultType="cn.xtits.xtp.dto.MenuWithOperationDto">
