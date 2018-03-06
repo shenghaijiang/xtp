@@ -10,13 +10,16 @@ import java.util.List;
  */
 public interface OrganizeService {
 
-    int deleteByPrimaryKey(Integer ID);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(Organize record);
 
     List<Organize> listByExample(OrganizeExample example);
 
-    Organize getByPrimaryKey(Integer ID);
+    Organize getByPrimaryKey(Integer id);
 
     int updateByPrimaryKey(Organize record);
+
+    int updateByPrimaryKeySelective(Organize record);
+
 }

@@ -176,21 +176,21 @@ public class OrganizeExample extends BaseQuery {
             return criteria;
         }
 
-        public void addCriterion(String condition) {
+        protected void addCriterion(String condition) {
             if (condition == null) {
                 throw new RuntimeException("Value for condition cannot be null");
             }
             criteria.add(new Criterion(condition));
         }
 
-        public void addCriterion(String condition, Object value, String property) {
+        protected void addCriterion(String condition, Object value, String property) {
             if (value == null) {
                 throw new RuntimeException("Value for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value));
         }
 
-        public void addCriterion(String condition, Object value1, Object value2, String property) {
+        protected void addCriterion(String condition, Object value1, Object value2, String property) {
             if (value1 == null || value2 == null) {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
@@ -1477,6 +1477,136 @@ public class OrganizeExample extends BaseQuery {
             return (Criteria) this;
         }
 
+        public Criteria andAccountBookIsNull() {
+            addCriterion("AccountBook is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookIsNotNull() {
+            addCriterion("AccountBook is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookEqualTo(String value) {
+            addCriterion("AccountBook =", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookNotEqualTo(String value) {
+            addCriterion("AccountBook <>", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookGreaterThan(String value) {
+            addCriterion("AccountBook >", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookGreaterThanOrEqualTo(String value) {
+            addCriterion("AccountBook >=", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookLessThan(String value) {
+            addCriterion("AccountBook <", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookLessThanOrEqualTo(String value) {
+            addCriterion("AccountBook <=", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookLike(String value) {
+            addCriterion("AccountBook like", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookNotLike(String value) {
+            addCriterion("AccountBook not like", value, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookIn(List<String> values) {
+            addCriterion("AccountBook in", values, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookNotIn(List<String> values) {
+            addCriterion("AccountBook not in", values, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookBetween(String value1, String value2) {
+            addCriterion("AccountBook between", value1, value2, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookNotBetween(String value1, String value2) {
+            addCriterion("AccountBook not between", value1, value2, "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIsNull() {
+            addCriterion("Level is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIsNotNull() {
+            addCriterion("Level is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelEqualTo(Integer value) {
+            addCriterion("Level =", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotEqualTo(Integer value) {
+            addCriterion("Level <>", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelGreaterThan(Integer value) {
+            addCriterion("Level >", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelGreaterThanOrEqualTo(Integer value) {
+            addCriterion("Level >=", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelLessThan(Integer value) {
+            addCriterion("Level <", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelLessThanOrEqualTo(Integer value) {
+            addCriterion("Level <=", value, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelIn(List<Integer> values) {
+            addCriterion("Level in", values, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotIn(List<Integer> values) {
+            addCriterion("Level not in", values, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelBetween(Integer value1, Integer value2) {
+            addCriterion("Level between", value1, value2, "level");
+            return (Criteria) this;
+        }
+
+        public Criteria andLevelNotBetween(Integer value1, Integer value2) {
+            addCriterion("Level not between", value1, value2, "level");
+            return (Criteria) this;
+        }
+
         public Criteria andModifyDateIsNull() {
             addCriterion("ModifyDate is null");
             return (Criteria) this;
@@ -1534,6 +1664,266 @@ public class OrganizeExample extends BaseQuery {
 
         public Criteria andModifyDateNotBetween(Date value1, Date value2) {
             addCriterion("ModifyDate not between", value1, value2, "modifyDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManIsNull() {
+            addCriterion("MakeBillMan is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManIsNotNull() {
+            addCriterion("MakeBillMan is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManEqualTo(String value) {
+            addCriterion("MakeBillMan =", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManNotEqualTo(String value) {
+            addCriterion("MakeBillMan <>", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManGreaterThan(String value) {
+            addCriterion("MakeBillMan >", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManGreaterThanOrEqualTo(String value) {
+            addCriterion("MakeBillMan >=", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManLessThan(String value) {
+            addCriterion("MakeBillMan <", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManLessThanOrEqualTo(String value) {
+            addCriterion("MakeBillMan <=", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManLike(String value) {
+            addCriterion("MakeBillMan like", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManNotLike(String value) {
+            addCriterion("MakeBillMan not like", value, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManIn(List<String> values) {
+            addCriterion("MakeBillMan in", values, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManNotIn(List<String> values) {
+            addCriterion("MakeBillMan not in", values, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManBetween(String value1, String value2) {
+            addCriterion("MakeBillMan between", value1, value2, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManNotBetween(String value1, String value2) {
+            addCriterion("MakeBillMan not between", value1, value2, "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNull() {
+            addCriterion("CreateDate is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNotNull() {
+            addCriterion("CreateDate is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateEqualTo(Date value) {
+            addCriterion("CreateDate =", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotEqualTo(Date value) {
+            addCriterion("CreateDate <>", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThan(Date value) {
+            addCriterion("CreateDate >", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("CreateDate >=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThan(Date value) {
+            addCriterion("CreateDate <", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThanOrEqualTo(Date value) {
+            addCriterion("CreateDate <=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIn(List<Date> values) {
+            addCriterion("CreateDate in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotIn(List<Date> values) {
+            addCriterion("CreateDate not in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateBetween(Date value1, Date value2) {
+            addCriterion("CreateDate between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotBetween(Date value1, Date value2) {
+            addCriterion("CreateDate not between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierIsNull() {
+            addCriterion("Modifier is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierIsNotNull() {
+            addCriterion("Modifier is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierEqualTo(String value) {
+            addCriterion("Modifier =", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierNotEqualTo(String value) {
+            addCriterion("Modifier <>", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierGreaterThan(String value) {
+            addCriterion("Modifier >", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierGreaterThanOrEqualTo(String value) {
+            addCriterion("Modifier >=", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierLessThan(String value) {
+            addCriterion("Modifier <", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierLessThanOrEqualTo(String value) {
+            addCriterion("Modifier <=", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierLike(String value) {
+            addCriterion("Modifier like", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierNotLike(String value) {
+            addCriterion("Modifier not like", value, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierIn(List<String> values) {
+            addCriterion("Modifier in", values, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierNotIn(List<String> values) {
+            addCriterion("Modifier not in", values, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierBetween(String value1, String value2) {
+            addCriterion("Modifier between", value1, value2, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierNotBetween(String value1, String value2) {
+            addCriterion("Modifier not between", value1, value2, "modifier");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagIsNull() {
+            addCriterion("DeleteFlag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagIsNotNull() {
+            addCriterion("DeleteFlag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagEqualTo(Boolean value) {
+            addCriterion("DeleteFlag =", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagNotEqualTo(Boolean value) {
+            addCriterion("DeleteFlag <>", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagGreaterThan(Boolean value) {
+            addCriterion("DeleteFlag >", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("DeleteFlag >=", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagLessThan(Boolean value) {
+            addCriterion("DeleteFlag <", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagLessThanOrEqualTo(Boolean value) {
+            addCriterion("DeleteFlag <=", value, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagIn(List<Boolean> values) {
+            addCriterion("DeleteFlag in", values, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagNotIn(List<Boolean> values) {
+            addCriterion("DeleteFlag not in", values, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagBetween(Boolean value1, Boolean value2) {
+            addCriterion("DeleteFlag between", value1, value2, "deleteFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteFlagNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("DeleteFlag not between", value1, value2, "deleteFlag");
             return (Criteria) this;
         }
 
@@ -1604,6 +1994,21 @@ public class OrganizeExample extends BaseQuery {
 
         public Criteria andCreateUserIDLikeInsensitive(String value) {
             addCriterion("upper(CreateUserID) like", value.toUpperCase(), "createUserID");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccountBookLikeInsensitive(String value) {
+            addCriterion("upper(AccountBook) like", value.toUpperCase(), "accountBook");
+            return (Criteria) this;
+        }
+
+        public Criteria andMakeBillManLikeInsensitive(String value) {
+            addCriterion("upper(MakeBillMan) like", value.toUpperCase(), "makeBillMan");
+            return (Criteria) this;
+        }
+
+        public Criteria andModifierLikeInsensitive(String value) {
+            addCriterion("upper(Modifier) like", value.toUpperCase(), "modifier");
             return (Criteria) this;
         }
     }

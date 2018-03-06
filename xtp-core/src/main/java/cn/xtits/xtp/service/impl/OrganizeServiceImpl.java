@@ -21,10 +21,9 @@ public class OrganizeServiceImpl implements OrganizeService {
     @Resource
     private OrganizeMapper mapper;
 
-
     @Override
-    public int deleteByPrimaryKey(Integer ID) {
-        return mapper.deleteByPrimaryKey(ID);
+    public int deleteByPrimaryKey(Integer id) {
+        return mapper.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -41,12 +40,18 @@ public class OrganizeServiceImpl implements OrganizeService {
     }
 
     @Override
-    public Organize getByPrimaryKey(Integer ID) {
-        return mapper.selectByPrimaryKey(ID);
+    public Organize getByPrimaryKey(Integer id) {
+        return mapper.selectByPrimaryKey(id);
     }
 
     @Override
     public int updateByPrimaryKey(Organize record) {
         return mapper.updateByPrimaryKey(record);
     }
+
+    @Override
+    public int updateByPrimaryKeySelective(Organize record) {
+        return mapper.updateByPrimaryKeySelective(record);
+    }
+
 }
