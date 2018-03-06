@@ -11,7 +11,6 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.OrganizeService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +76,7 @@ public class OrganizeController extends BaseController {
     @RequestMapping(value = "listOrganize")
     @ResponseBody
     public AjaxResult listOrganize(
-            @RequestParam(value = "parentId", required = false) String parentId,
+            @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
         OrganizeExample example = new OrganizeExample();
@@ -85,12 +84,19 @@ public class OrganizeController extends BaseController {
         example.setPageSize(pageSize);
         OrganizeExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
-        if (StringUtils.isNotBlank(parentId)) {
+        if (parentId != null) {
             criteria.andParentIdEqualTo(parentId);
         }
         List<Organize> list = service.listByExample(example);
         Pagination<Organize> pList = new Pagination<>(example, list, example.getCount());
         return new AjaxResult(pList);
+    }
+
+    @RequestMapping(value = "getOrganize")
+    public AjaxResult getOrganize(
+            @RequestParam(value = "id", required = false) Integer id) {
+        Organize res = service.getByPrimaryKey(id);
+        return new AjaxResult(res);
     }
 
     /**

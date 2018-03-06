@@ -38,7 +38,7 @@ public class Organize implements Serializable {
      *
      * @mbg.generated
      */
-    private String parentId;
+    private Integer parentId;
 
     /**
      *
@@ -326,7 +326,7 @@ public class Organize implements Serializable {
      *
      * @mbg.generated
      */
-    public String getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
@@ -338,8 +338,8 @@ public class Organize implements Serializable {
      *
      * @mbg.generated
      */
-    public void setParentId(String parentId) {
-        this.parentId = parentId == null ? null : parentId.trim();
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     /**

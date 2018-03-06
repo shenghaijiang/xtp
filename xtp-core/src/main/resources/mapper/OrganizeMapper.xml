@@ -9,7 +9,7 @@
     <id column="Id" jdbcType="INTEGER" property="id" />
     <result column="AppId" jdbcType="INTEGER" property="appId" />
     <result column="Code" jdbcType="VARCHAR" property="code" />
-    <result column="ParentId" jdbcType="VARCHAR" property="parentId" />
+    <result column="ParentId" jdbcType="INTEGER" property="parentId" />
     <result column="FullName" jdbcType="VARCHAR" property="fullName" />
     <result column="Category" jdbcType="VARCHAR" property="category" />
     <result column="OuterPhone" jdbcType="VARCHAR" property="outerPhone" />
@@ -162,7 +162,7 @@
       AccountBook, Level, ModifyDate, 
       MakeBillMan, CreateDate, Modifier, 
       DeleteFlag)
-    values (#{appId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
+    values (#{appId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
       #{fullName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{outerPhone,jdbcType=VARCHAR}, 
       #{innerPhone,jdbcType=VARCHAR}, #{fax,jdbcType=VARCHAR}, #{postalcode,jdbcType=VARCHAR}, 
       #{address,jdbcType=VARCHAR}, #{web,jdbcType=VARCHAR}, #{manager,jdbcType=VARCHAR}, 
@@ -266,7 +266,7 @@
         #{code,jdbcType=VARCHAR},
       </if>
       <if test="parentId != null">
-        #{parentId,jdbcType=VARCHAR},
+        #{parentId,jdbcType=INTEGER},
       </if>
       <if test="fullName != null">
         #{fullName,jdbcType=VARCHAR},
@@ -363,7 +363,7 @@
         Code = #{record.code,jdbcType=VARCHAR},
       </if>
       <if test="record.parentId != null">
-        ParentId = #{record.parentId,jdbcType=VARCHAR},
+        ParentId = #{record.parentId,jdbcType=INTEGER},
       </if>
       <if test="record.fullName != null">
         FullName = #{record.fullName,jdbcType=VARCHAR},
@@ -445,7 +445,7 @@
     set Id = #{record.id,jdbcType=INTEGER},
       AppId = #{record.appId,jdbcType=INTEGER},
       Code = #{record.code,jdbcType=VARCHAR},
-      ParentId = #{record.parentId,jdbcType=VARCHAR},
+      ParentId = #{record.parentId,jdbcType=INTEGER},
       FullName = #{record.fullName,jdbcType=VARCHAR},
       Category = #{record.category,jdbcType=VARCHAR},
       OuterPhone = #{record.outerPhone,jdbcType=VARCHAR},
@@ -486,7 +486,7 @@
         Code = #{code,jdbcType=VARCHAR},
       </if>
       <if test="parentId != null">
-        ParentId = #{parentId,jdbcType=VARCHAR},
+        ParentId = #{parentId,jdbcType=INTEGER},
       </if>
       <if test="fullName != null">
         FullName = #{fullName,jdbcType=VARCHAR},
@@ -565,7 +565,7 @@
     update `organize`
     set AppId = #{appId,jdbcType=INTEGER},
       Code = #{code,jdbcType=VARCHAR},
-      ParentId = #{parentId,jdbcType=VARCHAR},
+      ParentId = #{parentId,jdbcType=INTEGER},
       FullName = #{fullName,jdbcType=VARCHAR},
       Category = #{category,jdbcType=VARCHAR},
       OuterPhone = #{outerPhone,jdbcType=VARCHAR},

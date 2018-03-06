@@ -397,62 +397,52 @@ public class OrganizeExample extends BaseQuery {
             return (Criteria) this;
         }
 
-        public Criteria andParentIdEqualTo(String value) {
+        public Criteria andParentIdEqualTo(Integer value) {
             addCriterion("ParentId =", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdNotEqualTo(String value) {
+        public Criteria andParentIdNotEqualTo(Integer value) {
             addCriterion("ParentId <>", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdGreaterThan(String value) {
+        public Criteria andParentIdGreaterThan(Integer value) {
             addCriterion("ParentId >", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdGreaterThanOrEqualTo(String value) {
+        public Criteria andParentIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("ParentId >=", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdLessThan(String value) {
+        public Criteria andParentIdLessThan(Integer value) {
             addCriterion("ParentId <", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdLessThanOrEqualTo(String value) {
+        public Criteria andParentIdLessThanOrEqualTo(Integer value) {
             addCriterion("ParentId <=", value, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdLike(String value) {
-            addCriterion("ParentId like", value, "parentId");
-            return (Criteria) this;
-        }
-
-        public Criteria andParentIdNotLike(String value) {
-            addCriterion("ParentId not like", value, "parentId");
-            return (Criteria) this;
-        }
-
-        public Criteria andParentIdIn(List<String> values) {
+        public Criteria andParentIdIn(List<Integer> values) {
             addCriterion("ParentId in", values, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdNotIn(List<String> values) {
+        public Criteria andParentIdNotIn(List<Integer> values) {
             addCriterion("ParentId not in", values, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdBetween(String value1, String value2) {
+        public Criteria andParentIdBetween(Integer value1, Integer value2) {
             addCriterion("ParentId between", value1, value2, "parentId");
             return (Criteria) this;
         }
 
-        public Criteria andParentIdNotBetween(String value1, String value2) {
+        public Criteria andParentIdNotBetween(Integer value1, Integer value2) {
             addCriterion("ParentId not between", value1, value2, "parentId");
             return (Criteria) this;
         }
@@ -1929,11 +1919,6 @@ public class OrganizeExample extends BaseQuery {
 
         public Criteria andCodeLikeInsensitive(String value) {
             addCriterion("upper(Code) like", value.toUpperCase(), "code");
-            return (Criteria) this;
-        }
-
-        public Criteria andParentIdLikeInsensitive(String value) {
-            addCriterion("upper(ParentId) like", value.toUpperCase(), "parentId");
             return (Criteria) this;
         }
 
