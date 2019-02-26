@@ -1,13 +1,15 @@
 package cn.xtits.xtp.shiro;
 
-import cn.xtits.xtf.common.utils.JsonUtil;
-import cn.xtits.xtf.common.utils.JwtUtil;
 import cn.xtits.xtp.config.GlobalValue;
 import cn.xtits.xtp.interceptor.LoginToken;
+import cn.xtits.xtf.common.utils.JsonUtil;
+import cn.xtits.xtf.common.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -22,11 +24,23 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    private StringRedisTemplate template;
+
+    public JWTFilter(StringRedisTemplate template) {
+        this.template = template;
+    }
+
     /**
      * 对跨域提供支持
      */
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
 
         if (!GlobalValue.oauth && request.getParameter("oauth") == null) {
             return true;
@@ -40,6 +54,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         }
 
         if (auth == null) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
@@ -48,23 +63,38 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             claims = JwtUtil.parseJWT(auth);
             Date expirationDate = claims.getExpiration();
             LoginToken t = JsonUtil.fromJson(claims.getSubject(), LoginToken.class);
+
+            String key = "jwt:" + String.valueOf(t.getUserId());
+            ValueOperations<String, String> ops = template.opsForValue();
+
+            //redis可用時，通過
+            try {
+                if (template.hasKey(key)) {
+                    String jwt = ops.get(key);
+                    if (jwt.equals(auth)) {
+
+                    } else {
+                        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        return false;
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+
             request.setAttribute("appToken", t.getAppToken());
             request.setAttribute("userId", t.getUserId());
             request.setAttribute("userName", t.getUserName());
             if (expirationDate.before(new Date())) {
-
+                httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
         } catch (Exception e) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
         // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
         if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
             httpServletResponse.setStatus(HttpStatus.OK.value());

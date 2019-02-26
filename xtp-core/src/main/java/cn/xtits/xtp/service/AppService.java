@@ -13,6 +13,8 @@ public interface AppService {
 
     App getAppByToken(String token);
 
+    App getAppByCode(String code);
+
     int deleteByPrimaryKey(Integer ID);
 
     int insert(App record);

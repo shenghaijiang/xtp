@@ -1,4 +1,8 @@
-
-.idea/
-/xtp-web/node_modules
-/xtp-web/dist
+application-test.yml
+*.iml
+.idea
+.DS_Store
+target
+/dist/
+.svn
+.vs

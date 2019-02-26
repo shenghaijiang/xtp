@@ -13,6 +13,7 @@ import cn.xtits.xtp.service.MenuService;
 import cn.xtits.xtp.service.RoleMenuService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +36,9 @@ public class RoleMenuController {
     @Autowired
     private MenuService menuService;
 
+    //@RequiresPermissions({"role-menu:insert"})
     @Deprecated
-    @RequestMapping(value = "insertRoleMenu", method = RequestMethod.POST)
+    @RequestMapping(value = "insertRoleMenu")
     @ResponseBody
     public AjaxResult insertRoleMenu(
             @RequestParam(value = "data", required = false) String data) {
@@ -45,8 +47,9 @@ public class RoleMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"role-menu:delete"})
     @Deprecated
-    @RequestMapping(value = "deleteRoleMenu", method = RequestMethod.POST)
+    @RequestMapping(value = "deleteRoleMenu")
     @ResponseBody
     public AjaxResult deleteRoleMenu(
             @RequestParam(value = "id", required = false) int id) {
@@ -54,7 +57,8 @@ public class RoleMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateRoleMenu", method = RequestMethod.POST)
+    //@RequiresPermissions({"role-menu:update"})
+    @RequestMapping(value = "updateRoleMenu")
     @ResponseBody
     public AjaxResult updateRoleMenu(
             @RequestParam(value = "roleId") Integer roleId,
@@ -63,6 +67,7 @@ public class RoleMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"role-menu:list"})
     @RequestMapping(value = "listRoleMenu")
     @ResponseBody
     public AjaxResult listRoleMenu(

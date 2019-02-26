@@ -12,13 +12,13 @@ import java.util.List;
  */
 public class OrganizeDto extends Organize {
 
-    private List<OrganizeDto> childrenList;
+    private List<OrganizeDto> children;
 
-    public List<OrganizeDto> getChildrenList() {
-        return childrenList;
+    public List<OrganizeDto> getChildren() {
+        return children;
     }
 
-    public void setChildrenList(List<OrganizeDto> childrenList) {
-        this.childrenList = childrenList;
+    public void setChildren(List<OrganizeDto> children) {
+        this.children = children;
     }
 }

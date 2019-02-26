@@ -11,6 +11,7 @@ import cn.xtits.xtp.service.RoleMenuOperationService;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,17 +30,19 @@ public class RoleMenuOperationController {
     @Autowired
     private RoleMenuOperationService service;
 
-    @RequestMapping(value = "insertRoleMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"role-menu-operation:insert"})
+    @RequestMapping(value = "insertRoleMenuOperation")
     @ResponseBody
     public AjaxResult insertRoleMenuOperation(
             @RequestParam(value = "data", required = false) String data) {
         RoleMenuOperation record = JsonUtil.fromJson(data, RoleMenuOperation.class);
         //Integer	menuOperationId = record.getMenuOperationId();
         service.insert(record);
-        return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
+        return new AjaxResult(ErrorCodeEnums.NO_ERROR.value, "", record);
     }
 
-    @RequestMapping(value = "deleteRoleMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"role-menu-operation:delete"})
+    @RequestMapping(value = "deleteRoleMenuOperation")
     @ResponseBody
     public AjaxResult deleteRoleMenuOperation(
             @RequestParam(value = "id", required = false) int id) {
@@ -47,7 +50,8 @@ public class RoleMenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateRoleMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"role-menu-operation:update"})
+    @RequestMapping(value = "updateRoleMenuOperation")
     @ResponseBody
     public AjaxResult updateRoleMenuOperation(
             @RequestParam(value = "roleId") Integer roleId,
@@ -58,7 +62,7 @@ public class RoleMenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"role-menu-operation:list"})
     @RequestMapping(value = "listRoleMenuOperation")
     @ResponseBody
     public AjaxResult listRoleMenuOperation(

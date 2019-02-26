@@ -9,4 +9,12 @@
         where token = #{token,jdbcType=VARCHAR}
     </select>
 
+    <select id="getAppByCode" resultMap="BaseResultMap">
+
+        select
+        <include refid="Base_Column_List"/>
+        from `app`
+        where code = #{code,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

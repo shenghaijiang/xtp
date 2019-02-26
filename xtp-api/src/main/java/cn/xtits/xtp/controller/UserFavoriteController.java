@@ -10,6 +10,7 @@ import cn.xtits.xtp.service.UserFavoriteService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,8 @@ public class UserFavoriteController {
     @Autowired
     private UserFavoriteService service;
 
-    @RequestMapping(value = "insertUserFavorite", method = RequestMethod.POST)
+    @RequiresPermissions({"user-favorite:insert"})
+    @RequestMapping(value = "insertUserFavorite")
     @ResponseBody
     public AjaxResult insertUserFavorite(
             @RequestParam(value = "data", required = false) String data) {
@@ -37,7 +39,8 @@ public class UserFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteUserFavorite", method = RequestMethod.POST)
+    @RequiresPermissions({"user-favorite:delete"})
+    @RequestMapping(value = "deleteUserFavorite")
     @ResponseBody
     public AjaxResult deleteUserFavorite(
             @RequestParam(value = "id", required = false) int id) {
@@ -45,7 +48,8 @@ public class UserFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateUserFavorite", method = RequestMethod.POST)
+    @RequiresPermissions({"user-favorite:update"})
+    @RequestMapping(value = "updateUserFavorite")
     @ResponseBody
     public AjaxResult updateUserFavorite(
             @RequestParam(value = "userId") Integer userId,
@@ -58,6 +62,7 @@ public class UserFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"user-favorite:list"})
     @RequestMapping(value = "listUserFavorite")
     @ResponseBody
     public AjaxResult listUserFavorite(

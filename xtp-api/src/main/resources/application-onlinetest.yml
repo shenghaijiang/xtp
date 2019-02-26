@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:mysql://10.10.3.11/xtp?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: js
+    password: Gd81dwPBnuoKYFzd
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 10.10.3.12
+    port: 6379
+    database: 0
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 500
+      min-idle: 0
+#xtp:
+REST_XTP_URL:  http://10.10.3.12:5555/xtp-api
+APP_TOKEN:  CJzdWIiOiJ7XCJ1c2VySDkwMTUeyJhbGciOiJI
+TTL_MILLIS:  864000000
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.2.103:8761/eureka/

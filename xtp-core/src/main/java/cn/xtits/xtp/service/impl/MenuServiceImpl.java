@@ -136,13 +136,13 @@ public class MenuServiceImpl implements MenuService {
         MenuWithOperationDto temp = new MenuWithOperationDto();
         temp.setId(0);
 
-
         for (MenuWithOperationDto item : repeatlist) {
-            MenuOperation e = new MenuOperation();
-            if(item.getOperationId()!=null) {
-                e.setId(item.getOperationId());
-                e.setCode(item.getOperationCoce());
-                e.setName(item.getOperationName());
+            //是否有按钮权限
+            MenuOperation menuOperation = new MenuOperation();
+            if (item.getOperationId() != null) {
+                menuOperation.setId(item.getOperationId());
+                menuOperation.setCode(item.getOperationCoce());
+                menuOperation.setName(item.getOperationName());
             }
             item.setOperationId(null);
             item.setOperationCoce(null);
@@ -152,28 +152,31 @@ public class MenuServiceImpl implements MenuService {
             if (temp.getId().equals(0)) {
                 temp = item;
                 temp.setOperationList(new ArrayList<>());
-                if(e.getId()!=null) {
-                    temp.getOperationList().add(e);
+                if (menuOperation.getId() != null) {
+                    temp.getOperationList().add(menuOperation);
                 }
                 allList.add(temp);
                 continue;
             }
-
+            //相同的时候添加选项
             if (item.getId().equals(temp.getId())) {
 
-                if(e.getId()!=null) {
-                    temp.getOperationList().add(e);
+                if (menuOperation.getId() != null) {
+                    if (temp.getOperationList() == null) {
+                        temp.setOperationList(new ArrayList<>());
+                    }
+                    temp.getOperationList().add(menuOperation);
                 }
-
-            } else {//相同的时候添加选项
+            //不相同的时候添加菜单
+            } else {
                 temp = item;
-                if(e.getId()!=null) {
-                    temp.getOperationList().add(e);
-                }
                 temp.setOperationList(new ArrayList<>());
-
+                if (menuOperation.getId() != null) {
+                    temp.getOperationList().add(menuOperation);
+                }
                 allList.add(temp);
             }
+
         }
 
         dto.setAllMenu(allList);

@@ -9,6 +9,7 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.MenuOperationService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,8 @@ public class MenuOperationController {
     @Autowired
     private MenuOperationService service;
 
-    @RequestMapping(value = "insertMenuOperation", method = RequestMethod.POST)
+    @RequiresPermissions({"menu-operation:insert"})
+    @RequestMapping(value = "insertMenuOperation")
     @ResponseBody
     public AjaxResult insertMenuOperation(
             @RequestParam(value = "data", required = false) String data) {
@@ -38,7 +40,8 @@ public class MenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteMenuOperation", method = RequestMethod.POST)
+    @RequiresPermissions({"menu-operation:delete"})
+    @RequestMapping(value = "deleteMenuOperation")
     @ResponseBody
     public AjaxResult deleteMenuOperation(
             @RequestParam(value = "id", required = false) int id) {
@@ -49,7 +52,8 @@ public class MenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateMenuOperation", method = RequestMethod.POST)
+    @RequiresPermissions({"menu-operation:update"})
+    @RequestMapping(value = "updateMenuOperation")
     @ResponseBody
     public AjaxResult updateMenuOperation(
             @RequestParam(value = "data", required = false) String data) {
@@ -58,7 +62,7 @@ public class MenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"menu-operation:list"})
     @RequestMapping(value = "listMenuOperation")
     @ResponseBody
     public AjaxResult listMenuOperation(
@@ -78,6 +82,7 @@ public class MenuOperationController {
         return new AjaxResult(pList);
     }
 
+    //@RequiresPermissions({"menu-operation:list"})
     @RequestMapping(value = "listMenuAllOperation")
     @ResponseBody
     public AjaxResult listMenuAllOperation(

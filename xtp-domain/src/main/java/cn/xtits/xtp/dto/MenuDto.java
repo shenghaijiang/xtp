@@ -36,6 +36,8 @@ public class MenuDto {
 
     private List<MenuOperation> operationList;
 
+    private List<MenuDto> children;
+
     public Integer getId() {
         return id;
     }
@@ -138,5 +140,13 @@ public class MenuDto {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public List<MenuDto> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<MenuDto> children) {
+        this.children = children;
     }
 }

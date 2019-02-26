@@ -1,15 +1,15 @@
 server:
-  port: 8088
+  port: 8051
 spring:
   profiles:
-    active: gitee
+    active: test
   application:
     name: xtp-api-service
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://192.168.2.104:8761/eureka/
+# MyBatis
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  configLocation: classpath:mybatis-config.xml
+  type-aliases-package: cn.xtits.xtp.entity
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}

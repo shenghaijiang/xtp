@@ -23,6 +23,8 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import javax.annotation.Resource;
 import java.util.HashSet;
@@ -33,6 +35,8 @@ public class MyRealm extends AuthorizingRealm {
 
     private static final Logger LOGGER = LogManager.getLogger(MyRealm.class);
 
+    @Autowired
+    private StringRedisTemplate template;
 
     @Resource
     private MenuService menuService;
@@ -61,6 +65,7 @@ public class MyRealm extends AuthorizingRealm {
             Claims claims = null;
             try {
                 claims = JwtUtil.parseJWT(principals.toString());
+
 
             } catch (Exception e) {
                 e.printStackTrace();

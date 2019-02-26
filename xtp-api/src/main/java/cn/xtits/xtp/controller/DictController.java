@@ -10,6 +10,7 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.DictService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,8 @@ public class DictController {
     @Autowired
     private DictService service;
 
-    @RequestMapping(value = "insertDict", method = RequestMethod.POST)
+    @RequiresPermissions({"dict:insert"})
+    @RequestMapping(value = "insertDict")
     @ResponseBody
     public AjaxResult insertDict(
             @RequestParam(value = "data", required = false) String data) {
@@ -40,7 +42,8 @@ public class DictController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteDict", method = RequestMethod.POST)
+    @RequiresPermissions({"dict:delete"})
+    @RequestMapping(value = "deleteDict")
     @ResponseBody
     public AjaxResult deleteDict(
             @RequestParam(value = "id", required = false) int id) {
@@ -48,7 +51,8 @@ public class DictController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateDict", method = RequestMethod.POST)
+    @RequiresPermissions({"dict:update"})
+    @RequestMapping(value = "updateDict")
     @ResponseBody
     public AjaxResult updateDict(
             @RequestParam(value = "data", required = false) String data) {
@@ -57,7 +61,7 @@ public class DictController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"dict:list"})
     @RequestMapping(value = "listDict")
     @ResponseBody
     public AjaxResult listDict(
@@ -72,12 +76,12 @@ public class DictController {
         return new AjaxResult(pList);
     }
 
+    //@RequiresPermissions({"dict:list"})
     @RequestMapping(value = "listDictType")
     @ResponseBody
     public AjaxResult listDictType() {
         Map<String, String> map = new HashMap<>();
         for (DictTypeEnums e : DictTypeEnums.values()) {
-
             map.put(e.value, e.msg);
         }
         return new AjaxResult(map);

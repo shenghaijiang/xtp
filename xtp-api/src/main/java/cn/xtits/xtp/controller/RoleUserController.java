@@ -9,6 +9,7 @@ import cn.xtits.xtp.service.RoleUserService;
 import cn.xtits.xtp.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,8 @@ public class RoleUserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "updateRoleUser", method = RequestMethod.POST)
+    //@RequiresPermissions({"role-user:update"})
+    @RequestMapping(value = "updateRoleUser")
     @ResponseBody
     public AjaxResult updateRoleUser(
             @RequestParam(value = "userId") Integer userId,
@@ -42,6 +44,7 @@ public class RoleUserController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"role-user:list"})
     @RequestMapping(value = "listRoleUser")
     @ResponseBody
     public AjaxResult listRoleUser(
@@ -55,7 +58,7 @@ public class RoleUserController extends BaseController {
         example.setPageSize(pageSize);
         RoleUserExample.Criteria criteria = example.createCriteria();
 
-        if (appUserId != null && appUserId > 0 ) {
+        if (appUserId != null && appUserId > 0) {
 
             App app = appService.getAppByToken(getAppToken());
             UserExample userExample = new UserExample();
@@ -79,4 +82,5 @@ public class RoleUserController extends BaseController {
         Pagination<RoleUser> pList = new Pagination<>(example, list, example.getCount());
         return new AjaxResult(pList);
     }
+
 }

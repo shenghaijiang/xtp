@@ -11,6 +11,7 @@ import cn.xtits.xtp.service.AppService;
 import cn.xtits.xtp.service.RoleService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -37,14 +38,17 @@ public class RoleController extends BaseController {
     @Autowired
     private RoleService service;
 
-    @RequestMapping(value = "insertRole", method = RequestMethod.POST)
+    @RequiresPermissions({"role:insert"})
+    @RequestMapping(value = "insertRole")
     @ResponseBody
     public AjaxResult insertRole(
             @RequestParam(value = "data", required = false) String data) {
         Role record = JsonUtil.fromJson(data, Role.class);
-        if (APP_TOKEN != getAppToken()) {
-            App app = appService.getAppByToken(getAppToken());
-            record.setAppId(app.getId());
+        if(record.getAppId()==null) {
+            if (APP_TOKEN != getAppToken()) {
+                App app = appService.getAppByToken(getAppToken());
+                record.setAppId(app.getId());
+            }
         }
 
         RoleExample example = new RoleExample();
@@ -54,7 +58,7 @@ public class RoleController extends BaseController {
         if (record.getAppId() != null && record.getAppId() > 0) {
             criteria.andAppIdEqualTo(record.getAppId());
         }
-        criteria.andIdNotEqualTo(record.getId());
+        //criteria.andIdNotEqualTo(record.getId());
         List<Role> list = service.listByExample(example);
         if (list.size() > 0) {
             return new AjaxResult(ErrorCodeEnums.RECORD_EXISTS.value);
@@ -77,7 +81,8 @@ public class RoleController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteRole", method = RequestMethod.POST)
+    @RequiresPermissions({"role:insert"})
+    @RequestMapping(value = "deleteRole")
     @ResponseBody
     public AjaxResult deleteRole(
             @RequestParam(value = "id", required = false) int id) {
@@ -88,7 +93,8 @@ public class RoleController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateRole", method = RequestMethod.POST)
+    @RequiresPermissions({"role:update"})
+    @RequestMapping(value = "updateRole")
     @ResponseBody
     public AjaxResult updateRole(
             @RequestParam(value = "data", required = false) String data) {
@@ -125,7 +131,7 @@ public class RoleController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"role:list"})
     @RequestMapping(value = "listRole")
     @ResponseBody
     public AjaxResult listRole(

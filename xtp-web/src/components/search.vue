@@ -1,12 +1,14 @@
+
 <template>
     <div>
-        <el-col :span="24" class="toolbar xt-search">
+        <el-col :span="24" class="toolbar xt-search search-box" >
             <div class="xt-search-items">
                 <slot></slot>
             </div>
             <div class="xt-search-button">
-                <el-button @click="searchClick">查询</el-button>
-                <el-button type="primary" v-show="addButton" @click="addClick">新增</el-button>
+                <el-button @click="searchClick" type="info" size="small">查询</el-button>
+                <el-button type="primary" v-show="addButton" @click="addClick" size="small">新增</el-button>
+                <slot name="actions"></slot>
             </div>
         </el-col>
     </div>
@@ -14,26 +16,26 @@
 
 <script type="text/ecmascript-6">
     export default{
-        data(){
-            return{
+        data() {
+            return {
 
+            };
+        },
+        props: {
+            addButton: {
+                type: Boolean,
+                default: false
             }
         },
-        props:{
-            addButton:{
-                type:Boolean,
-                default:false
-            }
-        },
-        methods:{
-            searchClick(event){
-                this.$emit('click',event)
+        methods: {
+            searchClick(event) {
+                this.$emit("click", event);
             },
-            addClick(event){
-                this.$emit('addClick',event)
+            addClick(event) {
+                this.$emit("addClick", event);
             }
         }
-    }
+    };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -49,5 +51,6 @@
         display: inline-block;
         width:10rem;
         float: left;
+        margin-top: 4px;
     }
 </style>

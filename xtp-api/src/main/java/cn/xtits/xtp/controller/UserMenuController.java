@@ -10,6 +10,7 @@ import cn.xtits.xtp.service.UserMenuService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,8 @@ public class UserMenuController {
     @Autowired
     private UserMenuService service;
 
-    @RequestMapping(value = "insertUserMenu", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu:insert"})
+    @RequestMapping(value = "insertUserMenu")
     @ResponseBody
     public AjaxResult insertUserMenu(
             @RequestParam(value = "data", required = false) String data) {
@@ -37,7 +39,8 @@ public class UserMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteUserMenu", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu:delete"})
+    @RequestMapping(value = "deleteUserMenu")
     @ResponseBody
     public AjaxResult deleteUserMenu(
             @RequestParam(value = "id", required = false) int id) {
@@ -45,7 +48,8 @@ public class UserMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateUserMenu", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu:update"})
+    @RequestMapping(value = "updateUserMenu")
     @ResponseBody
     public AjaxResult updateUserMenu(
             @RequestParam(value = "userId") Integer userId,
@@ -56,7 +60,7 @@ public class UserMenuController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"user-menu:list"})
     @RequestMapping(value = "listUserMenu")
     @ResponseBody
     public AjaxResult listUserMenu(

@@ -1,57 +1,53 @@
-import Vue from 'vue'
-import App from './App'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
-import VueRouter from 'vue-router'
-// import Vuex from 'vuex'
-// import stores from './vuex/store'
-import routes from './routes'
-import 'font-awesome/css/font-awesome.min.css'
-import 'animate.css/animate.min.css'
-import babelpolyfill from 'babel-polyfill'
+// The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import Vue from "vue";
+import App from "./App";
+import Router from "vue-router";
+import routers from "./router";
+import store from "./store";
+// import './assets/styles/reset.scss'
+import "font-awesome/css/font-awesome.min.css";
+import "./assets/styles/scss/element-variables.scss";
+import ElementUI from "element-ui";
+import components from "./components";
+import "babel-polyfill";
 
-Vue.use(ElementUI)
-Vue.use(VueRouter)
-// Vue.use(Vuex)
+Vue.use(Router);
+Vue.use(ElementUI);
+Vue.use(components);
 
-const router = new VueRouter({
-  routes
-})
+Vue.config.productionTip = false;
 
-// const store=new Vuex.Store({
-//   modules:stores
-// })
+window.document.title = window.SYSTEM_NAME;
+const router = new Router({
+  routes: routers
+});
 
 router.beforeEach((to, from, next) => {
-  //NProgress.start();
-  if (to.path == '/login') {
-
-      sessionStorage.clear();
-      localStorage.clear();
-  }
-  let oauth = localStorage.getItem('isautologin')?(localStorage.getItem("xtit_oauth") || ""):(sessionStorage.getItem("xtit_oauth") || "");
-  if (!oauth && to.path != '/login') {
-    setTimeout(()=>{
-      let oauth = localStorage.getItem('isautologin')?(localStorage.getItem("xtit_oauth") || ""):(sessionStorage.getItem("xtit_oauth") || "");
-      if(oauth==="")
-        next({ path: '/login' })
-      else
-        next();
-    },50);
-  } else {
-    if(to.path != '/')
-      next()
-      else{
-      //location.href="/main.html"
-        next()
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    const getStorageItem = localStorage.getItem(window.TOKEN_KEY) || sessionStorage.getItem(window.TOKEN_KEY) || null;
+    if (!getStorageItem) {
+      next({
+        path: "/login"
+        // query: { redirect: to.fullPath }
+      });
+    } else {
+      next();
     }
+    next();
+  } else {
+    next();
   }
-})
+});
 
-
-var vm=new Vue({
+/* eslint-disable no-new */
+window._Vue = new Vue({
+  el: "#app",
+  store,
   router,
-  // store,
-  render: h => h(App)
-}).$mount('#app')
-
+  template: "<App/>",
+  components: { App },
+  data: {
+    Bus: new Vue()
+  }
+});

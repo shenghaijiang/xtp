@@ -2,6 +2,7 @@ package cn.xtits.xtp.interceptor;
 
 //import org.aspectj.lang.annotation.Aspect;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * Created by ShengHaiJiang on 2017/9/13.
  */
-//@Aspect
+@Aspect
 //@Component 事务依然生效
 @Configuration
 public class TxAdviceInterceptor {

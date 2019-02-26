@@ -14,6 +14,7 @@ import cn.xtits.xtp.service.MenuService;
 import cn.xtits.xtp.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,8 @@ public class MenuController extends BaseController {
     @Autowired
     private MenuService menuService;
 
-    @RequestMapping(value = "insertMenu", method = RequestMethod.POST)
+    @RequiresPermissions({"menu:insert"})
+    @RequestMapping(value = "insertMenu")
     @ResponseBody
     public AjaxResult insertMenu(
             @RequestParam(value = "data", required = false) String data) {
@@ -54,7 +56,7 @@ public class MenuController extends BaseController {
             criteria.andAppIdEqualTo(record.getAppId());
         }
         criteria.andCodeEqualTo(record.getCode());
-        criteria.andIdNotEqualTo(record.getId());
+        //criteria.andIdNotEqualTo(record.getId());
         criteria.andDeleteFlagEqualTo(false);
         List<Menu> list = menuService.listByExample(example);
         if (list.size() > 0) {
@@ -76,7 +78,8 @@ public class MenuController extends BaseController {
         return new AjaxResult(record);
     }
 
-    @RequestMapping(value = "deleteMenu", method = RequestMethod.POST)
+    @RequiresPermissions({"menu:delete"})
+    @RequestMapping(value = "deleteMenu")
     @ResponseBody
     public AjaxResult deleteMenu(
             @RequestParam(value = "id", required = false) int id) {
@@ -98,7 +101,8 @@ public class MenuController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateMenu", method = RequestMethod.POST)
+    @RequiresPermissions({"menu:update"})
+    @RequestMapping(value = "updateMenu")
     @ResponseBody
     public AjaxResult updateMenu(
             @RequestParam(value = "data", required = false) String data) {
@@ -126,7 +130,7 @@ public class MenuController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"menu:list"})
     @RequestMapping(value = "checkExists")
     @ResponseBody
     public AjaxResult checkExists(
@@ -164,6 +168,7 @@ public class MenuController extends BaseController {
         return new AjaxResult(flag);
     }
 
+    //@RequiresPermissions({"menu:list"})
     @RequestMapping(value = "listMenu")
     @ResponseBody
     public AjaxResult listMenu(
@@ -174,9 +179,9 @@ public class MenuController extends BaseController {
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") Integer pageIndex,
             @RequestParam(value = "parentId", required = false, defaultValue = "0") Integer parentId) {
         MenuExample example = new MenuExample();
-        example.setPageIndex(1);
-        example.setPageSize(Integer.MAX_VALUE);
-        example.setOrderByClause("sort asc");
+        example.setPageIndex(pageIndex);
+        example.setPageSize(pageSize);
+        example.setOrderByClause("parentId,sort asc");
         MenuExample.Criteria criteria = example.createCriteria();
         if (name!=null && !"".equals(name)) {
             criteria.andNameLike(name);
@@ -188,8 +193,47 @@ public class MenuController extends BaseController {
 
             criteria.andAppIdEqualTo(appId);
         }
-        if(parentId>0)
+        if(parentId!=null)
         {
+            criteria.andParentIdEqualTo(parentId);
+        }
+        if (!APP_TOKEN.equals(getAppToken())) {
+            App app = appService.getAppByToken(getAppToken());
+            criteria.andAppIdEqualTo(app.getId());
+        }
+        criteria.andDeleteFlagEqualTo(false);
+        List<Menu> list = menuService.listByExample(example);
+
+        Pagination<Menu> pList = new Pagination<>(example, list, example.getCount());
+        return new AjaxResult(pList);
+    }
+
+
+    @RequestMapping(value = "listMenuWithChildren")
+    @ResponseBody
+    public AjaxResult listMenuWithChildren(
+            @RequestParam(value = "appId", required = false) Integer appId,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageIndex", required = false, defaultValue = "1") Integer pageIndex,
+            @RequestParam(value = "parentId", required = false, defaultValue = "0") Integer parentId) {
+        MenuExample example = new MenuExample();
+        example.setPageIndex(1);
+        example.setPageSize(Integer.MAX_VALUE);
+        example.setOrderByClause("parentId,sort asc");
+        MenuExample.Criteria criteria = example.createCriteria();
+        if (name != null && !"".equals(name)) {
+            criteria.andNameLike(name);
+        }
+        if (code != null && !"".equals(code)) {
+            criteria.andCodeLike(code);
+        }
+        if (appId != null && appId > 0) {
+
+            criteria.andAppIdEqualTo(appId);
+        }
+        if (parentId > 0) {
             criteria.andParentIdGreaterThan(0);
         }
         if (!APP_TOKEN.equals(getAppToken())) {
@@ -200,92 +244,81 @@ public class MenuController extends BaseController {
         //criteria.andParentIdEqualTo(parentId);
         List<Menu> list = menuService.listByExample(example);
 
-        List<Menu> rList = new ArrayList<>();
+        List<MenuDto> rList = new ArrayList<>();
 
-        // 最多四级
-        for (Menu item1 : list) {
-            if( (name == null || "".equals(name))&&(code == null || "".equals(code)))
-            {
-                if(item1.getParentId().equals(parentId)){
-                    rList.add(item1);
-                }
-                continue;
+        // 一级
+        for (Menu itemL1 : list) {
+            if (itemL1.getParentId().equals(parentId)) {
+                MenuDto dto = new MenuDto();
+                MapperUtil.copyProperties(itemL1, dto);
+                rList.add(dto);
             }
+        }
 
-            if (!item1.getParentId().equals(parentId)) {
-                if(item1.getParentId().equals(0))
-                {
-                    continue;
+        // 二级
+        for (MenuDto itemL1 : rList) {
+            itemL1.setChildren(new ArrayList<MenuDto>());
+            for (Menu itemL2 : list) {
+                if (itemL2.getParentId().equals(itemL1.getId())) {
+                    MenuDto dto = new MenuDto();
+                    MapperUtil.copyProperties(itemL2, dto);
+                    itemL1.getChildren().add(dto);
                 }
-                Menu item2 =  menuService.getByPrimaryKey(item1.getParentId());
-                if (!item2.getParentId().equals(parentId)) {
-                    if(item2.getParentId().equals(0))
-                    {
-                        continue;
-                    }
-                    Menu item3 = menuService.getByPrimaryKey(item2.getParentId());
-                    if (!item3.getParentId().equals(parentId)) {
-                        if(item3.getParentId().equals(0))
-                        {
-                            continue;
-                        }
-                        Menu item4 = menuService.getByPrimaryKey(item3.getParentId());
-                        if (item4.getParentId().equals(parentId)) {
-                            if(!rList.contains(item4)) {
-                                rList.add(item4);
-                            }
-                        }
-                    } else {
-                        if(!rList.contains(item3)) {
-                            rList.add(item3);
-                        }
-                    }
-                } else {
-                    if(!rList.contains(item2)) {
-                        rList.add(item2);
+            }
+        }
+
+        // 三级
+        for (MenuDto itemL1 : rList) {
+            for (MenuDto itemL2 : itemL1.getChildren()) {
+                itemL2.setChildren(new ArrayList<MenuDto>());
+                for (Menu itemL3 : list) {
+                    if (itemL3.getParentId().equals(itemL2.getId())) {
+                        MenuDto dto = new MenuDto();
+                        MapperUtil.copyProperties(itemL3, dto);
+                        itemL2.getChildren().add(dto);
                     }
                 }
-            } else {
-                if(!rList.contains(item1)) {
-                    rList.add(item1);
+            }
+        }
+
+
+        // 四级
+        for (MenuDto itemL1 : rList) {
+            for (MenuDto itemL2 : itemL1.getChildren()) {
+                for (MenuDto itemL3 : itemL2.getChildren()) {
+                    itemL3.setChildren(new ArrayList<MenuDto>());
+                    for (Menu itemL4 : list) {
+                        if (itemL4.getParentId().equals(itemL3.getId())) {
+                            MenuDto dto = new MenuDto();
+                            MapperUtil.copyProperties(itemL4, dto);
+                            itemL3.getChildren().add(dto);
+                        }
+                    }
                 }
             }
         }
 
         example.setPageIndex(pageIndex);
         example.setPageSize(pageSize);
-        //pageIndex = example.getPageIndex();
-        //pageSize = example.getPageSize();
 
         example.setCount(rList.size());
-        if(rList.size()>(pageIndex-1)*pageSize) {
+        if (rList.size() > (pageIndex - 1) * pageSize) {
 
 
-            if(rList.size() - (pageIndex - 1) * pageSize<pageSize)
-            {
+            if (rList.size() - (pageIndex - 1) * pageSize < pageSize) {
                 rList = rList.subList((pageIndex - 1) * pageSize, rList.size());
-            }
-            else {
+            } else {
                 rList = rList.subList((pageIndex - 1) * pageSize, pageIndex * pageSize);
             }
 
         }
 
 
-        List<MenuDto> myList = new ArrayList<>();
-        for (Menu item : rList) {
-            MenuDto dto = new MenuDto();
-            MapperUtil.copyProperties(item, dto);
-            App app = appService.getByPrimaryKey(item.getAppId());
-            if (app != null) {
-                dto.setAppName(app.getName());
-            }
-            myList.add(dto);
-        }
-        Pagination<MenuDto> pList = new Pagination<>(example, myList, example.getCount());
+        Pagination<MenuDto> pList = new Pagination<>(example, rList, example.getCount());
         return new AjaxResult(pList);
     }
 
+    //@RequiresPermissions({"menu:list"})
     @RequestMapping(value = "listMenuByUserId")
     @ResponseBody
     public AjaxResult listMenuByUserId(
@@ -318,6 +351,7 @@ public class MenuController extends BaseController {
         return new AjaxResult(dto);
     }
 
+    //@RequiresPermissions({"menu:list"})
     @RequestMapping(value = "listMenuWithOperationByUserId")
     @ResponseBody
     public AjaxResult listMenuWithOperationByUserId(

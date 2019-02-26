@@ -4,7 +4,6 @@ import cn.xtits.xtf.web.springmvc.ExceptionHandlerResolver;
 import cn.xtits.xtf.web.springmvc.JsonMessageConverter;
 import cn.xtits.xtf.web.springmvc.RequestContextInterceptor;
 import cn.xtits.xtf.web.springmvc.RequestLogInterceptor;
-import cn.xtits.xtp.interceptor.LoginInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -40,7 +39,6 @@ public class XtpApplication extends WebMvcConfigurerAdapter {
      * @author lance
      */
     public void addInterceptors(InterceptorRegistry registry) {
-        //registry.addInterceptor(new LoginInterceptor(APP_TOKEN)).addPathPatterns("/**").excludePathPatterns("/user/loginUser*", "/Unit/listUnit*");
         registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(new RequestLogInterceptor()).addPathPatterns("/**");
 

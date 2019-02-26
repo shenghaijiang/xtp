@@ -9,6 +9,7 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.RoleDataRuleService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,8 @@ public class RoleDataRuleController {
     @Autowired
     private RoleDataRuleService service;
 
-    @RequestMapping(value = "insertRoleDataRule", method = RequestMethod.POST)
+    //    @RequiresPermissions({"role-data-rule:insert"})
+    @RequestMapping(value = "insertRoleDataRule")
     @ResponseBody
     public AjaxResult insertRoleDataRule(
             @RequestParam(value = "data", required = false) String data) {
@@ -36,7 +38,8 @@ public class RoleDataRuleController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteRoleDataRule", method = RequestMethod.POST)
+    //    @RequiresPermissions({"role-data-rule:delete"})
+    @RequestMapping(value = "deleteRoleDataRule")
     @ResponseBody
     public AjaxResult deleteRoleDataRule(
             @RequestParam(value = "id", required = false) int id) {
@@ -44,7 +47,8 @@ public class RoleDataRuleController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateRoleDataRule", method = RequestMethod.POST)
+    //    @RequiresPermissions({"role-data-rule:update"})
+    @RequestMapping(value = "updateRoleDataRule")
     @ResponseBody
     public AjaxResult updateRoleDataRule(
             @RequestParam(value = "data", required = false) String data) {
@@ -53,7 +57,7 @@ public class RoleDataRuleController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //    @RequiresPermissions({"role-data-rule:list"})
     @RequestMapping(value = "listRoleDataRule")
     @ResponseBody
     public AjaxResult listRoleDataRule(

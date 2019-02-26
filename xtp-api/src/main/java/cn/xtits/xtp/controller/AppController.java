@@ -33,7 +33,7 @@ public class AppController {
     @Autowired
     private AppService service;
 
-    //    @RequiresPermissions({"app:insert"})
+    @RequiresPermissions({"app:insert"})
     @RequestMapping(value = "insertApp")
     @ResponseBody
     public AjaxResult insertApp(
@@ -42,7 +42,7 @@ public class AppController {
         AppExample example = new AppExample();
         AppExample.Criteria criteria = example.createCriteria();
         criteria.andCodeEqualTo(record.getCode());
-        criteria.andIdNotEqualTo(record.getId());
+        //criteria.andIdNotEqualTo(record.getId());
         List<App> list = service.listByExample(example);
         if (list.size() > 0) {
             return new AjaxResult(ErrorCodeEnums.RECORD_EXISTS.value, "记录已经存在");
@@ -51,7 +51,7 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    //    @RequiresPermissions({"app:delete"})
+    @RequiresPermissions({"app:delete"})
     @RequestMapping(value = "deleteApp")
     @ResponseBody
     public AjaxResult deleteApp(
@@ -60,7 +60,7 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    //    @RequiresPermissions({"app:update"})
+    @RequiresPermissions({"app:update"})
     @RequestMapping(value = "updateApp")
     @ResponseBody
     public AjaxResult updateApp(
@@ -78,7 +78,7 @@ public class AppController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    //    @RequiresPermissions({"app:view"})
+    //@RequiresPermissions({"app:list"})
     @RequestMapping(value = "listApp")
     @ResponseBody
     public AjaxResult listApp(

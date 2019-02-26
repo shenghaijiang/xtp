@@ -8,6 +8,7 @@ public class LoginToken {
     private int userId;
     private String userName;
     private String appToken;
+    private int appId;
 
     public int getUserId() {
         return userId;
@@ -31,5 +32,13 @@ public class LoginToken {
 
     public void setAppToken(String appToken) {
         this.appToken = appToken;
+    }
+
+    public int getAppId() {
+        return appId;
+    }
+
+    public void setAppId(int appId) {
+        this.appId = appId;
     }
 }

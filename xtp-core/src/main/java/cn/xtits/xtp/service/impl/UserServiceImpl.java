@@ -6,9 +6,11 @@ import cn.xtits.xtf.common.utils.HttpClientUtil;
 import cn.xtits.xtf.common.utils.JsonUtil;
 import cn.xtits.xtf.common.web.AjaxResult;
 import cn.xtits.xtp.entity.App;
+import cn.xtits.xtp.entity.Dict;
 import cn.xtits.xtp.entity.User;
 import cn.xtits.xtp.entity.UserExample;
 import cn.xtits.xtp.mapper.AppMapper;
+import cn.xtits.xtp.mapper.DictMapper;
 import cn.xtits.xtp.mapper.UserMapper;
 import cn.xtits.xtp.service.UserService;
 import com.github.pagehelper.Page;
@@ -34,25 +36,29 @@ public class UserServiceImpl implements UserService {
     private String APP_TOKEN;
 
     @Resource
-    private UserMapper mapper;
+    private AppMapper appMapper;
 
     @Resource
-    private AppMapper appMapper;
+    private DictMapper dictMapper;
+
+    @Resource
+    private UserMapper userMapper;
+
 
     @Override
     public int deleteByPrimaryKey(Integer ID) {
-        return mapper.deleteByPrimaryKey(ID);
+        return userMapper.deleteByPrimaryKey(ID);
     }
 
     @Override
     public int insert(User record) {
-        int count = mapper.insert(record);
+        int count = userMapper.insert(record);
         //更新的时候数据库不同步，xtp记录误删除同步
         if (record.getAppUserId() != null && record.getAppUserId() > 0) {
 
         } else {
             record.setAppUserId(record.getId());
-            mapper.updateByPrimaryKey(record);
+            userMapper.updateByPrimaryKey(record);
         }
         App app = appMapper.selectByPrimaryKey(record.getAppId());
 
@@ -76,30 +82,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> listByExample(UserExample example) {
         PageHelper.startPage(example.getPageIndex().intValue(), example.getPageSize().intValue());
-        Page page = (Page) mapper.selectByExample(example);
+        Page page = (Page) userMapper.selectByExample(example);
         example.setCount((int) page.getTotal());
         return page.toPageInfo().getList();
     }
 
     @Override
     public User getByPrimaryKey(Integer ID) {
-        return mapper.selectByPrimaryKey(ID);
+        return userMapper.selectByPrimaryKey(ID);
     }
 
     @Override
     public int updateByPrimaryKey(User record) {
-        return mapper.updateByPrimaryKey(record);
+        return userMapper.updateByPrimaryKey(record);
     }
 
     @Override
     public int updateByPrimaryKeySelective(User record) {
-        int count = mapper.updateByPrimaryKeySelective(record);
+        int count = userMapper.updateByPrimaryKeySelective(record);
         return count;
     }
 
     @Override
     public User getUserByAppUserId(Integer appUserId, Integer appId) {
-        return mapper.getUserByAppUserId(appId, appUserId);
+        return userMapper.getUserByAppUserId(appId, appUserId);
     }
 
     @Override
@@ -107,7 +113,7 @@ public class UserServiceImpl implements UserService {
         if (roleIds != null && roleIds.size() < 1) {
             roleIds.add(-1000);
         }
-        return mapper.listUserByRoleId(roleIds);
+        return userMapper.listUserByRoleId(roleIds);
     }
 
 }

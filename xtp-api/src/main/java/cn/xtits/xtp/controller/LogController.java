@@ -27,7 +27,7 @@ public class LogController {
     @Autowired
     private LogService service;
 
-    @RequestMapping(value = "insertLog", method = RequestMethod.POST)
+    @RequestMapping(value = "insertLog")
     @ResponseBody
     public AjaxResult insertLog(
             @RequestParam(value = "data", required = false) String data) {
@@ -36,7 +36,7 @@ public class LogController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteLog", method = RequestMethod.POST)
+    @RequestMapping(value = "deleteLog")
     @ResponseBody
     public AjaxResult deleteLog(
             @RequestParam(value = "id", required = false) int id) {
@@ -44,7 +44,7 @@ public class LogController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateLog", method = RequestMethod.POST)
+    @RequestMapping(value = "updateLog")
     @ResponseBody
     public AjaxResult updateLog(
             @RequestParam(value = "data", required = false) String data) {

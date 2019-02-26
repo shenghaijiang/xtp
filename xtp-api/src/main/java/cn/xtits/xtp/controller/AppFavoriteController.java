@@ -9,6 +9,7 @@ import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.AppFavoriteService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,9 @@ public class AppFavoriteController {
     @Autowired
     private AppFavoriteService service;
 
+    @RequiresPermissions({"app-favorite:insert"})
     @Deprecated
-    @RequestMapping(value = "insertAppFavorite", method = RequestMethod.POST)
+    @RequestMapping(value = "insertAppFavorite")
     @ResponseBody
     public AjaxResult insertAppFavorite(
             @RequestParam(value = "data", required = false) String data) {
@@ -37,7 +39,7 @@ public class AppFavoriteController {
         AppFavoriteExample.Criteria criteria = example.createCriteria();
         criteria.andAppIdEqualTo(record.getAppId());
         criteria.andMenuIdEqualTo(record.getMenuId());
-        criteria.andIdNotEqualTo(record.getId());
+        //criteria.andIdNotEqualTo(record.getId());
         List<AppFavorite> list = service.listByExample(example);
         if (list.size() > 0) {
             return new AjaxResult(ErrorCodeEnums.RECORD_EXISTS.value, ErrorCodeEnums.RECORD_EXISTS.msg);
@@ -47,8 +49,9 @@ public class AppFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    @RequiresPermissions({"app-favorite:delete"})
     @Deprecated
-    @RequestMapping(value = "deleteAppFavorite", method = RequestMethod.POST)
+    @RequestMapping(value = "deleteAppFavorite")
     @ResponseBody
     public AjaxResult deleteAppFavorite(
             @RequestParam(value = "id", required = false) int id) {
@@ -56,7 +59,8 @@ public class AppFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateAppFavorite", method = RequestMethod.POST)
+    @RequiresPermissions({"app-favorite:update"})
+    @RequestMapping(value = "updateAppFavorite")
     @ResponseBody
     public AjaxResult updateAppFavorite(
             @RequestParam(value = "appId") Integer appId,
@@ -65,6 +69,7 @@ public class AppFavoriteController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"app-favorite:list"})
     @Deprecated
     @RequestMapping(value = "listAppFavorite")
     @ResponseBody

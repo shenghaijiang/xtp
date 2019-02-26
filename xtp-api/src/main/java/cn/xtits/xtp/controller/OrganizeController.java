@@ -9,8 +9,11 @@ import cn.xtits.xtp.entity.OrganizeExample;
 import cn.xtits.xtp.enums.ErrorCodeEnums;
 import cn.xtits.xtp.query.Pagination;
 import cn.xtits.xtp.service.OrganizeService;
+import cn.xtits.xtp.util.CommonUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +34,8 @@ public class OrganizeController extends BaseController {
     @Autowired
     private OrganizeService service;
 
-    @RequestMapping(value = "insertOrganize", method = RequestMethod.POST)
+    @RequiresPermissions({"organize:insert"})
+    @RequestMapping(value = "insertOrganize")
     @ResponseBody
     public AjaxResult insertOrganize(
             @RequestParam(value = "data", required = false) String data) {
@@ -46,7 +50,8 @@ public class OrganizeController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteOrganize", method = RequestMethod.POST)
+    @RequiresPermissions({"organize:delete"})
+    @RequestMapping(value = "deleteOrganize")
     @ResponseBody
     public AjaxResult deleteOrganize(
             @RequestParam(value = "id", required = false) int id) {
@@ -59,7 +64,8 @@ public class OrganizeController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateOrganize", method = RequestMethod.POST)
+    @RequiresPermissions({"organize:update"})
+    @RequestMapping(value = "updateOrganize")
     @ResponseBody
     public AjaxResult updateOrganize(
             @RequestParam(value = "data", required = false) String data) {
@@ -73,12 +79,14 @@ public class OrganizeController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+    //@RequiresPermissions({"organize:list"})
     @RequestMapping(value = "listOrganize")
     @ResponseBody
     public AjaxResult listOrganize(
             @RequestParam(value = "parentId", required = false) Integer parentId,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
+            @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+            @RequestParam(value = "code", required = false) String code) {
         OrganizeExample example = new OrganizeExample();
         example.setPageIndex(pageIndex);
         example.setPageSize(pageSize);
@@ -87,11 +95,15 @@ public class OrganizeController extends BaseController {
         if (parentId != null) {
             criteria.andParentIdEqualTo(parentId);
         }
+        if(StringUtils.isNotBlank(code)){
+            criteria.andCodeLike(code);
+        }
         List<Organize> list = service.listByExample(example);
         Pagination<Organize> pList = new Pagination<>(example, list, example.getCount());
         return new AjaxResult(pList);
     }
 
+    @RequiresPermissions({"organize:insert"})
     @RequestMapping(value = "getOrganize")
     public AjaxResult getOrganize(
             @RequestParam(value = "id", required = false) Integer id) {
@@ -104,9 +116,10 @@ public class OrganizeController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "listOrganizeWithDetailsTree")
+    //@RequiresPermissions({"organize:list"})
+    @RequestMapping(value = "listOrganizeTree")
     @ResponseBody
-    public AjaxResult listAccessoryTypeWithDetailsTree() {
+    public AjaxResult listOrganizeWithDetailsTree() {
         OrganizeExample example = new OrganizeExample();
         example.setPageSize(Integer.MAX_VALUE);
         OrganizeExample.Criteria criteria = example.createCriteria();
@@ -114,9 +127,9 @@ public class OrganizeController extends BaseController {
         List<Organize> list = service.listByExample(example);
         List<OrganizeDto> organizeDtoList = new ArrayList<>();
         for (Organize organize : list) {
-            OrganizeDto materialCategoryDto = new OrganizeDto();
-            MapperUtil.copyProperties(organize, materialCategoryDto);
-            organizeDtoList.add(materialCategoryDto);
+            OrganizeDto organizeDto = new OrganizeDto();
+            MapperUtil.copyProperties(organize, organizeDto);
+            organizeDtoList.add(organizeDto);
         }
         List<OrganizeDto> treeChildRecord = getTreeChildRecord(organizeDtoList, 0);
 
@@ -131,6 +144,7 @@ public class OrganizeController extends BaseController {
      * @time 2017-9-26
      * @author Dan
      */
+    //@RequiresPermissions({"organize:list"})
     private List<OrganizeDto> getTreeChildRecord(List<OrganizeDto> allList, Integer parentId) {
         List<OrganizeDto> listParentRecord = new ArrayList<>();
         List<OrganizeDto> listNotParentRecord = new ArrayList<>();
@@ -139,6 +153,7 @@ public class OrganizeController extends BaseController {
             for (OrganizeDto record : allList) {
                 // 对比找出父节点
                 if (record.getParentId().equals(parentId)) {
+
                     listParentRecord.add(record);
                 } else {
                     listNotParentRecord.add(record);
@@ -149,10 +164,68 @@ public class OrganizeController extends BaseController {
         if (listParentRecord.size() > 0) {
             for (OrganizeDto record : listParentRecord) {
                 // 递归查询子节点
-                record.setChildrenList(getTreeChildRecord(listNotParentRecord, record.getId()));
+                record.setChildren(getTreeChildRecord(listNotParentRecord, record.getId()));
             }
         }
         return listParentRecord;
     }
+
+    //@RequiresPermissions({"organize:list"})
+    @RequestMapping(value = "getOrganizeCoding")
+    @ResponseBody
+    public AjaxResult getOrganizeCoding(
+            @RequestParam(value = "code", required = false) String code) {
+        List<Organize> organizeList = null;
+        {
+            OrganizeExample example = new OrganizeExample();
+            example.setPageSize(1);
+            OrganizeExample.Criteria criteria = example.createCriteria();
+            criteria.andDeleteFlagEqualTo(false);
+            criteria.andCodeEqualTo(code);
+            //example.setOrderByClause("code desc");
+            organizeList = service.listByExample(example);
+        }
+        {
+            if (organizeList != null && organizeList.size() > 0) {
+                Organize organize = organizeList.get(0);
+                OrganizeExample example = new OrganizeExample();
+                example.setPageSize(Integer.MAX_VALUE);
+                OrganizeExample.Criteria criteria = example.createCriteria();
+                criteria.andDeleteFlagEqualTo(false);
+                criteria.andParentIdEqualTo(organize.getId());
+                example.setOrderByClause("code desc");
+                List<Organize> organizesCodeList = service.listByExample(example);
+
+                if (organizesCodeList != null && organizesCodeList.size() > 0) {
+                    Organize organizeCode = organizesCodeList.get(0);
+                    String oldCode = organizeCode.getCode();
+                    if (oldCode.startsWith(code)) {
+                        String strCode = oldCode.substring(code.length(), oldCode.length());
+                        int i = 0;
+                        try {
+                            i = Integer.parseInt(strCode);
+                            return new AjaxResult(code + CommonUtil.getSplitCode(i + 1));
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                            return new AjaxResult(ErrorCodeEnums.SERVER_ERROR.value, "编码格式错误...");
+                        }
+                    } else {
+                        return new AjaxResult(ErrorCodeEnums.SERVER_ERROR.value, "编码异常?");
+                    }
+
+                } else {
+                    String newCode = code + CommonUtil.getSplitCode(1);
+
+                    return new AjaxResult(newCode);
+                }
+
+            } else {
+                return new AjaxResult(ErrorCodeEnums.SERVER_ERROR.value, "上级编码不存在?");
+            }
+        }
+
+    }
+
+
 
 }

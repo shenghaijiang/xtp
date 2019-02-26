@@ -14,17 +14,21 @@ import cn.xtits.xtp.service.AppService;
 import cn.xtits.xtp.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/user")
@@ -44,10 +48,12 @@ public class UserController extends BaseController {
     @Autowired
     private AppService appService;
 
-    @RequestMapping(value = "insertUser", method = RequestMethod.POST)
+    @RequiresPermissions({"user:insert"})
+    @RequestMapping(value = "insertUser")
     @ResponseBody
     public AjaxResult insertUser(
-            @RequestParam(value = "data", required = false) String data) {
+            @RequestParam(value = "data", required = false) String data,
+            @RequestParam(value = "appCode", required = false) String appCode) {
         String password = Randoms.getRandomString(8);
         User record = JsonUtil.fromJson(data, User.class);
 
@@ -55,50 +61,65 @@ public class UserController extends BaseController {
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
         criteria.andAccountEqualTo(record.getAccount());
-        if (record.getAppId() != null && record.getAppId() > 0) {
-            criteria.andAppIdEqualTo(record.getAppId());
-        }
-        if (record.getId() != null && record.getId() > 0) {
-            criteria.andIdNotEqualTo(record.getId());
+        if (StringUtils.isBlank(appCode)) {
+            if (record.getAppId() != null && record.getAppId() > 0) {
+                criteria.andAppIdEqualTo(record.getAppId());
+            }
+        } else {
+            App app = appService.getAppByCode(appCode);
+            criteria.andAppIdEqualTo(app.getId());
+            record.setAppId(app.getId());
         }
         List<User> list = service.listByExample(example);
         if (list.size() > 0) {
             return new AjaxResult(ErrorCodeEnums.RECORD_EXISTS.value, ErrorCodeEnums.RECORD_EXISTS.msg);
         }
-
         record.setDeleteFlag(false);
         record.setCreateDate(new Date());
         record.setModifyDate(new Date());
-        service.insert(record);
         record.setPassword(password);
+        service.insert(record);
         return new AjaxResult(record);
     }
 
-    @RequestMapping(value = "updateUserResetPassword", method = RequestMethod.POST)
+    //    @RequiresPermissions({"user:reset-password"})
+    @RequestMapping(value = "updateUserResetPassword")
     @ResponseBody
-    public AjaxResult updateUserPassword(
-            @RequestParam(value = "id", required = false) Integer userId) {
+    public AjaxResult updateUserResetPassword(
+            @RequestParam(value = "id", required = false) Integer id) {
         String password = Randoms.getRandomString(8);
         User user = new User();
         user.setPassword(password);
-        user.setId(userId);
-        service.updateByPrimaryKeySelective(user);
-        return new AjaxResult(user);
+        user.setId(id);
+        int row = service.updateByPrimaryKeySelective(user);
+        return new AjaxResult(row > 0 ? 1 : 0, "", user);
     }
 
-    @RequestMapping(value = "updateUserPassword", method = RequestMethod.POST)
+    //@RequiresPermissions({"user:update-password"})
+    @RequestMapping(value = "updateUserPassword")
     @ResponseBody
     public AjaxResult updateUserPassword(
             @RequestParam(value = "data", required = false) String data,
             @RequestParam(value = "password", required = false) String password) {
-        App app = appService.getAppByToken(APP_TOKEN);
+
+        if (StringUtils.isBlank(password)) {
+            return new AjaxResult(0, "旧密码不能为空!");
+        }
         User record = JsonUtil.fromJson(data, User.class);
+        if (StringUtils.isBlank(record.getPassword())) {
+            return new AjaxResult(0, "密码不能为空!");
+        }
         UserExample example = new UserExample();
         example.setPageSize(1);
         UserExample.Criteria criteria = example.createCriteria();
+        criteria.andDeleteFlagEqualTo(false);
         criteria.andAccountEqualTo(record.getAccount());
         criteria.andPasswordEqualTo(password);
+
+        App app = appService.getAppByToken(getAppToken());
+        record.setAppId(app.getId());
         criteria.andAppIdEqualTo(app.getId());
+
         List<User> list = service.listByExample(example);
         if (list.size() > 0) {
             record.setId(list.get(0).getId());
@@ -106,19 +127,27 @@ public class UserController extends BaseController {
             service.updateByPrimaryKeySelective(record);
             return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
         } else {
-            return new AjaxResult(0);
+            return new AjaxResult(0, "账号或密码不正确!");
         }
     }
 
-    @RequestMapping(value = "updateSyncUser", method = RequestMethod.POST)
+    @RequestMapping(value = "updateSyncUser")
     @ResponseBody
     public AjaxResult updateSyncUser(
             @RequestParam(value = "appToken", required = false) String appToken,
+            @RequestParam(value = "appCode", required = false) String appCode,
             @RequestParam(value = "data", required = false) String data) {
 
         User record = JsonUtil.fromJson(data, User.class);
         record.setModifyDate(new Date());
-        App app = appService.getAppByToken(appToken);
+        App app = null;
+        if (StringUtils.isNotBlank(appCode)) {
+            app = appService.getAppByCode(appCode);
+        } else if (StringUtils.isNotBlank(appToken)) {
+            app = appService.getAppByToken(appToken);
+        } else {
+            appService.getAppByToken(getAppToken());
+        }
         User user = service.getUserByAppUserId(record.getId(), app.getId());
         if (null != user) {
             record.setId(user.getId());
@@ -139,7 +168,8 @@ public class UserController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value, "", record.getId().toString());
     }
 
-    @RequestMapping(value = "deleteUser", method = RequestMethod.POST)
+    @RequiresPermissions({"user:delete"})
+    @RequestMapping(value = "deleteUser")
     @ResponseBody
     public AjaxResult deleteUser(
             @RequestParam(value = "id", required = false) int id) {
@@ -150,7 +180,8 @@ public class UserController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateUser", method = RequestMethod.POST)
+    @RequiresPermissions({"user:update"})
+    @RequestMapping(value = "updateUser")
     @ResponseBody
     public AjaxResult updateUser(
             @RequestParam(value = "data", required = false) String data) {
@@ -160,12 +191,15 @@ public class UserController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"user:list"})
     @RequestMapping(value = "listUser")
     @ResponseBody
     public AjaxResult listUser(
+            @RequestParam(value = "id", required = false) String id,
+            @RequestParam(value = "appFlag", required = false) Boolean appFlag,
             @RequestParam(value = "account", required = false) String account,
             @RequestParam(value = "appId", required = false) Integer appId,
+            @RequestParam(value = "appCode", required = false) String appCode,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "mail", required = false) String mail,
             @RequestParam(value = "phone", required = false) String phone,
@@ -176,6 +210,19 @@ public class UserController extends BaseController {
         example.setPageSize(pageSize);
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
+
+        if (StringUtils.isNotBlank(id)) {
+            String[] split = id.split(",");
+            if (split.length > 1) {
+                List<Integer> integerList = new ArrayList<>();
+                for (String s : split) {
+                    integerList.add(Integer.parseInt(s));
+                }
+                criteria.andIdIn(integerList);
+            } else {
+                criteria.andIdEqualTo(Integer.parseInt(split[0]));
+            }
+        }
         if (account != null && !"".equals(account.trim())) {
             criteria.andAccountLike(account);
         }
@@ -191,8 +238,17 @@ public class UserController extends BaseController {
         if (appId != null && appId > 0) {
             criteria.andAppIdEqualTo(appId);
         }
-        if (!APP_TOKEN.equals(getAppToken())) {
+        //appFlag 为true，不需要AppId查询
+        if (appFlag == null || !appFlag) {
             App app = appService.getAppByToken(getAppToken());
+            criteria.andAppIdEqualTo(app.getId());
+        }
+        if ((appFlag == null || !appFlag) && !APP_TOKEN.equals(getAppToken())) {
+            App app = appService.getAppByToken(getAppToken());
+            criteria.andAppIdEqualTo(app.getId());
+        }
+        if (StringUtils.isNotBlank(appCode)) {
+            App app = appService.getAppByCode(appCode.trim());
             criteria.andAppIdEqualTo(app.getId());
         }
         List<User> list = service.listByExample(example);
@@ -200,6 +256,7 @@ public class UserController extends BaseController {
         return new AjaxResult(pList);
     }
 
+    //@RequiresPermissions({"user:list"})
     @RequestMapping(value = "listUserByRoleId")
     @ResponseBody
     public AjaxResult listUserByRoleId(
@@ -214,28 +271,52 @@ public class UserController extends BaseController {
         return new AjaxResult(pList);
     }
 
-    @RequestMapping(value = "loginUser", method = RequestMethod.POST)
+    @Autowired
+    private StringRedisTemplate template;
+
+    @RequestMapping(value = "loginUser")
     @ResponseBody
-    public AjaxResult updateUser(
+    public AjaxResult loginUser(
+            @RequestParam(value = "appCode", required = false) String appCode,
             @RequestParam(value = "account") String account,
             @RequestParam(value = "password", required = false) String password) {
-        App app = appService.getAppByToken(APP_TOKEN);
+        App app = null;
+        if (StringUtils.isBlank(appCode)) {
+            //app = appService.getAppByToken(APP_TOKEN);
+        } else {
+            app = appService.getAppByCode(appCode);
+        }
+//        if (app == null || app.getId() < 1) {
+//            return new AjaxResult(-1, "该应用不存在!");
+//        }
         UserExample example = new UserExample();
         example.setPageSize(1);
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andAccountEqualTo(account);
         criteria.andPasswordEqualTo(password);
-        criteria.andAppIdEqualTo(app.getId());
+        //criteria.andAppIdEqualTo(app.getId());
         List<User> list = service.listByExample(example);
 
         if (list.size() > 0) {
             User u = list.get(0);
             try {
+                if (app == null) {
+                    app = appService.getByPrimaryKey(u.getAppId());
+                }
                 LoginToken t = new LoginToken();
+                t.setAppId(u.getAppId());
                 t.setUserId(u.getId());
-                t.setUserName(u.getAccount());
-                t.setAppToken(APP_TOKEN);
-                String token = JwtUtil.createJWT(u.getId().toString(), JsonUtil.toJson(t), 24 * 60 * 60 * 1000);
+                t.setUserName(u.getName());
+                t.setAppToken(app.getToken());
+                String authToken = JsonUtil.toJson(t);
+                String token = JwtUtil.createJWT(u.getId().toString(), authToken, 24 * 60 * 60 * 1000);
+                try {
+                    String key = "jwt:" + String.valueOf(u.getId());
+                    ValueOperations<String, String> ops = template.opsForValue();
+                    ops.set(key, token, 60 * 24, TimeUnit.MINUTES);
+                } catch (Exception e) {
+
+                }
                 return new AjaxResult(ErrorCodeEnums.NO_ERROR.value, "", token);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -245,36 +326,46 @@ public class UserController extends BaseController {
 
     }
 
-    @RequestMapping(value = "getUser", method = RequestMethod.POST)
+    //@RequiresPermissions({"user:list"})
+    @RequestMapping(value = "getUser")
     @ResponseBody
     public AjaxResult getUser(
             @RequestParam(value = "id", required = false) Integer id) {
 
-        if(id==null) {
+        if (id == null) {
             id = getUserId();
         }
         User user = service.getByPrimaryKey(id);
         return new AjaxResult(user);
     }
 
+    //@RequiresPermissions({"user:list"})
     @RequestMapping(value = "getUserByAppUserId")
     @ResponseBody
     public AjaxResult getUserByAppUserId(
-            @RequestParam(value = "id", required = false) Integer id,
-            @RequestParam(value = "appToken", required = false) String appToken) {
-        App app = appService.getAppByToken(appToken);
+            @RequestParam(value = "appToken", required = false) String appToken,
+            @RequestParam(value = "appCode", required = false) String appCode,
+            @RequestParam(value = "userId", required = false) Integer userId) {
+
         UserExample example = new UserExample();
         example.setPageSize(1);
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andDeleteFlagEqualTo(false);
-        criteria.andAppUserIdEqualTo(id);
-
+        criteria.andAppUserIdEqualTo(userId == null ? getUserId() : userId);
+        App app;
+        if (StringUtils.isNotBlank(appToken)) {
+            app = appService.getAppByToken(appToken);
+        } else if (StringUtils.isNotBlank(appCode)) {
+            app = appService.getAppByCode(appCode);
+        } else {
+            app = appService.getAppByToken(getAppToken());
+        }
         criteria.andAppIdEqualTo(app.getId());
         List<User> list = service.listByExample(example);
         if (list.size() > 0) {
             return new AjaxResult(list.get(0));
         } else {
-            return new AjaxResult(null);
+            return new AjaxResult(-1, "不存在该用户!");
         }
     }
 

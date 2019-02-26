@@ -24,10 +24,14 @@ public class AppServiceImpl implements AppService {
     @Resource
     private AppMapper mapper;
 
-
     @Override
     public App getAppByToken(String token) {
         return mapper.getAppByToken(token);
+    }
+
+    @Override
+    public App getAppByCode(String code) {
+        return mapper.getAppByCode(code);
     }
 
     @Override

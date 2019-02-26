@@ -10,6 +10,7 @@ import cn.xtits.xtp.service.UserMenuOperationService;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,8 @@ public class UserMenuOperationController {
     @Autowired
     private UserMenuOperationService service;
 
-    @RequestMapping(value = "insertUserMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu-operation:insert"})
+    @RequestMapping(value = "insertUserMenuOperation")
     @ResponseBody
     public AjaxResult insertUserMenuOperation(
             @RequestParam(value = "data", required = false) String data) {
@@ -37,7 +39,8 @@ public class UserMenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "deleteUserMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu-operation:delete"})
+    @RequestMapping(value = "deleteUserMenuOperation")
     @ResponseBody
     public AjaxResult deleteUserMenuOperation(
             @RequestParam(value = "id", required = false) int id) {
@@ -45,7 +48,8 @@ public class UserMenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-    @RequestMapping(value = "updateUserMenuOperation", method = RequestMethod.POST)
+    //@RequiresPermissions({"user-menu-operation:update"})
+    @RequestMapping(value = "updateUserMenuOperation")
     @ResponseBody
     public AjaxResult updateUserMenuOperation(
             @RequestParam(value = "userId") Integer userId,
@@ -57,7 +61,7 @@ public class UserMenuOperationController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
-
+    //@RequiresPermissions({"user-menu-operation:list"})
     @RequestMapping(value = "listUserMenuOperation")
     @ResponseBody
     public AjaxResult listUserMenuOperation(

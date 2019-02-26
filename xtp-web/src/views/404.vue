@@ -1,11 +1,14 @@
 <template>
-    <p class="page-container">该功能正在开发中，敬请期待！</p>
+  <div>
+    <h3>404</h3>
+  </div>
 </template>
 
-<style scoped>
-    .page-container {
-        font-size: 20px;
-        text-align: center;
-        color: rgb(192, 204, 218);
-    }
-</style>
+<script>
+export default {
+  created() {
+
+  }
+};
+</script>
+
