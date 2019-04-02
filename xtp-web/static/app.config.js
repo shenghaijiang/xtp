@@ -1,14 +1,22 @@
 
+//登录传参信息
 window.TOKEN_KEY = "app-token";
 
-window.SYSTEM_NAME = "通用权限管理";
+window.THEME_CONFIG = {
+  THEME: "default", //系统主题选择
+  SYSTEM_NAME: "XTP通用权限管理系统", //系统大标题
+  SUB_NAME: "后台登录", //系统小标题
+  NAV_BAR_NAME: "XTP通用权限管理系统" //顶部栏标题
+};
 
+//项目名称
 window.PROJECT_NAME = "xtp";
 
 window.env = {
-  NODE_ENV: "development"
+  NODE_ENV: "development" //是否需要主题外框还是单页面，production单页面否则带外壳
 };
 
+//后端请求接口
 window.APP_SETTING = {
   SERVER_HOST: "139.196.125.197",
   SERVER_PORT: 5555,
@@ -20,6 +28,7 @@ window.APP_SETTING = {
   }
 };
 
+//其他系统地址
 window.APP_SETTING_WEB = {
   SERVER_HOST: "139.196.125.197",
   SERVER_PORT: 11142,

@@ -6,6 +6,7 @@ const app = {
       opened: !+Cookies.get("sidebarStatus")
     },
     language: Cookies.get("language") || "en",
+    theme: window.THEME_CONFIG.THEME || "default",
     account: localStorage.getItem("account") //存储用户帐户名
   },
   mutations: {
@@ -30,6 +31,9 @@ const app = {
       if (!state.account) {
 
       }
+    },
+    SET_THEME: (state, theme) => {
+      state.theme = theme;
     }
   },
   actions: {
@@ -41,6 +45,9 @@ const app = {
     },
     setAccount({ commit }, account) {
       commit("SET_ACCOUNT", account);
+    },
+    setTheme({ commit }, theme) {
+      commit("SET_THEME", theme);
     }
   }
 };

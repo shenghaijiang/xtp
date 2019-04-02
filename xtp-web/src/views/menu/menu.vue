@@ -342,7 +342,6 @@ export default {
 
   /*#region 注册绑定数据*/
 
-  mixins: [PagePlugIn],
   components: {MenuTag},
   data() {
     return {
@@ -376,28 +375,14 @@ export default {
       allIcon: getAllIcons(),
       menuTagData: {}
     };
-  }
+  },
+  mixins: [PagePlugIn]
 
   /*#endregion */
 
 };
 </script>
 
-<style scoped>
-  .iconbox {
-    display: flex;
-    flex-flow: row wrap;
-  }
-
-  .iconbox .item {
-    padding: .5rem;
-    margin: .2rem;
-    border: 1px solid #eeeeee;
-    font-size: 2rem;
-    cursor: pointer;
-  }
-
-  .iconbox .item:hover {
-    background-color: #73ccff;
-  }
+<style scoped lang="scss">
+  @import "../../assets/styles/scss/views/menu/menu";
 </style>

@@ -5,6 +5,13 @@ export default {
       pageInfo: {pageIndex: 1, pageSize: 10, count: 0}
     };
   },
+  computed: {
+    theme: {
+      get() {
+        return this.$store.getters.theme || "default";
+      }
+    }
+  },
   methods: {
     // 一页的条数
     handleSizeChange (val) {

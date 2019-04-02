@@ -76,7 +76,7 @@
 
     <!--新增界面-->
 
-    <el-dialog width="95%" top="20px" :title="formData.id==0?'新增':'修改'" :visible.sync="dialog.formDataVisible" :close-on-click-modal="false" :modal-append-to-body="false">
+    <el-dialog width="95%" top="20px" :title="formData.id===0?'新增':'修改'" :visible.sync="dialog.formDataVisible" :close-on-click-modal="false" :modal-append-to-body="false">
       <el-form :model="formData" label-width="100px" :rules="formRules" ref="formData">
         <el-form-item label="应用编码" prop="code">
           <el-input v-model="formData.code" auto-complete="off" :maxlength="50" placeholder="请输入应用编码" size="small"></el-input>
@@ -99,7 +99,6 @@
 <script>
 
   /*#region 导入函数*/
-
   import PagePlugIn from "../../mixins/page-plug-in";
   import {AppAPI} from "../../modules";
 

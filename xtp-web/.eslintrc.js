@@ -36,9 +36,9 @@ module.exports = {
   * "error" 或 2 - 开启规则，使用错误级别的错误：error (当被触发的时候，程序会退出)
   * */
   rules: {
-    'camelcase': ['error', {'properties': 'always'}],//强制使用骆驼拼写法命名约定
-    'semi': ['error', 'always'],//语句强制分号结尾
-    'semi-spacing': ['error', {'before': false, 'after': true}],
+    // 'camelcase': ['error', {'properties': 'always'}],//强制使用骆驼拼写法命名约定
+    'semi': 0, // ['error', 'always'],//语句强制分号结尾
+    // 'semi-spacing': ['error', {'before': false, 'after': true}],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',//只在开发环境中允许调试
     "no-cond-assign": 2,// 禁止条件表达式中出现赋值操作符
     "no-console": 0,// 禁用 console
@@ -59,7 +59,7 @@ module.exports = {
     "no-ex-assign": 2,// 禁止对 catch 子句的参数重新赋值
     "no-extra-boolean-cast": 2,// 禁止不必要的布尔转换
     "no-extra-parens": 0,// 禁止不必要的括号 //(a * b) + c;//报错
-    "no-extra-semi": 2,// 禁止不必要的分号
+    "no-extra-semi": 0,// 禁止不必要的分号
     "no-func-assign": 2,// 禁止对 function 声明重新赋值
     "no-inner-declarations": [2, "functions"],// 禁止在嵌套的块中出现 function 或 var 声明
     "no-invalid-regexp": 2,// 禁止 RegExp 构造函数中无效的正则表达式字符串
@@ -317,7 +317,7 @@ module.exports = {
     }],// 强制操作符使用一致的换行符
     "padded-blocks": 0, // 要求或禁止块内填充
     "quote-props": 0, // 要求对象字面量属性名称用引号括起来
-    "quotes": [2, "double", "avoid-escape"],// 强制使用一致的反勾号、双引号或单引号
+    "quotes": 0, // [2, "double", "avoid-escape"],// 强制使用一致的反勾号、双引号或单引号
     "require-jsdoc": 0, // 要求使用 JSDoc 注释
     "sort-vars": 0,// 要求同一个声明块中的变量按顺序排列
     "space-before-blocks": [2, "always"],// 强制在块之前使用一致的空格
