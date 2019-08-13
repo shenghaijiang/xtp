@@ -1,10 +1,10 @@
 <template>
   <section class="app-main">
     <!--<transition name="fade" mode="out-in">-->
-    <keep-alive>
-      <router-view v-if="isKeepAlive"></router-view>
+    <keep-alive :include="cachedViews">
+      <router-view></router-view>
     </keep-alive>
-    <router-view v-if="!isKeepAlive"></router-view>
+<!--    <router-view v-if="!isKeepAlive"></router-view>-->
     <!--</transition>-->
   </section>
 </template>
@@ -262,6 +262,9 @@ ${redata.url ? "<label class=\"message-click\">点击进入</label>" : ""}`,
   },
 
   /*#region 生命周期函数(created、mount、等)*/
+  beforeCreate() {
+    this.$store.dispatch("getMenuList", {});
+  },
   beforeDestroy() {
     this.webSocketClose();
     this.clearInterval(this.testSendInterval);
