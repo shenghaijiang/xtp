@@ -2,6 +2,11 @@
 //登录传参信息
 window.TOKEN_KEY = "app-token";
 
+//是否启用webSocket
+window.WEBSOCKET = {
+  ENABLE: false
+};
+
 window.THEME_CONFIG = {
   THEME: "default", //系统主题选择
   SYSTEM_NAME: "XTP通用权限管理系统", //系统大标题

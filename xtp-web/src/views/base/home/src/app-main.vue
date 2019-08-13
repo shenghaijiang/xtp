@@ -268,9 +268,12 @@ ${redata.url ? "<label class=\"message-click\">点击进入</label>" : ""}`,
     console.log(this.closeFlag, this.reconnect);
   },
   created() {
-    this.$notify.closeAll();
-    this.wsUri = `ws://${window.APP_SETTING_WEB.SERVER_HOST}:${window.APP_SETTING_WEB.SERVER_PORT}/web-socket/myWebSocket?oauth=${localStorage.getItem(window.TOKEN_KEY) || sessionStorage.getItem(window.TOKEN_KEY) || null}`;
-    this.initWebSocket();
+    this.enableWebSocket = window.WEBSOCKET ? window.WEBSOCKET.ENABLE : true;
+    if (this.enableWebSocket) {
+      this.$notify.closeAll();
+      this.wsUri = `ws://${window.APP_SETTING_WEB.SERVER_HOST}:${window.APP_SETTING_WEB.SERVER_PORT}/web-socket/myWebSocket?oauth=${localStorage.getItem(window.TOKEN_KEY) || sessionStorage.getItem(window.TOKEN_KEY) || null}`;
+      this.initWebSocket();
+    }
   },
 
   /*#endregion*/
@@ -298,7 +301,8 @@ ${redata.url ? "<label class=\"message-click\">点击进入</label>" : ""}`,
       testSendTime: 1000 * 60 * 10,
       reconnectCount: 0,
       WebSocketEnum: WebSocketEnum,
-      WebSocketEnumList: WebSocketEnumList
+      WebSocketEnumList: WebSocketEnumList,
+      enableWebSocket: window.WEBSOCKET ? window.WEBSOCKET.ENABLE : true
     }
   }
 

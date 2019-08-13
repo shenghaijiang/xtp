@@ -1,6 +1,11 @@
 
 window.TOKEN_KEY = "app-token";
 
+//是否启用webSocket
+window.WEBSOCKET = {
+  ENABLE: false
+};
+
 window.THEME_CONFIG = {
   THEME: "yandang",
   SYSTEM_NAME: "XTP通用权限管理系统",
