@@ -40,7 +40,7 @@
                     <dependency>
                         <groupId>cn.xtits</groupId>
                         <artifactId>xtf-mybatis</artifactId>
-                        <version>2.1.7</version>
+                        <version>2.1.12</version>
                     </dependency>
                     <dependency>
                         <groupId>mysql</groupId>

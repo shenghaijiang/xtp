@@ -12,6 +12,8 @@ import java.util.List;
  */
 public interface MenuService {
 
+    int updateCopy(Integer updateCopy, Integer toAppId);
+
     int deleteByPrimaryKey(Integer ID);
 
     int insert(Menu record);

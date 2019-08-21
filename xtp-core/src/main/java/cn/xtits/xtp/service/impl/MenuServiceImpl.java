@@ -40,6 +40,90 @@ public class MenuServiceImpl implements MenuService {
 
 
     @Override
+    public int updateCopy(Integer fromAppId, Integer toAppId) {
+
+        MenuExample example = new MenuExample();
+        example.setPageIndex(1);
+        example.setPageSize(Integer.MAX_VALUE);
+        MenuExample.Criteria criteria = example.createCriteria();
+        criteria.andAppIdEqualTo(fromAppId);
+        criteria.andDeleteFlagEqualTo(false);
+
+        List<Menu> list = menuMapper.selectByExample(example);
+
+        List<Menu> level0List = new ArrayList<>();
+        List<Menu> level1List = new ArrayList<>();
+        List<Menu> level2List = new ArrayList<>();
+        for (Menu menu : list) {
+            if (menu.getParentId().equals(0))
+                level0List.add(menu);
+        }
+
+        Integer currentParentId1 = 0;
+        Integer currentParentId2 = 0;
+        for (Menu menu0 : level0List) {
+            Menu insertMenu = new Menu();
+            insertMenu.setAppId(toAppId);
+            insertMenu.setCode(menu0.getCode());
+            insertMenu.setName(menu0.getName());
+            insertMenu.setDeleteFlag(false);
+            insertMenu.setDisplayFlag(menu0.getDisplayFlag());
+            insertMenu.setEnableFlag(menu0.getEnableFlag());
+            insertMenu.setParentFlag(menu0.getParentFlag());
+            insertMenu.setParentId(menu0.getParentId());
+            insertMenu.setType(menu0.getType());
+            insertMenu.setUrl(menu0.getUrl());
+            insertMenu.setSort(menu0.getSort());
+            insertMenu.setIcon(menu0.getIcon());
+            //0级插入
+            menuMapper.insertSelective(insertMenu);
+            currentParentId1 = insertMenu.getId();
+            //1级插入
+            for (Menu menu1 : list) {
+                if(menu1.getParentId().equals(menu0.getId())){
+                    insertMenu = new Menu();
+                    insertMenu.setAppId(toAppId);
+                    insertMenu.setCode(menu1.getCode());
+                    insertMenu.setName(menu1.getName());
+                    insertMenu.setDeleteFlag(false);
+                    insertMenu.setDisplayFlag(menu1.getDisplayFlag());
+                    insertMenu.setEnableFlag(menu1.getEnableFlag());
+                    insertMenu.setParentFlag(menu1.getParentFlag());
+                    insertMenu.setParentId(currentParentId1);
+                    insertMenu.setType(menu1.getType());
+                    insertMenu.setUrl(menu1.getUrl());
+                    insertMenu.setSort(menu1.getSort());
+                    insertMenu.setIcon(menu1.getIcon());
+                    menuMapper.insertSelective(insertMenu);
+                    currentParentId2 = insertMenu.getId();
+
+                    //2级插入
+                    for (Menu menu2 : list) {
+                        if(menu2.getParentId().equals(menu1.getId())){
+                            insertMenu = new Menu();
+                            insertMenu.setAppId(toAppId);
+                            insertMenu.setCode(menu2.getCode());
+                            insertMenu.setName(menu2.getName());
+                            insertMenu.setDeleteFlag(false);
+                            insertMenu.setDisplayFlag(menu2.getDisplayFlag());
+                            insertMenu.setEnableFlag(menu2.getEnableFlag());
+                            insertMenu.setParentFlag(menu2.getParentFlag());
+                            insertMenu.setParentId(currentParentId2);
+                            insertMenu.setType(menu2.getType());
+                            insertMenu.setUrl(menu2.getUrl());
+                            insertMenu.setSort(menu2.getSort());
+                            insertMenu.setIcon(menu2.getIcon());
+                            menuMapper.insertSelective(insertMenu);
+                        }
+                    }
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    @Override
     public int deleteByPrimaryKey(Integer ID) {
         return menuMapper.deleteByPrimaryKey(ID);
     }

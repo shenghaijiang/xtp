@@ -27,7 +27,7 @@
                         connectionURL="jdbc:mysql://139.196.125.197/xtp?characterEncoding=utf8" userId="root"
                         password="`Qq1234567890-="/>-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://119.37.194.4:11161/xtp" userId="js"
+                        connectionURL="jdbc:mysql://119.37.194.4:11161/ie-xtp" userId="js"
                         password="Gd81dwPBnuoKYFzd"/>
 
         <!--<jdbcConnection-->
@@ -40,23 +40,24 @@
         </javaTypeResolver>
 
         <!-- !!!! Model Configurations !!!! -->
-        <javaModelGenerator targetPackage="cn.xtits.xtp.entity" targetProject="generator">
+        <javaModelGenerator targetPackage="cn.xtits.xtp.entity" targetProject="../xtp-domain/src/main/java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
         <!-- !!!! Mapper XML Configurations !!!! -->
-        <sqlMapGenerator targetPackage="cn.xtits.xtp.service" targetProject="generator">
+        <sqlMapGenerator targetPackage="mapper" targetProject="../xtp-core/src/main/resources">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
         <!-- !!!! Mapper Interface Configurations !!!! -->
-        <javaClientGenerator targetPackage="cn.xtits.xtp.mapper" targetProject="generator" type="XMLMAPPER">
+        <javaClientGenerator targetPackage="cn.xtits.xtp.mapper.base" targetProject="../xtp-core/src/main/java"
+                             type="XMLMAPPER">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
         <!-- !!!! Table Configurations !!!! -->
-        <table tableName="dict" domainObjectName="Dict" delimitIdentifiers="true" enableCountByExample="true"
+        <table tableName="useropen" domainObjectName="UserOpen" delimitIdentifiers="true" enableCountByExample="true"
                enableDeleteByExample="false" enableSelectByExample="true"
                enableUpdateByExample="true">
             <property name="useActualColumnNames" value="true"></property>

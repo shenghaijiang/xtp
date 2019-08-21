@@ -75,8 +75,6 @@ public class UserController extends BaseController {
             return new AjaxResult(ErrorCodeEnums.RECORD_EXISTS.value, ErrorCodeEnums.RECORD_EXISTS.msg);
         }
         record.setDeleteFlag(false);
-        record.setCreateDate(new Date());
-        record.setModifyDate(new Date());
         record.setPassword(password);
         service.insert(record);
         return new AjaxResult(record);

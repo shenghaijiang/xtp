@@ -101,6 +101,28 @@ public class MenuController extends BaseController {
         return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
     }
 
+//    @RequiresPermissions({"menu:copy"})
+    @RequestMapping(value = "updateCopy")
+    @ResponseBody
+    public AjaxResult deleteMenu(
+            @RequestParam(value = "fromAppId", required = false) int fromAppId,
+            @RequestParam(value = "toAppId", required = false) int toAppId) {
+
+        MenuExample example = new MenuExample();
+        example.setPageIndex(1);
+        example.setPageSize(1);
+        MenuExample.Criteria criteria = example.createCriteria();
+        criteria.andAppIdEqualTo(toAppId);
+        criteria.andDeleteFlagEqualTo(false);
+
+        List<Menu> list = menuService.listByExample(example);
+        if (list.size() > 0) {
+            return new AjaxResult(ErrorCodeEnums.NORMAL_ERROR.value, "请先删除目标系统的菜单");
+        }
+        int i = menuService.updateCopy(fromAppId, toAppId);
+        return new AjaxResult(ErrorCodeEnums.NO_ERROR.value);
+    }
+
     @RequiresPermissions({"menu:update"})
     @RequestMapping(value = "updateMenu")
     @ResponseBody
