@@ -1,61 +1,38 @@
 import BasicRoutes from "./router.config";
-import Home from "../components/xt-home/home.vue";
-import Login from "../components/xt-login/login.vue"; //雁荡登录页
-import XtpLogin from "../views/base/login/login";
+import Login from "../views/base/login/login";
+import Home from "../views/base/home/home.vue";
+import NotFound from "../views/base/not-found/not-found.vue";
+import Main from "../views/base/main/main.vue";
 
 const baseRoutes = [...BasicRoutes.basicRoutes.map((route) => {
-    route.meta = {
-        title: route.meta.title,
-        requiresAuth: true,
-      ...route.meta
-    };
-    return route;
+	route.meta = {
+		title: route.meta.title,
+		requiresAuth: true,
+		...route.meta
+	};
+	return route;
 })];
-let routes = [];
+
+let modulesPath = [];
 if (window.env.NODE_ENV === "production") {
-    routes = [{
-        sort: 1,
-        icon: "fa fa-th-large",
-        displayFlag: false,
-        path: "/login",
-        name: "Login",
-        title: "登录",
-        component: window.PROJECT_NAME !== "xtp" ? XtpLogin : Login,
-        meta: {title: "登录"},
-        children: []
-    }, {
-        sort: 2,
-        path: "/",
-        icon: "fa fa-bookmark",
-        component: Home,
-        displayFlag: false,
-        title: "基础信息",
-        name: "Home",
-        meta: {title: "基础信息", requiresAuth: true},
-        children: []
-    }, ...baseRoutes];
+	modulesPath = [
+		{title: "首页", name: "Home", path: "/", component: Home, children: []},
+		...baseRoutes,
+		{title: "NotFound", name: "NotFound", component: NotFound, path: "*"}
+	]
 } else {
-    routes = [{
-        sort: 1,
-        icon: "fa fa-th-large",
-        displayFlag: false,
-        path: "/login",
-        name: "Login",
-        title: "登录",
-        component: window.PROJECT_NAME !== "xtp" ? XtpLogin : Login,
-        meta: {title: "登录"},
-        children: []
-    }, {
-        sort: 2,
-        path: "/",
-        icon: "fa fa-bookmark",
-        component: Home,
-        displayFlag: false,
-        title: "基础信息",
-        name: "Home",
-        meta: {title: "基础信息", requiresAuth: true},
-        children: [...baseRoutes]
-    }];
+	modulesPath = [
+		{title: "首页", name: "Home", path: "/", component: Home, children: [
+			{title: "Main", name: "Main", component: Main, path: "/"},
+			...baseRoutes,
+			{title: "NotFound", name: "NotFound", component: NotFound, path: "*"}
+		]}
+	]
 }
+
+const routes = [
+	{title: "登录", name: "Login", component: Login, path: "/login"},
+	...modulesPath
+];
 
 export default routes;

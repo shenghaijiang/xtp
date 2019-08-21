@@ -1,31 +1,37 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from "vue";
-import App from "./App";
-import Router from "vue-router";
-import routers from "./router";
-import store from "./store";
-// import './assets/styles/reset.scss'
-import "font-awesome/css/font-awesome.min.css";
-import "./assets/styles/scss/element-variables.scss";
-import ElementUI from "element-ui";
-import components from "./components";
-import "babel-polyfill";
+import Vue from 'vue'
+import Router from 'vue-router'
+import routers from './router'
+import store from "./store"
+// @ts-ignore
+import App from './App.vue'
+import ElementUI from 'element-ui'
+import Components from "./components";
+import "./assets/styles/scss/themes/element-variables.scss"
+import "font-awesome/css/font-awesome.min.css"
+import 'babel-polyfill'
+import "./utils/common";
 
 Vue.use(Router);
 Vue.use(ElementUI);
-Vue.use(components);
+Vue.use(Components);
 
 Vue.config.productionTip = false;
 
-window.document.title = window.SYSTEM_NAME;
+// declare global {
+//   interface Window {
+//     SYSTEM_NAME: string
+//     _Vue: any
+//   }
+// }
+window.document.title = window.THEME_CONFIG.NAV_BAR_NAME;
+
 const router = new Router({
   routes: routers
 });
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const getStorageItem = localStorage.getItem(window.TOKEN_KEY) || sessionStorage.getItem(window.TOKEN_KEY) || null;
+    const getStorageItem = sessionStorage.getItem(window.TOKEN_KEY) || localStorage.getItem(window.TOKEN_KEY) || null;
     if (!getStorageItem) {
       next({
         path: "/login"
@@ -42,12 +48,11 @@ router.beforeEach((to, from, next) => {
 
 /* eslint-disable no-new */
 window._Vue = new Vue({
-  el: "#app",
-  store,
+  el: '#app',
   router,
-  template: "<App/>",
-  components: { App },
+  store,
   data: {
     Bus: new Vue()
-  }
-});
+  },
+  render: (h) => h(App)
+})

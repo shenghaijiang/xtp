@@ -19,17 +19,20 @@ export default {
 };
 </script>
 
-<style lang="sass" scoped>
-.search-box
-  display: flex
-  background-color: #eee
-  margin-bottom: 8px
-  .search-box__input
-    width: 230px
-    margin: 2px 2px 2px
-  .search-box__button-wrap
-    display: flex
-    align-items: center
-    margin-left: 8px
+<style lang="scss" scoped>
+.search-box {
+  display: flex;
+  background-color: #eee;
+  margin-bottom: 8px;
+}
+.search-box__button-wrap{
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+.search-box__input {
+  width: 230px;
+  margin: 2px;
+}
 </style>
 

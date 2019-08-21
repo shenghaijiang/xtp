@@ -1,3 +1,5 @@
+import {date} from "../utils/date";
+
 export default {
   data () {
     return {
@@ -29,12 +31,12 @@ export default {
         if (oldFilter[item] || oldFilter[item] === false || oldFilter[item] === 0) {
           const lowerItem = item.toLocaleLowerCase();
           if (lowerItem.indexOf("date") >= 0) {
-            filter[item] = new Date(oldFilter[item]).Format("yyyy-MM-dd hh:mm:ss");
+            filter[item] = date.format("yyyy-MM-dd hh:mm:ss", new Date(oldFilter[item]));
             if ((lowerItem.indexOf("date") >= 0) && (lowerItem.indexOf("start") >= 0)) {
-              filter[item] = new Date(oldFilter[item]).Format("yyyy-MM-dd 00:00:00");
+              filter[item] = date.format("yyyy-MM-dd hh:mm:ss", new Date(oldFilter[item]));
             }
             if ((lowerItem.indexOf("date") >= 0) && (lowerItem.indexOf("end") >= 0)) {
-              filter[item] = new Date(oldFilter[item]).Format("yyyy-MM-dd 23:59:59");
+              filter[item] = date.format("yyyy-MM-dd 23:59:59", new Date(oldFilter[item]));
             }
           } else {
             if (typeof (oldFilter[item]) === "string") {

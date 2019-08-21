@@ -9,6 +9,15 @@ const DictType = {
   unit: "Unit"//计量单位
 };
 
+const OrganizeList = [
+  {value: "1", key: "一级组织"},
+  {value: "2", key: "二级组织"},
+  {value: "3", key: "三级组织"},
+  {value: "4", key: "四级组织"},
+  {value: "5", key: "五级组织"}
+];
+
 export {
-  DictType
+  DictType,
+  OrganizeList
 };

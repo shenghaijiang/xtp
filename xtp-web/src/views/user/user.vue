@@ -144,7 +144,7 @@
 <script>
 
 /*#region 导入函数*/
-import {CheckExp, GetExitData} from "../../utils/util";
+import {CheckExp, GetExitData} from "../../utils/utils";
 import PagePlugIn from "../../mixins/page-plug-in";
 import {AppAPI, UserAPI, RoleAPI, RoleUserAPI} from "../../modules";
 
@@ -338,12 +338,13 @@ export default {
           {required: true, message: "请输入姓名", trigger: "blur"},
           {min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur"}
         ],
-//                    groupId: [
-//                        {required: true, message: '请输入分组号', trigger: 'blur'}
-//                    ],
-        // phone: [
-        //     {minlength: 11, maxlength: 11,required: true, message: '请输入正确的手机号', trigger: 'blur'},
-        //     { validator:checkPhone, trigger: 'blur,change' }],
+      //  groupId: [
+      //      {required: true, message: '请输入分组号', trigger: 'blur'}
+      //  ],
+      // phone: [
+      //     {minlength: 11, maxlength: 11,required: true, message: '请输入正确的手机号', trigger: 'blur'},
+      //     { validator:checkPhone, trigger: 'blur,change' }
+      // ],
         mail: [{ required: false, message: "", trigger: "change" },
           { type: "email", message: "请输入正确的邮箱地址", trigger: "blur,change" }],
         qq: [{required: false, message: "", trigger: "blur"}, { validator: checkQQ, trigger: "change" }],
