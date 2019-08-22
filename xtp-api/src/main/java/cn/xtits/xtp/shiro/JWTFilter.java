@@ -1,9 +1,9 @@
 package cn.xtits.xtp.shiro;
 
-import cn.xtits.xtp.config.GlobalValue;
-import cn.xtits.xtp.interceptor.LoginToken;
 import cn.xtits.xtf.common.utils.JsonUtil;
 import cn.xtits.xtf.common.utils.JwtUtil;
+import cn.xtits.xtp.config.GlobalValue;
+import cn.xtits.xtp.interceptor.LoginToken;
 import io.jsonwebtoken.Claims;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+        httpServletResponse.setHeader("Access-control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
 
