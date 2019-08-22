@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -38,19 +39,34 @@ public class XtpApplication extends WebMvcConfigurerAdapter {
      * @param registry
      * @author lance
      */
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new RequestContextInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(new RequestLogInterceptor()).addPathPatterns("/**");
-
     }
 
 
+    @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add(new ExceptionHandlerResolver());
     }
 
+    @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.clear();
         converters.add(new JsonMessageConverter());
+    }
+
+    /**
+     * 添加 CORS 跨域处理
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowCredentials(true)
+                .allowedHeaders("*")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "OPTIONS", "PUT", "DELETE");
+
     }
 }
