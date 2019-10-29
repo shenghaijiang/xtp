@@ -1,5 +1,6 @@
 package cn.xtits.xtp.controller;
 
+import cn.xtits.xtf.common.utils.HttpClientUtil;
 import cn.xtits.xtf.common.utils.JsonUtil;
 import cn.xtits.xtf.common.utils.JwtUtil;
 import cn.xtits.xtf.common.web.AjaxResult;
@@ -73,11 +74,11 @@ public class UserOpenController extends BaseController {
             try {
                 LoginToken t = new LoginToken();
                 t.setAppId(u.getAppId());
-                t.setUserId(u.getId());
+                t.setUserId(u.getUserId());
                 t.setUserName(u.getNickName());
                 t.setAppToken(app.getToken());
                 String authToken = JsonUtil.toJson(t);
-                String token = JwtUtil.createJWT(u.getId().toString(), authToken, 24 * 60 * 60 * 1000);
+                String token = JwtUtil.createJWT(u.getUserId().toString(), authToken, 24 * 60 * 60 * 1000);
                 try {
                     String key = "jwt:" + String.valueOf(u.getId());
                     ValueOperations<String, String> ops = template.opsForValue();
@@ -103,11 +104,11 @@ public class UserOpenController extends BaseController {
             try {
                 LoginToken t = new LoginToken();
                 t.setAppId(u.getAppId());
-                t.setUserId(u.getId());
+                t.setUserId(u.getUserId());
                 t.setUserName(u.getNickName());
                 t.setAppToken(app.getToken());
                 String authToken = JsonUtil.toJson(t);
-                String token = JwtUtil.createJWT(u.getId().toString(), authToken, 24 * 60 * 60 * 1000);
+                String token = JwtUtil.createJWT(u.getUserId().toString(), authToken, 24 * 60 * 60 * 1000);
                 try {
                     String key = "jwt:" + String.valueOf(u.getId());
                     ValueOperations<String, String> ops = template.opsForValue();
@@ -124,4 +125,18 @@ public class UserOpenController extends BaseController {
 
     }
 
+
+    @RequestMapping(value = "jscode2session")
+    @ResponseBody
+    public AjaxResult jscode2session(
+            @RequestParam(value = "code", required = false) String code) {
+        try {
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wxc6f17db215ae62a0&secret=9dc3a7b27077a00bd374049dc9b8645d&js_code=" + code + "&grant_type=authorization_code";
+            String res = HttpClientUtil.doGet(url);
+            Jscode jscode = JsonUtil.fromJson(res, Jscode.class);
+            return new AjaxResult(jscode);
+        }catch (Exception ex){
+            return new AjaxResult(ex.getMessage());
+        }
+    }
 }

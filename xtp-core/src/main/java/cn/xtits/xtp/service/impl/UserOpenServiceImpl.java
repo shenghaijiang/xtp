@@ -31,6 +31,7 @@ public class UserOpenServiceImpl implements UserOpenService {
 
         User user = new User();
         user.setAccount(record.getOpenId());
+        user.setName(record.getNickName());
         user.setAppId(record.getAppId());
         user.setDeleteFlag(false);
         userMapper.insertSelective(user);

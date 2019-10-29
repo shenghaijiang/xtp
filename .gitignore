@@ -6,3 +6,6 @@ target
 /dist/
 .svn
 .vs
+*.zip
+node_modules
+xtp-web/xtp/
