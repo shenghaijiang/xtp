@@ -35,6 +35,12 @@ public class UserOpenController extends BaseController {
     @Value("${APP_TOKEN}")
     private String APP_TOKEN;
 
+    @Value("${wx.appid}")
+    private String APPID;
+
+    @Value("${wx.secret}")
+    private String SECRET;
+
     Gson gson = new GsonBuilder().serializeNulls().create();
 
     @Autowired
@@ -131,7 +137,8 @@ public class UserOpenController extends BaseController {
     public AjaxResult jscode2session(
             @RequestParam(value = "code", required = false) String code) {
         try {
-            String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wxc6f17db215ae62a0&secret=9dc3a7b27077a00bd374049dc9b8645d&js_code=" + code + "&grant_type=authorization_code";
+            String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+APPID+"&secret="+SECRET+"&js_code=" + code + "&grant_type=authorization_code";
+            System.out.println(url);
             String res = HttpClientUtil.doGet(url);
             Jscode jscode = JsonUtil.fromJson(res, Jscode.class);
             return new AjaxResult(jscode);

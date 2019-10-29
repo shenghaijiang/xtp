@@ -17,6 +17,10 @@ spring:
 REST_XTP_URL:  http://10.10.3.12:5555/xtp-api
 APP_TOKEN:  CJzdWIiOiJ7XCJ1c2VySDkwMTUeyJhbGciOiJI
 TTL_MILLIS:  864000000
+wx:
+  appid: appid
+  secret: secret
+
 eureka:
   client:
     serviceUrl:
